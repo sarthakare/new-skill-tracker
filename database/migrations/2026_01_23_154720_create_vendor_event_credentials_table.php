@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('vendor_event_credentials', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('vendor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->foreignId('college_id')->constrained()->onDelete('cascade');
+            $table->string('username')->unique();
+            $table->string('password'); // hashed
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->timestamps();
+            
+            $table->unique(['vendor_id', 'event_id']);
+            $table->index(['vendor_id', 'event_id', 'status']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('vendor_event_credentials');
+    }
+};
