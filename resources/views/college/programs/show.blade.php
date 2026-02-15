@@ -3,137 +3,116 @@
 @section('title', 'Program Details')
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1">{{ $program->name }}</h2>
-            <p class="text-muted mb-0">Event: {{ $event->name }}</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="btn btn-outline-primary">Edit Program</a>
-            <a href="{{ route('college.events.programs.index', $event) }}" class="btn btn-outline-secondary">Back</a>
-        </div>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl font-semibold text-slate-800">{{ $program->name }}</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Event: {{ $event->name }}</p>
     </div>
-
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-muted">Type</div>
-                    <div class="fs-5">@if($program->type)<span class="badge bg-info">{{ $program->type }}</span>@else—@endif</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-muted">Run by</div>
-                    <div class="fs-5">{{ $program->executorLabel() }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-muted">Program Manager</div>
-                    <div class="fs-5">{{ $program->oversightManager?->name ?? '—' }}</div>
-                    @if($program->oversightManager)
-                        <small class="text-muted">{{ $program->oversightManager->department }}</small>
-                    @endif
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="text-muted">Students</div>
-                    <div class="fs-5">{{ $program->students->count() }}</div>
-                </div>
-            </div>
-        </div>
+    <div class="flex gap-2">
+        <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-primary border border-primary/30 hover:bg-primary/10">Edit Program</a>
+        <a href="{{ route('college.events.programs.index', $event) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Back</a>
     </div>
+</div>
 
-    <div class="card mb-4">
-        <div class="card-header">Manager Credentials</div>
-        <div class="card-body">
-            @if(!empty($generatedCredentials))
-                <div class="alert alert-warning">
-                    <strong>New credentials generated:</strong> Copy these now; they are shown once.
-                </div>
-                <ul class="list-group mb-3">
-                    @foreach($generatedCredentials as $generated)
-                        <li class="list-group-item">
-                            <div><strong>Username:</strong> {{ $generated['username'] }}</div>
-                            <div><strong>Password:</strong> {{ $generated['password'] }}</div>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-card border border-border shadow-card p-4">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Type</p>
+        <p class="text-lg font-semibold text-slate-800 mt-0.5">@if($program->type)<span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $program->type }}</span>@else—@endif</p>
+    </div>
+    <div class="bg-white rounded-card border border-border shadow-card p-4">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Run by</p>
+        <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->executorLabel() }}</p>
+    </div>
+    <div class="bg-white rounded-card border border-border shadow-card p-4">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Program Manager</p>
+        <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->oversightManager?->name ?? '—' }}</p>
+        @if($program->oversightManager)<p class="text-xs text-slate-500 mt-0.5">{{ $program->oversightManager->department }}</p>@endif
+    </div>
+    <div class="bg-white rounded-card border border-border shadow-card p-4">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Students</p>
+        <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->students->count() }}</p>
+    </div>
+</div>
 
-            <div class="table-responsive">
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Status</th>
-                            <th>Created</th>
+<div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
+    <div class="px-5 py-4 border-b border-border bg-primary/5">
+        <h2 class="text-lg font-semibold text-slate-800">Manager Credentials</h2>
+    </div>
+    <div class="p-5">
+        @if(!empty($generatedCredentials))
+            <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                <strong>New credentials generated:</strong> Copy these now; they are shown once.
+            </div>
+            <ul class="space-y-2 mb-4">
+                @foreach($generatedCredentials as $generated)
+                    <li class="rounded-lg border border-border bg-slate-50 px-4 py-3 text-sm">
+                        <div><strong>Username:</strong> {{ $generated['username'] }}</div>
+                        <div><strong>Password:</strong> {{ $generated['password'] }}</div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-slate-100 border-b border-border">
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Username</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Status</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($credentials as $credential)
+                        <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5">
+                            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $credential->username }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-600">{{ $credential->status }}</td>
+                            <td class="px-4 py-3 text-sm text-slate-600">{{ $credential->created_at->format('Y-m-d') }}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($credentials as $credential)
-                            <tr>
-                                <td>{{ $credential->username }}</td>
-                                <td>{{ $credential->status }}</td>
-                                <td>{{ $credential->created_at->format('Y-m-d') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-center text-muted">No credentials found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr><td colspan="3" class="px-4 py-8 text-center text-slate-500">No credentials found.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 
-    <div class="card">
-        <div class="card-header">Completion Requests</div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Requested At</th>
-                            <th>Notes</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($program->completionRequests as $request)
-                            <tr>
-                                <td>{{ $request->status }}</td>
-                                <td>{{ $request->created_at->format('Y-m-d') }}</td>
-                                <td>{{ $request->notes ?? '—' }}</td>
-                                <td class="text-end">
-                                    @if($request->status === 'pending')
-                                        <form action="{{ route('college.programs.approve-completion', [$event, $program]) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                        </form>
-                                    @else
-                                        <span class="text-muted">Reviewed</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center text-muted">No completion requests yet.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
+    <div class="px-5 py-4 border-b border-border bg-primary/5">
+        <h2 class="text-lg font-semibold text-slate-800">Completion Requests</h2>
     </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="bg-slate-100 border-b border-border">
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Status</th>
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Requested At</th>
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Notes</th>
+                    <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($program->completionRequests as $request)
+                    <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5">
+                        <td class="px-4 py-3 text-sm text-slate-600">{{ $request->status }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-600">{{ $request->created_at->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3 text-sm text-slate-600">{{ $request->notes ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right">
+                            @if($request->status === 'pending')
+                                <form action="{{ route('college.programs.approve-completion', [$event, $program]) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-button text-sm font-medium text-white bg-success hover:opacity-90">Approve</button>
+                                </form>
+                            @else
+                                <span class="text-slate-500 text-sm">Reviewed</span>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No completion requests yet.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 @endsection
