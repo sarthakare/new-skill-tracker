@@ -8,6 +8,7 @@ use App\Models\ProgramAttendance;
 use App\Models\ProgramManagerCredential;
 use App\Models\ProgramSession;
 use App\Models\ProgramStudent;
+use App\Models\SyllabusTopic;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -24,8 +25,10 @@ class ProgramAttendanceController extends Controller
             ->firstOrFail();
         $students = ProgramStudent::where('program_id', $program->id)->orderBy('student_name')->get();
         $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
+        $topics = SyllabusTopic::where('program_id', $program->id)->with('subtopics')->orderBy('sort_order')->get();
+        $taughtTopicIds = $session->taughtSyllabus()->pluck('syllabus_topics.id')->toArray();
 
-        return view('manager.programs.attendance', compact('program', 'session', 'students', 'attendance', 'credential'));
+        return view('manager.programs.attendance', compact('program', 'session', 'students', 'attendance', 'credential', 'topics', 'taughtTopicIds'));
     }
 
     public function store(Request $request, Program $program, ProgramSession $session): RedirectResponse
@@ -36,7 +39,8 @@ class ProgramAttendanceController extends Controller
 
         $validated = $request->validate([
             'attendance' => ['array'],
-            'method' => ['required', 'in:QR,Manual'],
+            'syllabus_topics' => ['nullable', 'array'],
+            'syllabus_topics.*' => ['integer', 'exists:syllabus_topics,id'],
         ]);
 
         $studentIds = ProgramStudent::where('program_id', $program->id)->pluck('id')->toArray();
@@ -50,12 +54,16 @@ class ProgramAttendanceController extends Controller
                 ],
                 [
                     'status' => in_array($studentId, $presentIds) ? 'present' : 'absent',
-                    'method' => $validated['method'],
+                    'method' => 'Manual',
                 ]
             );
         }
 
         $session->update(['status' => 'completed']);
+
+        $topicIds = $validated['syllabus_topics'] ?? [];
+        $validTopicIds = SyllabusTopic::where('program_id', $program->id)->whereIn('id', $topicIds)->pluck('id')->toArray();
+        $session->taughtSyllabus()->sync($validTopicIds);
 
         return redirect()->route('manager.program.sessions.index', $program)
             ->with('success', 'Attendance saved successfully.');
@@ -69,6 +77,7 @@ class ProgramAttendanceController extends Controller
 
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
+        $program->load(['event', 'college', 'vendorManager', 'independentManager']);
         $students = ProgramStudent::where('program_id', $program->id)->orderBy('student_name')->get();
         $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
 
@@ -76,5 +85,39 @@ class ProgramAttendanceController extends Controller
         $absentCount = $students->count() - $presentCount;
 
         return view('manager.programs.attendance-report', compact('program', 'session', 'students', 'attendance', 'credential', 'presentCount', 'absentCount'));
+    }
+
+    public function dailyReport(Program $program, ProgramSession $session): View
+    {
+        if ($session->program_id !== $program->id) {
+            abort(403, 'Unauthorized access to this session.');
+        }
+
+        $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
+            ->firstOrFail();
+        $program->load(['event', 'college', 'vendorManager', 'independentManager']);
+        $students = ProgramStudent::where('program_id', $program->id)->orderBy('student_name')->get();
+        $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
+        $taughtTopics = $session->taughtSyllabus()->with('subtopics')->orderBy('sort_order')->get();
+
+        $presentCount = $attendance->where('status', 'present')->count();
+        $totalCount = $students->count();
+
+        return view('manager.programs.daily-report', compact('program', 'session', 'credential', 'taughtTopics', 'presentCount', 'totalCount'));
+    }
+
+    public function completionReport(Program $program): View
+    {
+        $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
+            ->firstOrFail();
+        $program->load(['syllabusTopics.subtopics', 'students', 'sessions', 'completionRequests', 'event', 'college', 'vendorManager', 'independentManager']);
+        $topics = $program->syllabusTopics;
+        $totalTopics = $topics->count();
+        $completedTopics = $topics->where('is_complete', true)->count();
+        $totalSubtopics = $topics->sum(fn ($t) => $t->subtopics->count());
+        $completedSubtopics = $topics->sum(fn ($t) => $t->subtopics->where('is_complete', true)->count());
+        $latestCompletion = $program->completionRequests->sortByDesc('created_at')->first();
+
+        return view('manager.programs.completion-report', compact('program', 'credential', 'topics', 'totalTopics', 'completedTopics', 'totalSubtopics', 'completedSubtopics', 'latestCompletion'));
     }
 }

@@ -17,6 +17,7 @@ class SyllabusController extends Controller
     {
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
+        $program->load(['event', 'college', 'vendorManager', 'independentManager']);
         $topics = SyllabusTopic::where('program_id', $program->id)
             ->with('subtopics')
             ->orderBy('sort_order')

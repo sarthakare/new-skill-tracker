@@ -32,6 +32,8 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::get('/{program}/sessions/{session}/attendance', [ProgramAttendanceController::class, 'edit'])->name('attendance.edit');
     Route::post('/{program}/sessions/{session}/attendance', [ProgramAttendanceController::class, 'store'])->name('attendance.store');
     Route::get('/{program}/sessions/{session}/attendance-report', [ProgramAttendanceController::class, 'report'])->name('attendance.report');
+    Route::get('/{program}/sessions/{session}/daily-report', [ProgramAttendanceController::class, 'dailyReport'])->name('daily.report');
+    Route::get('/{program}/completion-report', [ProgramAttendanceController::class, 'completionReport'])->name('completion.report');
 
     Route::get('/{program}/syllabus', [SyllabusController::class, 'index'])->name('syllabus.index');
     Route::post('/{program}/syllabus/topics', [SyllabusController::class, 'storeTopic'])->name('syllabus.topics.store');

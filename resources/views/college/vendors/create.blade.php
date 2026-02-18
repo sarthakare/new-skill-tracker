@@ -45,7 +45,7 @@
             </div>
             <div>
                 <label for="contact_phone" class="block text-sm font-medium text-slate-700 mb-1">Contact Phone</label>
-                <input type="text" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" class="w-full rounded-input border @error('contact_phone') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
+                <input type="text" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full rounded-input border @error('contact_phone') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
                 @error('contact_phone')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Program Manager') - Skill Tracker</title>
+    <title>@yield('title', 'Program Manager')@yield('title_suffix', ' - Skill Tracker')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50/80 font-sans antialiased text-slate-800">
@@ -12,7 +12,7 @@
         $programId = isset($program) ? $program->id : 0;
     @endphp
     {{-- Top bar --}}
-    <header class="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-primary/5 border-b-2 border-primary shadow-sm">
+    <header class="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-slate-50 border-b-2 border-primary shadow-sm">
         <div class="flex items-center gap-3">
             <button type="button"
                     id="sidebar-toggle"
@@ -48,7 +48,7 @@
 
     <div class="flex">
         {{-- Sidebar --}}
-        <aside id="sidebar" class="fixed md:sticky top-14 left-0 z-20 w-56 min-h-[calc(100vh-3.5rem)] bg-slate-50 border-r border-border transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
+        <aside id="sidebar" class="fixed top-14 left-0 z-20 w-56 h-[calc(100vh-3.5rem)] overflow-y-auto bg-slate-50 border-r border-border transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
             <nav class="p-3 space-y-0.5">
                 <a href="{{ $programId ? route('manager.program.dashboard', $programId) : '#' }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.dashboard') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
@@ -66,14 +66,19 @@
                     Students
                 </a>
                 <a href="{{ $programId ? route('manager.program.sessions.index', $programId) : '#' }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.sessions.*') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    Sessions
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.sessions.*') || request()->routeIs('manager.program.attendance.*') || request()->routeIs('manager.program.daily.*') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Daily Report
+                </a>
+                <a href="{{ $programId ? route('manager.program.completion.report', $programId) : '#' }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.completion.report') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Completion Report
                 </a>
                 <a href="{{ $programId ? route('manager.program.completion.create', $programId) : '#' }}"
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.completion.*') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('manager.program.completion.create') || request()->routeIs('manager.program.completion.store') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Completion
+                    Closure Request
                 </a>
             </nav>
         </aside>
@@ -82,7 +87,7 @@
         <div id="sidebar-overlay" class="fixed inset-0 z-10 bg-slate-900/50 md:hidden opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
 
         {{-- Main content --}}
-        <main class="flex-1 min-w-0 p-4 sm:p-6">
+        <main class="flex-1 min-w-0 p-4 sm:p-6 md:ml-56">
             @if(session('success'))
                 <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm flex items-center justify-between" role="alert">
                     <span>{{ session('success') }}</span>

@@ -16,13 +16,20 @@
     <div class="p-5">
         <form action="{{ route('manager.program.attendance.store', [$program, $session]) }}" method="POST" class="space-y-4">
             @csrf
+            @if($topics->isNotEmpty())
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Attendance Method</label>
-                <select name="method" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
-                    <option value="Manual">Manual</option>
-                    <option value="QR">QR</option>
-                </select>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Syllabus Taught This Session (optional)</label>
+                <p class="text-xs text-slate-500 mb-2">Select topics covered. Used in Daily Report.</p>
+                <div class="flex flex-wrap gap-3">
+                    @foreach($topics as $topic)
+                        <label class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                            <input type="checkbox" name="syllabus_topics[]" value="{{ $topic->id }}" {{ in_array($topic->id, $taughtTopicIds) ? 'checked' : '' }} class="rounded border-slate-300 text-primary focus:ring-primary">
+                            <span class="text-sm">{{ $topic->title }}</span>
+                        </label>
+                    @endforeach
+                </div>
             </div>
+            @endif
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>

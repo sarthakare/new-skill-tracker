@@ -9,7 +9,7 @@
 </head>
 <body class="min-h-screen bg-slate-50/80 font-sans antialiased text-slate-800">
     {{-- Top bar --}}
-    <header class="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-primary/5 border-b-2 border-primary shadow-sm">
+    <header class="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-slate-50 border-b-2 border-primary shadow-sm">
         <div class="flex items-center gap-3">
             <button type="button"
                     id="sidebar-toggle"
@@ -45,7 +45,7 @@
 
     <div class="flex">
         {{-- Sidebar --}}
-        <aside id="sidebar" class="fixed md:sticky top-14 left-0 z-20 w-56 min-h-[calc(100vh-3.5rem)] bg-slate-50 border-r border-border transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
+        <aside id="sidebar" class="fixed top-14 left-0 z-20 w-56 h-[calc(100vh-3.5rem)] overflow-y-auto bg-slate-50 border-r border-border transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
             <nav class="p-3 space-y-0.5">
                 <a href="{{ route('super-admin.dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('super-admin.dashboard') ? 'bg-primary-light text-primary' : 'text-slate-600 hover:bg-primary/10 hover:text-slate-900' }}">
@@ -64,7 +64,7 @@
         <div id="sidebar-overlay" class="fixed inset-0 z-10 bg-slate-900/50 md:hidden opacity-0 pointer-events-none transition-opacity duration-200" aria-hidden="true"></div>
 
         {{-- Main content --}}
-        <main class="flex-1 min-w-0 p-4 sm:p-6">
+        <main class="flex-1 min-w-0 p-4 sm:p-6 md:ml-56">
             @if(session('success'))
                 <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm flex items-center justify-between" role="alert">
                     <span>{{ session('success') }}</span>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SyllabusTopic extends Model
@@ -23,5 +24,11 @@ class SyllabusTopic extends Model
     public function subtopics(): HasMany
     {
         return $this->hasMany(SyllabusSubtopic::class)->orderBy('sort_order');
+    }
+
+    public function programSessions(): BelongsToMany
+    {
+        return $this->belongsToMany(ProgramSession::class, 'program_session_syllabus', 'syllabus_topic_id', 'program_session_id')
+            ->withTimestamps();
     }
 }

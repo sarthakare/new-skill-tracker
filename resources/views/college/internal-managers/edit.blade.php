@@ -34,7 +34,8 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-                <input type="text" name="phone" value="{{ old('phone', $internalManager->phone) }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                <input type="text" name="phone" value="{{ old('phone', $internalManager->phone) }}" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'')" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                @error('phone')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div class="flex gap-2">
                 <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Update</button>

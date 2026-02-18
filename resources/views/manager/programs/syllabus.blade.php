@@ -1,19 +1,28 @@
 @extends('manager.layouts.app')
 
 @section('title', 'Syllabus')
+@section('title_suffix', '')
 
 @section('content')
-<div class="mb-6">
-    <h1 class="flex items-center gap-2 text-2xl font-semibold text-slate-800">
-        <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-        </span>
-        Syllabus - {{ $program->name }}
-    </h1>
-    <p class="mt-2 text-slate-600">Add syllabus topics and subtopics. Mark each as complete as you teach it.</p>
+<div class="mb-6 flex flex-wrap items-start justify-between gap-4 print:hidden">
+    <div>
+        <h1 class="flex items-center gap-2 text-2xl font-semibold text-slate-800">
+            <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            </span>
+            Syllabus - {{ $program->name }}
+        </h1>
+        <p class="mt-2 text-slate-600">Add syllabus topics and subtopics. Mark each as complete as you teach it.</p>
+    </div>
+    <div class="print:hidden">
+        <button type="button" onclick="if(location.hash){history.replaceState(null,'',location.pathname+location.search);}window.print();" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2h-6a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            Print
+        </button>
+    </div>
 </div>
 
-<div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
+<div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6 print:hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
         <h2 class="text-lg font-semibold text-slate-800">Add Topic</h2>
     </div>
@@ -29,8 +38,62 @@
     </div>
 </div>
 
+{{-- Printable syllabus - formal document for college submission --}}
+<div id="syllabus-print-document" class="hidden print:block syllabus-formal-doc">
+    <div class="syllabus-doc-header">
+        <h1 class="syllabus-doc-title">SYLLABUS</h1>
+        @if($program->college)
+            <p class="syllabus-doc-subtitle">Submitted to {{ $program->college->name }}</p>
+        @endif
+        <p class="syllabus-doc-date">Date: {{ now()->format('d F Y') }}</p>
+    </div>
+
+    <table class="syllabus-doc-info-table">
+        <tr><td class="syllabus-doc-label">Program Name</td><td>{{ $program->name }}</td></tr>
+        @if($program->event)
+            <tr><td class="syllabus-doc-label">Event</td><td>{{ $program->event->name }}</td></tr>
+        @endif
+        @if($program->type)
+            <tr><td class="syllabus-doc-label">Type</td><td>{{ $program->type }}</td></tr>
+        @endif
+        @if($program->department)
+            <tr><td class="syllabus-doc-label">Department</td><td>{{ $program->department }}</td></tr>
+        @endif
+        @if($program->duration_days)
+            <tr><td class="syllabus-doc-label">Duration</td><td>{{ $program->duration_days }} days</td></tr>
+        @endif
+        @if($program->mode)
+            <tr><td class="syllabus-doc-label">Mode</td><td>{{ $program->mode }}</td></tr>
+        @endif
+        <tr><td class="syllabus-doc-label">Trainer</td><td>{{ $program->executorLabel() }}</td></tr>
+    </table>
+
+    <h2 class="syllabus-doc-section">Course Syllabus</h2>
+    <div class="syllabus-doc-content">
+        @forelse($topics as $topic)
+            <div class="syllabus-topic-item">
+                <p class="syllabus-topic-title">
+                    {{ $loop->iteration }}. {{ $topic->title }}
+                    @if($topic->scheduled_date || $topic->scheduled_time)
+                        <span class="syllabus-scheduled">({{ trim(($topic->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '')) }})</span>
+                    @endif
+                </p>
+                @if($topic->subtopics->isNotEmpty())
+                    <ul class="syllabus-subtopic-list">
+                        @foreach($topic->subtopics as $subtopic)
+                            <li>{{ $subtopic->title }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        @empty
+            <p class="syllabus-empty">No topics defined.</p>
+        @endforelse
+    </div>
+</div>
+
 @forelse($topics as $topic)
-    <div class="topic-card bg-white rounded-card border border-border shadow-card overflow-hidden mb-4" id="topic-{{ $topic->id }}">
+    <div class="topic-card bg-white rounded-card border border-border shadow-card overflow-hidden mb-4 print:hidden" id="topic-{{ $topic->id }}">
         <div class="px-5 py-4 border-b border-border bg-slate-50/80">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div class="flex flex-wrap items-center gap-2">
@@ -81,7 +144,7 @@
                 @csrf
                 <label class="text-sm text-slate-500">Scheduled:</label>
                 <input type="date" name="scheduled_date" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[150px]" value="{{ $topic->scheduled_date?->format('Y-m-d') }}">
-                <input type="time" name="scheduled_time" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[100px]" value="{{ $topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '' }}">
+                <input type="time" name="scheduled_time" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[125px]" value="{{ $topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '' }}">
                 <button type="submit" class="px-3 py-1.5 rounded-button text-sm font-medium text-slate-700 border border-border hover:bg-slate-50">Set</button>
             </form>
         </div>
@@ -125,13 +188,141 @@
         </div>
     </div>
 @empty
-    <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
+    <div class="bg-white rounded-card border border-border shadow-card overflow-hidden print:hidden">
         <div class="p-12 text-center text-slate-500">
             <svg class="w-16 h-16 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
             <p class="mt-2">No topics yet. Add your first topic above.</p>
         </div>
     </div>
 @endforelse
+
+<style>
+    /* Formal document styles - print only */
+    .syllabus-formal-doc {
+        font-family: 'Times New Roman', Times, serif;
+        max-width: 100%;
+        padding: 24px;
+        margin: 0;
+        color: #1e293b;
+        border: 1px solid #1e293b;
+    }
+    .syllabus-doc-header {
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #1e293b;
+    }
+    .syllabus-doc-title {
+        font-size: 22pt;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        margin: 0 0 8px 0;
+    }
+    .syllabus-doc-subtitle {
+        font-size: 11pt;
+        margin: 0 0 4px 0;
+    }
+    .syllabus-doc-date {
+        font-size: 10pt;
+        margin: 0;
+    }
+    .syllabus-doc-info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+        font-size: 11pt;
+    }
+    .syllabus-doc-info-table td {
+        padding: 6px 12px;
+        border: 1px solid #64748b;
+        vertical-align: top;
+    }
+    .syllabus-doc-label {
+        width: 140px;
+        font-weight: 600;
+        background: #f8fafc;
+    }
+    .syllabus-doc-section {
+        font-size: 14pt;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #94a3b8;
+    }
+    .syllabus-doc-content {
+        font-size: 11pt;
+        line-height: 1.5;
+    }
+    .syllabus-topic-item {
+        margin-bottom: 16px;
+    }
+    .syllabus-topic-title {
+        font-weight: 600;
+        margin: 0 0 6px 0;
+    }
+    .syllabus-scheduled {
+        font-weight: 400;
+        font-size: 10pt;
+        color: #64748b;
+    }
+    .syllabus-subtopic-list {
+        margin: 0 0 0 24px;
+        padding: 0;
+        list-style-type: disc;
+    }
+    .syllabus-subtopic-list li {
+        margin-bottom: 4px;
+    }
+    .syllabus-empty {
+        font-style: italic;
+        color: #64748b;
+    }
+
+    @media print {
+        html, body {
+            overflow: visible !important;
+            height: auto !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        body > div, main {
+            overflow: visible !important;
+            min-height: 0 !important;
+            height: auto !important;
+            min-width: 100% !important;
+        }
+        aside, header, nav, .print\:hidden, .sidebar, [role="banner"] { display: none !important; }
+        main { padding: 0 !important; margin: 0 !important; }
+        #syllabus-print-document {
+            display: block !important;
+            overflow: visible !important;
+            height: auto !important;
+            min-height: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+        .syllabus-formal-doc, .syllabus-doc-content, .syllabus-topic-item {
+            overflow: visible !important;
+        }
+        .syllabus-topic-item {
+            page-break-inside: auto;
+        }
+        /* margin: 5mm hides browser header/footer (title, URL); @bottom-center adds our page number */
+        @page {
+            margin: 5mm;
+            size: A4;
+        }
+        @page {
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 9pt;
+                font-family: 'Times New Roman', Times, serif;
+            }
+        }
+    }
+</style>
 
 @push('scripts')
 <script>

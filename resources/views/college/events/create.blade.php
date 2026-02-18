@@ -69,6 +69,7 @@
                            id="end_date"
                            name="end_date"
                            value="{{ old('end_date') }}"
+                           min="{{ old('start_date') }}"
                            required
                            class="w-full rounded-input border @error('end_date') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
                     @error('end_date')
@@ -106,3 +107,28 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        var startDateInput = document.getElementById('start_date');
+        var endDateInput = document.getElementById('end_date');
+
+        if (!startDateInput || !endDateInput) {
+            return;
+        }
+
+        function syncEndDateMin() {
+            var startDate = startDateInput.value;
+            endDateInput.min = startDate || '';
+
+            if (startDate && endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = startDate;
+            }
+        }
+
+        startDateInput.addEventListener('change', syncEndDateMin);
+        syncEndDateMin();
+    })();
+</script>
+@endpush

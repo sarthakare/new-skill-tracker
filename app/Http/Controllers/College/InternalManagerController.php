@@ -33,7 +33,7 @@ class InternalManagerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:50'],
         ]);
 
         $manager = InternalManager::create([
@@ -70,7 +70,7 @@ class InternalManagerController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:50'],
         ]);
 
         $internalManager->update($validated);

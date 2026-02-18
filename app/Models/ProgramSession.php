@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProgramSession extends Model
@@ -33,5 +34,11 @@ class ProgramSession extends Model
     public function attendance(): HasMany
     {
         return $this->hasMany(ProgramAttendance::class);
+    }
+
+    public function taughtSyllabus(): BelongsToMany
+    {
+        return $this->belongsToMany(SyllabusTopic::class, 'program_session_syllabus', 'program_session_id', 'syllabus_topic_id')
+            ->withTimestamps();
     }
 }

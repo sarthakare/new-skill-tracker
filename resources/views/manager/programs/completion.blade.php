@@ -1,6 +1,6 @@
 @extends('manager.layouts.app')
 
-@section('title', 'Program Completion')
+@section('title', 'Closure Request')
 
 @section('content')
 <div class="mb-6">
@@ -8,7 +8,7 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         </span>
-        Completion Request - {{ $program->name }}
+        Closure Request - {{ $program->name }}
     </h1>
 </div>
 
@@ -27,11 +27,11 @@
                 <textarea name="notes" rows="4" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">{{ old('notes') }}</textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Attachments (Attendance, Reports, Certificates)</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Attachments (Attendance, daily reports, completion reports, Certificates, etc.)</label>
                 <input type="file" name="attachments[]" multiple class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
             </div>
             <div class="flex gap-2">
-                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Submit Completion Request</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Submit Closure Request</button>
             </div>
         </form>
     </div>
