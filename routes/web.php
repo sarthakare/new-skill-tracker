@@ -12,6 +12,9 @@ Route::get('/', function () {
         if (Auth::user()->isCollegeAdmin()) {
             return redirect()->route('college.dashboard');
         }
+        if (Auth::user()->isStudent()) {
+            return redirect()->route('student.dashboard');
+        }
     }
 
     // Check if program manager is logged in
@@ -30,7 +33,7 @@ Route::get('/', function () {
         $credential = \App\Models\VendorEventCredential::where('id', session('vendor_event_credential_id'))
             ->where('status', 'active')
             ->first();
-        
+
         if ($credential) {
             return redirect()->route('vendor.event.dashboard', $credential->event_id);
         }

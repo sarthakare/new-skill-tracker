@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Program extends Model
@@ -25,6 +26,25 @@ class Program extends Model
     public function college(): BelongsTo
     {
         return $this->belongsTo(College::class);
+    }
+
+    /** College-defined departments this program applies to (many-to-many). */
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'department_program');
+    }
+
+    /**
+     * Comma-separated department names from the catalog, or legacy free-text from programs.department.
+     */
+    public function departmentsLabel(): string
+    {
+        $names = $this->departments()->orderBy('name')->pluck('name');
+        if ($names->isNotEmpty()) {
+            return $names->implode(', ');
+        }
+
+        return (string) ($this->attributes['department'] ?? '');
     }
 
     public function event(): BelongsTo

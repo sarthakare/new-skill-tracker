@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\College;
+use App\Models\Department;
 use App\Models\IndependentTrainer;
 use App\Models\InternalManager;
 use App\Models\Vendor;
@@ -66,6 +67,17 @@ class SampleCollegeManagersSeeder extends Seeder
 
         $this->command->info('Independent Trainers: '.count($trainers).' created/verified for Sample College of Engineering.');
 
+        // Departments (for internal managers and students)
+        $departmentNames = ['Engineering', 'Skills Development', 'Student Affairs'];
+        $departmentIds = [];
+        foreach ($departmentNames as $departmentName) {
+            $department = Department::firstOrCreate(
+                ['college_id' => $collegeId, 'name' => $departmentName],
+                ['college_id' => $collegeId, 'name' => $departmentName],
+            );
+            $departmentIds[$departmentName] = $department->id;
+        }
+
         // Internal Managers
         $managers = [
             ['name' => 'Alex Rivera', 'department' => 'Engineering', 'email' => 'alex.rivera@samplecollege.edu', 'phone' => '+1-555-300-3001'],
@@ -78,7 +90,7 @@ class SampleCollegeManagersSeeder extends Seeder
                 ['college_id' => $collegeId, 'email' => $data['email']],
                 [
                     'name' => $data['name'],
-                    'department' => $data['department'],
+                    'department_id' => $departmentIds[$data['department']] ?? null,
                     'phone' => $data['phone'],
                 ]
             );

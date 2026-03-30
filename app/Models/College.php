@@ -31,6 +31,22 @@ class College extends Model
     }
 
     /**
+     * Student accounts belonging to this college.
+     */
+    public function students(): HasMany
+    {
+        return $this->hasMany(User::class)->where('role', 'STUDENT');
+    }
+
+    /**
+     * Departments defined by this college (e.g. for student enrollment).
+     */
+    public function departments(): HasMany
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    /**
      * Get the events for the college.
      */
     public function events(): HasMany

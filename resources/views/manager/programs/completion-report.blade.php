@@ -107,8 +107,8 @@
         @if($program->type)
             <tr><td class="completion-report-doc-label">Type</td><td>{{ $program->type }}</td></tr>
         @endif
-        @if($program->department)
-            <tr><td class="completion-report-doc-label">Department</td><td>{{ $program->department }}</td></tr>
+        @if($program->departmentsLabel() !== '')
+            <tr><td class="completion-report-doc-label">Departments</td><td>{{ $program->departmentsLabel() }}</td></tr>
         @endif
         <tr><td class="completion-report-doc-label">Status</td><td>{{ $program->status }}</td></tr>
         <tr><td class="completion-report-doc-label">Trainer</td><td>{{ $program->executorLabel() }}</td></tr>

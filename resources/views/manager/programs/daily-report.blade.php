@@ -89,8 +89,8 @@
         <tr><td class="daily-report-doc-label">Session</td><td>{{ $session->title }}</td></tr>
         <tr><td class="daily-report-doc-label">Date</td><td>{{ $session->session_date->format('d F Y') }}</td></tr>
         <tr><td class="daily-report-doc-label">Time</td><td>{{ $session->start_time ?? '—' }} - {{ $session->end_time ?? '—' }}</td></tr>
-        @if($program->department)
-            <tr><td class="daily-report-doc-label">Department</td><td>{{ $program->department }}</td></tr>
+        @if($program->departmentsLabel() !== '')
+            <tr><td class="daily-report-doc-label">Departments</td><td>{{ $program->departmentsLabel() }}</td></tr>
         @endif
         <tr><td class="daily-report-doc-label">Trainer</td><td>{{ $program->executorLabel() }}</td></tr>
         <tr><td class="daily-report-doc-label">Total Students</td><td>{{ $totalCount }}</td></tr>

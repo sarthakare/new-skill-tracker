@@ -49,7 +49,7 @@
                                 </td>
                                 <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->student_name }}</td>
                                 <td class="px-5 py-3 text-sm text-slate-600">{{ $student->student_identifier ?? '—' }}</td>
-                                <td class="px-5 py-3 text-sm text-slate-600">{{ $student->department }}</td>
+                                <td class="px-5 py-3 text-sm text-slate-600">{{ $student->departmentLabel() }}</td>
                             </tr>
                         @empty
                             <tr><td colspan="4" class="px-5 py-12 text-center text-slate-500">No students found.</td></tr>

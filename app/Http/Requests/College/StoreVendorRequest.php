@@ -15,7 +15,7 @@ class StoreVendorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'in:Training,Certification,Logistics'],
+            'type' => ['required', 'in:Training,Certification,Logistics,Other'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:20'],
             'address' => ['nullable', 'string'],

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +22,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Department (for students), from college-defined departments.
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    /**
      * Check if user is Super Admin.
      */
     public function isSuperAdmin(): bool
@@ -34,6 +43,14 @@ class User extends Authenticatable
     public function isCollegeAdmin(): bool
     {
         return $this->role === 'COLLEGE_ADMIN';
+    }
+
+    /**
+     * Check if user is a Student.
+     */
+    public function isStudent(): bool
+    {
+        return $this->role === 'STUDENT';
     }
 
     /**
@@ -73,6 +90,8 @@ class User extends Authenticatable
         'password',
         'role',
         'college_id',
+        'department_id',
+        'mobile',
     ];
 
     /**

@@ -18,12 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/vendor.php'));
             Route::middleware('web')
                 ->group(base_path('routes/manager.php'));
+            Route::middleware('web')
+                ->group(base_path('routes/student.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'super-admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
             'college-scope' => \App\Http\Middleware\EnsureCollegeScope::class,
+            'student-scope' => \App\Http\Middleware\EnsureStudentScope::class,
             'vendor-event-access' => \App\Http\Middleware\EnsureVendorEventAccess::class,
             'program-manager-access' => \App\Http\Middleware\EnsureProgramManagerAccess::class,
         ]);

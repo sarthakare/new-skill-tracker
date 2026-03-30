@@ -26,6 +26,9 @@ class UnifiedAuthController extends Controller
             if ($user->isCollegeAdmin()) {
                 return redirect()->route('college.dashboard');
             }
+            if ($user->isStudent()) {
+                return redirect()->route('student.dashboard');
+            }
         }
 
         // Check if program manager is logged in
@@ -78,6 +81,7 @@ class UnifiedAuthController extends Controller
             if ($user && Hash::check($password, $user->password)) {
                 Auth::login($user, $remember);
                 $request->session()->regenerate();
+
                 return redirect()->intended(route('super-admin.dashboard'));
             }
         }
@@ -90,7 +94,7 @@ class UnifiedAuthController extends Controller
 
             if ($user && Hash::check($password, $user->password)) {
                 // Check if college is active
-                if (!$user->college_id) {
+                if (! $user->college_id) {
                     throw ValidationException::withMessages([
                         'username' => ['Your account is not associated with a college.'],
                     ]);
@@ -104,7 +108,34 @@ class UnifiedAuthController extends Controller
 
                 Auth::login($user, $remember);
                 $request->session()->regenerate();
+
                 return redirect()->intended(route('college.dashboard'));
+            }
+        }
+
+        // Try 2b: Student (email-based)
+        if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            $user = \App\Models\User::where('email', $username)
+                ->where('role', 'STUDENT')
+                ->first();
+
+            if ($user && Hash::check($password, $user->password)) {
+                if (! $user->college_id) {
+                    throw ValidationException::withMessages([
+                        'username' => ['Your account is not associated with a college.'],
+                    ]);
+                }
+
+                if ($user->college && $user->college->status !== 'active') {
+                    throw ValidationException::withMessages([
+                        'username' => ['Your college account is inactive. Please contact the administrator.'],
+                    ]);
+                }
+
+                Auth::login($user, $remember);
+                $request->session()->regenerate();
+
+                return redirect()->intended(route('student.dashboard'));
             }
         }
 

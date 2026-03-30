@@ -26,6 +26,10 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::put('/{program}/students/{student}', [ProgramStudentController::class, 'update'])->name('students.update');
     Route::delete('/{program}/students/{student}', [ProgramStudentController::class, 'destroy'])->name('students.destroy');
 
+    // Program remarks (bulk: one page to update all students' remarks)
+    Route::get('/{program}/remarks', [ProgramStudentController::class, 'remarks'])->name('remarks.index');
+    Route::post('/{program}/remarks', [ProgramStudentController::class, 'updateRemarks'])->name('remarks.update');
+
     Route::get('/{program}/sessions', [ProgramSessionController::class, 'index'])->name('sessions.index');
     Route::post('/{program}/sessions', [ProgramSessionController::class, 'store'])->name('sessions.store');
 

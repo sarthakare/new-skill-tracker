@@ -1,13 +1,15 @@
 <?php
 
-use App\Http\Controllers\College\AuthController;
 use App\Http\Controllers\College\DashboardController;
+use App\Http\Controllers\College\DepartmentController;
 use App\Http\Controllers\College\EventController;
 use App\Http\Controllers\College\EventUserController;
 use App\Http\Controllers\College\IndependentTrainerController;
 use App\Http\Controllers\College\InternalManagerController;
 use App\Http\Controllers\College\ProgramController;
+use App\Http\Controllers\College\StudentController;
 use App\Http\Controllers\College\VendorController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +37,7 @@ Route::get('/college', function () {
     if (Auth::check() && Auth::user()->isCollegeAdmin()) {
         return redirect()->route('college.dashboard');
     }
+
     return redirect()->route('login');
 });
 
@@ -46,6 +49,12 @@ Route::prefix('college')->name('college.')->middleware(['auth', 'college-scope']
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/completions', [DashboardController::class, 'completionRequests'])->name('dashboard.completions');
+
+    // Students (accounts with student role for this college)
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+
+    // Departments (names students choose at registration)
+    Route::resource('departments', DepartmentController::class)->except(['show']);
 
     // Events
     Route::resource('events', EventController::class);

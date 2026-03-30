@@ -63,7 +63,7 @@
                             <td class="px-4 py-2 text-sm border-r border-border">{{ $index + 1 }}</td>
                             <td class="px-4 py-2 text-sm border-r border-border">{{ $student->student_name }}</td>
                             <td class="px-4 py-2 text-sm border-r border-border">{{ $student->student_identifier ?? '—' }}</td>
-                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->department }}</td>
+                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->departmentLabel() }}</td>
                             <td class="px-4 py-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status === 'Present' ? 'bg-success/20 text-success' : 'bg-red-100 text-red-700' }}">{{ $status }}</span>
                             </td>
@@ -95,8 +95,8 @@
         <tr><td class="attendance-doc-label">Session</td><td>{{ $session->title }}</td></tr>
         <tr><td class="attendance-doc-label">Date</td><td>{{ $session->session_date->format('d F Y') }}</td></tr>
         <tr><td class="attendance-doc-label">Time</td><td>{{ $session->start_time ?? '—' }} - {{ $session->end_time ?? '—' }}</td></tr>
-        @if($program->department)
-            <tr><td class="attendance-doc-label">Department</td><td>{{ $program->department }}</td></tr>
+        @if($program->departmentsLabel() !== '')
+            <tr><td class="attendance-doc-label">Departments</td><td>{{ $program->departmentsLabel() }}</td></tr>
         @endif
         <tr><td class="attendance-doc-label">Trainer</td><td>{{ $program->executorLabel() }}</td></tr>
         <tr><td class="attendance-doc-label">Total Students</td><td>{{ $students->count() }}</td></tr>
@@ -125,7 +125,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $student->student_name }}</td>
                     <td>{{ $student->student_identifier ?? '—' }}</td>
-                    <td>{{ $student->department }}</td>
+                    <td>{{ $student->departmentLabel() }}</td>
                     <td>{{ $status }}</td>
                 </tr>
             @empty

@@ -7,6 +7,7 @@ use App\Http\Requests\College\StoreEventRequest;
 use App\Http\Requests\College\UpdateEventRequest;
 use App\Models\ActivityLog;
 use App\Models\Event;
+use App\Models\Program;
 use App\Models\VendorEventCredential;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -60,7 +61,14 @@ class EventController extends Controller
     {
         $this->ensureCollegeScope($event);
 
-        $event->load(['vendors', 'vendorCredentials.vendor', 'programs.oversightManager']);
+        $collegeId = Auth::user()->college_id;
+        if ($event->status === 'Draft'
+            && Program::where('event_id', $event->id)->where('college_id', $collegeId)->exists()) {
+            Event::where('id', $event->id)->where('college_id', $collegeId)->update(['status' => 'Active']);
+            $event->refresh();
+        }
+
+        $event->load(['vendors', 'vendorCredentials.vendor', 'programs.oversightManager', 'programs.departments']);
 
         return view('college.events.show', compact('event'));
     }
@@ -148,7 +156,7 @@ class EventController extends Controller
         $this->ensureCollegeScope($event);
 
         $event->load(['vendors', 'vendorCredentials.vendor']);
-        
+
         $credentials = VendorEventCredential::where('event_id', $event->id)
             ->where('college_id', Auth::user()->college_id)
             ->with('vendor')

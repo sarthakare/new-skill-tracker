@@ -36,7 +36,7 @@
                 @forelse($managers as $manager)
                     <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5 transition-colors">
                         <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $manager->name }}</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">{{ $manager->department }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $manager->department?->name ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $manager->email ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $manager->phone ?? '—' }}</td>
                         <td class="px-5 py-3 text-right">

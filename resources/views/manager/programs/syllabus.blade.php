@@ -56,8 +56,8 @@
         @if($program->type)
             <tr><td class="syllabus-doc-label">Type</td><td>{{ $program->type }}</td></tr>
         @endif
-        @if($program->department)
-            <tr><td class="syllabus-doc-label">Department</td><td>{{ $program->department }}</td></tr>
+        @if($program->departmentsLabel() !== '')
+            <tr><td class="syllabus-doc-label">Departments</td><td>{{ $program->departmentsLabel() }}</td></tr>
         @endif
         @if($program->duration_days)
             <tr><td class="syllabus-doc-label">Duration</td><td>{{ $program->duration_days }} days</td></tr>

@@ -83,7 +83,7 @@
                                    class="w-full pl-10 pr-4 py-2.5 rounded-input border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary @error('username') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror">
                         </div>
                         <p class="mt-1.5 text-xs text-slate-500">
-                            Use email for Super Admin / College Admin, or username for Vendor Event access
+                            Use email for Super Admin, College Admin, or Student, or username for Program Manager / Vendor access
                         </p>
                         @error('username')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -124,6 +124,16 @@
                         Sign in
                     </button>
                 </form>
+
+                <div class="mt-5">
+                    <a href="{{ route('student.register') }}"
+                       class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-button font-medium text-primary bg-white border-2 border-primary/30 hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                        Register as student
+                    </a>
+                </div>
 
                 <p class="mt-6 text-center text-xs text-slate-500">
                     System will automatically detect your account type and redirect you

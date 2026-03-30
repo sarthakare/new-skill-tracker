@@ -4,10 +4,12 @@ namespace App\Http\Controllers\College;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Department;
 use App\Models\InternalManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class InternalManagerController extends Controller
@@ -16,6 +18,7 @@ class InternalManagerController extends Controller
     {
         $collegeId = Auth::user()->college_id;
         $managers = InternalManager::where('college_id', $collegeId)
+            ->with('department')
             ->latest()
             ->paginate(15);
 
@@ -24,22 +27,30 @@ class InternalManagerController extends Controller
 
     public function create(): View
     {
-        return view('college.internal-managers.create');
+        $departments = $this->departmentsForCollege();
+
+        return view('college.internal-managers.create', compact('departments'));
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $collegeId = Auth::user()->college_id;
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'department' => ['required', 'string', 'max:255'],
+            'department_id' => [
+                'required',
+                'integer',
+                Rule::exists('departments', 'id')->where('college_id', $collegeId),
+            ],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:50'],
         ]);
 
         $manager = InternalManager::create([
-            'college_id' => Auth::user()->college_id,
+            'college_id' => $collegeId,
+            'department_id' => $validated['department_id'],
             'name' => $validated['name'],
-            'department' => $validated['department'],
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
         ]);
@@ -59,16 +70,24 @@ class InternalManagerController extends Controller
     {
         $this->ensureCollegeScope($internalManager);
 
-        return view('college.internal-managers.edit', compact('internalManager'));
+        $departments = $this->departmentsForCollege();
+
+        return view('college.internal-managers.edit', compact('internalManager', 'departments'));
     }
 
     public function update(Request $request, InternalManager $internalManager): RedirectResponse
     {
         $this->ensureCollegeScope($internalManager);
 
+        $collegeId = Auth::user()->college_id;
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'department' => ['required', 'string', 'max:255'],
+            'department_id' => [
+                'required',
+                'integer',
+                Rule::exists('departments', 'id')->where('college_id', $collegeId),
+            ],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:50'],
         ]);
@@ -109,5 +128,15 @@ class InternalManagerController extends Controller
         if ($manager->college_id !== Auth::user()->college_id) {
             abort(403, 'Unauthorized access to this manager.');
         }
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, Department>
+     */
+    private function departmentsForCollege()
+    {
+        return Department::where('college_id', Auth::user()->college_id)
+            ->orderBy('name')
+            ->get();
     }
 }

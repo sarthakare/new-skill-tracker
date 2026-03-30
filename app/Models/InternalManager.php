@@ -10,8 +10,8 @@ class InternalManager extends Model
 {
     protected $fillable = [
         'college_id',
+        'department_id',
         'name',
-        'department',
         'email',
         'phone',
     ];
@@ -19,6 +19,11 @@ class InternalManager extends Model
     public function college(): BelongsTo
     {
         return $this->belongsTo(College::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     /** Legacy: programs where this internal was stored in manager_id. */

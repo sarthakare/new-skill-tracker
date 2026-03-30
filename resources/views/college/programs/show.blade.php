@@ -15,6 +15,16 @@
 </div>
 
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-card border border-border shadow-card p-4 col-span-2 lg:col-span-4">
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Departments</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+            @forelse($program->departments as $d)
+                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200/80">{{ $d->name }}</span>
+            @empty
+                <span class="text-sm font-medium text-slate-800">{{ $program->departmentsLabel() ?: '—' }}</span>
+            @endforelse
+        </div>
+    </div>
     <div class="bg-white rounded-card border border-border shadow-card p-4">
         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Type</p>
         <p class="text-lg font-semibold text-slate-800 mt-0.5">@if($program->type)<span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $program->type }}</span>@else—@endif</p>
@@ -26,7 +36,7 @@
     <div class="bg-white rounded-card border border-border shadow-card p-4">
         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Program Manager</p>
         <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->oversightManager?->name ?? '—' }}</p>
-        @if($program->oversightManager)<p class="text-xs text-slate-500 mt-0.5">{{ $program->oversightManager->department }}</p>@endif
+        @if($program->oversightManager)<p class="text-xs text-slate-500 mt-0.5">{{ $program->oversightManager->department?->name ?? '—' }}</p>@endif
     </div>
     <div class="bg-white rounded-card border border-border shadow-card p-4">
         <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Students</p>

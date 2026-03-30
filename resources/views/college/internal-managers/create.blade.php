@@ -25,7 +25,15 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Department <span class="text-red-500">*</span></label>
-                <input type="text" name="department" value="{{ old('department') }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                <select name="department_id" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white @error('department_id') border-red-500 @enderror">
+                    <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>Select department</option>
+                    @forelse($departments as $d)
+                        <option value="{{ $d->id }}" {{ (string) old('department_id') === (string) $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
+                    @empty
+                        <option value="" disabled>No departments — add them under Departments first</option>
+                    @endforelse
+                </select>
+                @error('department_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>

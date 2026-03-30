@@ -50,7 +50,7 @@
                                 <span class="text-slate-400">—</span>
                             @endif
                         </td>
-                        <td class="px-5 py-3 text-sm text-slate-600">{{ $program->department }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-600">{{ $program->departmentsLabel() ?: '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $program->duration_days }} days</td>
                         <td class="px-5 py-3">
                             <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-slate-200 text-slate-700">{{ $program->status }}</span>

@@ -102,7 +102,7 @@
                             <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5">
                                 <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $program->name }}</td>
                                 <td class="px-5 py-3">@if($program->type)<span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $program->type }}</span>@else<span class="text-slate-500">—</span>@endif</td>
-                                <td class="px-5 py-3 text-sm text-slate-600">{{ $program->department }}</td>
+                                <td class="px-5 py-3 text-sm text-slate-600">{{ $program->departmentsLabel() ?: '—' }}</td>
                                 <td class="px-5 py-3 text-sm text-slate-600">{{ $program->duration_days }} Days</td>
                                 <td class="px-5 py-3 text-sm text-slate-600">{{ $program->mode }}</td>
                                 <td class="px-5 py-3"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium {{ $program->status === 'Manager_Assigned' ? 'bg-info-light text-info' : ($program->status === 'Completed' ? 'bg-success-light text-success' : 'bg-slate-200 text-slate-700') }}">{{ str_replace('_', ' ', $program->status) }}</span></td>

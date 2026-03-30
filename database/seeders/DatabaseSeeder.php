@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed Super Admin
         $this->call([
             SuperAdminSeeder::class,
-            CollegeSeeder::class,
-            SampleCollegeManagersSeeder::class,
         ]);
     }
 }

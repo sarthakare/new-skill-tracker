@@ -21,6 +21,7 @@
     if ($vendors->isEmpty()) $missingManagers->push(['Vendors', route('college.vendors.create')]);
     if ($independents->isEmpty()) $missingManagers->push(['Independent Trainers', route('college.independent-trainers.create')]);
     if ($internals->isEmpty()) $missingManagers->push(['Internal Managers', route('college.internal-managers.create')]);
+    if ($departments->isEmpty()) $missingManagers->push(['Departments', route('college.departments.create')]);
 @endphp
 @if($missingManagers->isNotEmpty())
 <div class="mb-6 rounded-lg border border-info bg-info/10 px-4 py-3 text-sm text-slate-700 flex items-center gap-2">
@@ -31,11 +32,12 @@
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="p-5">
-        <form action="{{ route('college.events.programs.store', $event) }}" method="POST" class="space-y-4">
+        <form action="{{ route('college.events.programs.store', $event) }}" method="POST" class="space-y-4" id="program-form">
             @csrf
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Program Name <span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name') }}" placeholder="e.g., IT Training" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Type <span class="text-red-500">*</span></label>
@@ -44,11 +46,27 @@
                     <option value="Training" {{ old('type') === 'Training' ? 'selected' : '' }}>Training</option>
                     <option value="Hackathon" {{ old('type') === 'Hackathon' ? 'selected' : '' }}>Hackathon</option>
                     <option value="Seminar" {{ old('type') === 'Seminar' ? 'selected' : '' }}>Seminar</option>
+                    <option value="Other" {{ old('type') === 'Other' ? 'selected' : '' }}>Other</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Department <span class="text-red-500">*</span></label>
-                <input type="text" name="department" value="{{ old('department') }}" placeholder="e.g., CSE / IT or All" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+            <div class="border border-border rounded-lg p-4 bg-slate-50/50">
+                <h3 class="text-sm font-semibold text-slate-800 mb-1">Departments <span class="text-red-500">*</span></h3>
+                <p class="text-sm text-slate-500 mb-3">Select one or more departments this program applies to.</p>
+                @if($departments->isEmpty())
+                    <p class="text-sm text-amber-800">No departments defined. <a href="{{ route('college.departments.create') }}" class="font-medium text-primary hover:underline">Add departments</a> first.</p>
+                @else
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
+                        @foreach($departments as $d)
+                            <label class="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm cursor-pointer hover:border-primary/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                <input type="checkbox" name="department_ids[]" value="{{ $d->id }}" class="rounded border-slate-300 text-primary focus:ring-primary shrink-0"
+                                    @checked(in_array($d->id, array_map('intval', (array) old('department_ids', [])), true))>
+                                <span>{{ $d->name }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('department_ids')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('department_ids.*')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                @endif
             </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Duration (Days) <span class="text-red-500">*</span></label>
@@ -102,14 +120,14 @@
                     <select name="internal_manager_id" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">-- Select Internal Manager --</option>
                         @foreach($internals as $manager)
-                            <option value="{{ $manager->id }}" {{ old('internal_manager_id') == $manager->id ? 'selected' : '' }}>{{ $manager->name }} ({{ $manager->department }})</option>
+                            <option value="{{ $manager->id }}" {{ old('internal_manager_id') == $manager->id ? 'selected' : '' }}>{{ $manager->name }} ({{ $manager->department?->name ?? '—' }})</option>
                         @endforeach
                     </select>
                 </div>
             </div>
 
             <div class="flex gap-2 pt-2">
-                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Save</button>
+                <button type="submit" id="program-form-submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Save</button>
                 <a href="{{ route('college.events.programs.index', $event) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Cancel</a>
             </div>
             </form>
@@ -137,5 +155,14 @@
 
     managerType.addEventListener('change', toggleExecutorSelects);
     toggleExecutorSelects();
+
+    const programForm = document.getElementById('program-form');
+    const programSubmit = document.getElementById('program-form-submit');
+    if (programForm && programSubmit) {
+        programForm.addEventListener('submit', () => {
+            programSubmit.disabled = true;
+            programSubmit.classList.add('opacity-60', 'cursor-not-allowed', 'pointer-events-none');
+        });
+    }
 </script>
 @endpush
