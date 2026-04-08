@@ -28,13 +28,14 @@
             @method('PUT')
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Roll no. (optional)</label>
+                    <p class="text-xs text-slate-500 mb-1">For linked accounts, attendance uses the roll number from the student’s college profile when set.</p>
+                    <input type="text" name="student_identifier" value="{{ old('student_identifier', $student->student_identifier) }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Manual entry only; optional for registered students">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Name <span class="text-red-500">*</span></label>
                     <input type="text" name="student_name" value="{{ old('student_name', $student->student_name) }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('student_name') border-red-500 @enderror">
                     @error('student_name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Student ID (optional)</label>
-                    <input type="text" name="student_identifier" value="{{ old('student_identifier', $student->student_identifier) }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Email <span class="text-red-500">*</span></label>

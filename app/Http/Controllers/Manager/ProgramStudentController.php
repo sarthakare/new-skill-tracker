@@ -31,15 +31,32 @@ class ProgramStudentController extends Controller
             ->where('role', 'STUDENT')
             ->whereNotIn('id', $assignedUserIds)
             ->with('department')
-            ->orderBy('name')
-            ->get();
+            ->get()
+            ->sort(function (User $a, User $b) {
+                $ea = ! filled($a->roll_number);
+                $eb = ! filled($b->roll_number);
+                if ($ea !== $eb) {
+                    return $ea ? 1 : -1;
+                }
+                if (! $ea) {
+                    $c = strnatcasecmp((string) $a->roll_number, (string) $b->roll_number);
+                    if ($c !== 0) {
+                        return $c;
+                    }
+                }
+
+                return strnatcasecmp((string) $a->name, (string) $b->name);
+            })
+            ->values();
 
         $departments = Department::where('college_id', $collegeId)->orderBy('name')->get();
 
-        $students = ProgramStudent::where('program_id', $program->id)
-            ->with(['user.department', 'collegeDepartment'])
-            ->latest()
-            ->get();
+        $students = ProgramStudent::sortByRollThenName(
+            ProgramStudent::where('program_id', $program->id)
+                ->with(['user.department', 'collegeDepartment'])
+                ->latest()
+                ->get()
+        );
 
         return view('manager.programs.students', compact(
             'program',
@@ -82,7 +99,7 @@ class ProgramStudentController extends Controller
                 'program_id' => $program->id,
                 'user_id' => $user->id,
                 'student_name' => $user->name,
-                'student_identifier' => null,
+                'student_identifier' => filled($user->roll_number) ? (string) $user->roll_number : null,
                 'email' => $user->email,
                 'mobile' => $user->mobile,
                 'department_id' => $departmentId,
@@ -187,10 +204,12 @@ class ProgramStudentController extends Controller
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
 
-        $students = ProgramStudent::where('program_id', $program->id)
-            ->with(['user.department', 'collegeDepartment'])
-            ->latest()
-            ->get();
+        $students = ProgramStudent::sortByRollThenName(
+            ProgramStudent::where('program_id', $program->id)
+                ->with(['user.department', 'collegeDepartment'])
+                ->latest()
+                ->get()
+        );
 
         return view('manager.programs.remarks', compact(
             'program',

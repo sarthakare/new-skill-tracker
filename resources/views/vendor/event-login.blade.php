@@ -10,6 +10,9 @@
 <body class="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans antialiased">
     <div class="hidden md:flex md:w-1/2 bg-primary flex-col justify-center px-12 lg:px-20 py-16">
         <div class="max-w-md">
+            <div class="mb-6 rounded-xl bg-white/95 p-3 shadow-sm inline-block max-w-full">
+                @include('partials.host-institution-logo', ['class' => 'h-11 sm:h-12 w-auto max-w-full object-contain object-left'])
+            </div>
             <div class="flex items-center gap-3 text-white/90 mb-6">
                 <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-white/20">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
@@ -22,6 +25,9 @@
     </div>
     <div class="flex-1 flex items-center justify-center p-6 sm:p-10 md:p-12">
         <div class="w-full max-w-md">
+            <div class="md:hidden mb-6 rounded-xl bg-white p-3 shadow-sm border border-slate-200/80 inline-block max-w-full">
+                @include('partials.host-institution-logo', ['class' => 'h-10 w-auto max-w-full object-contain object-left'])
+            </div>
             <div class="md:hidden flex items-center gap-2 text-primary mb-8">
                 <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
                     <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>

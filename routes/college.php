@@ -52,6 +52,8 @@ Route::prefix('college')->name('college.')->middleware(['auth', 'college-scope']
 
     // Students (accounts with student role for this college)
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
 
     // Departments (names students choose at registration)
     Route::resource('departments', DepartmentController::class)->except(['show']);

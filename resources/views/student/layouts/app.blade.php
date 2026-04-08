@@ -10,6 +10,7 @@
 <body class="min-h-screen bg-slate-50/80 font-sans antialiased text-slate-800">
     <header class="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-slate-50 border-b-2 border-primary shadow-sm">
         <div class="flex items-center gap-3 min-w-0">
+            @include('partials.host-institution-logo', ['class' => 'hidden sm:block h-7 w-auto max-w-[10rem] md:max-w-[12rem] object-contain object-left shrink-0'])
             <a href="{{ route('student.dashboard') }}" class="flex items-center gap-2 text-primary font-semibold truncate">
                 <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 shrink-0">
                     <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>

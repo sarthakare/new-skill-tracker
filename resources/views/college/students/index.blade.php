@@ -18,27 +18,36 @@
         <span class="text-sm text-slate-600">{{ $students->total() }} {{ Str::plural('student', $students->total()) }}</span>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full min-w-[720px]">
+        <table class="w-full min-w-[880px]">
             <thead>
                 <tr class="bg-slate-100 border-b border-border">
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Roll no.</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Name</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Department</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Mobile</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Email</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Registered</th>
+                    <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($students as $student)
                     <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5 transition-colors">
+                        <td class="px-5 py-3 text-sm text-slate-900 font-medium">{{ $student->roll_number ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->name }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->department?->name ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->mobile ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->email }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->created_at?->timezone(config('app.timezone'))->format('M j, Y') ?? '—' }}</td>
+                        <td class="px-5 py-3 text-right">
+                            <a href="{{ route('college.students.edit', $student) }}" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-hover hover:underline">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                Edit
+                            </a>
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="px-5 py-12 text-center text-slate-500">No student accounts yet. Students can register from the student sign-up page.</td></tr>
+                    <tr><td colspan="7" class="px-5 py-12 text-center text-slate-500">No student accounts yet. Students can register from the student sign-up page.</td></tr>
                 @endforelse
             </tbody>
         </table>

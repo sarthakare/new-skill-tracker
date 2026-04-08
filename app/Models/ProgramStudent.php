@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class ProgramStudent extends Model
 {
@@ -67,6 +68,65 @@ class ProgramStudent extends Model
     public function isLinkedToUser(): bool
     {
         return $this->user_id !== null;
+    }
+
+    /**
+     * Name for program lists and attendance: live college account when linked, else stored program name.
+     */
+    public function displayName(): string
+    {
+        if ($this->user_id) {
+            $user = $this->relationLoaded('user') ? $this->user : $this->user()->first();
+            if ($user && filled($user->name)) {
+                return (string) $user->name;
+            }
+        }
+
+        return (string) $this->student_name;
+    }
+
+    /**
+     * Roll / ID for attendance: user roll_number when linked, else manual student_identifier.
+     */
+    public function displayRollNumber(): ?string
+    {
+        if ($this->user_id) {
+            $user = $this->relationLoaded('user') ? $this->user : $this->user()->first();
+            if ($user && filled($user->roll_number)) {
+                return (string) $user->roll_number;
+            }
+        }
+
+        $id = $this->student_identifier;
+
+        return filled($id) ? (string) $id : null;
+    }
+
+    /**
+     * Sort by roll number, then name (missing rolls last).
+     *
+     * @param  Collection<int, ProgramStudent>  $students
+     * @return Collection<int, ProgramStudent>
+     */
+    public static function sortByRollThenName(Collection $students): Collection
+    {
+        return $students->sort(function (ProgramStudent $a, ProgramStudent $b) {
+            $ra = $a->displayRollNumber();
+            $rb = $b->displayRollNumber();
+            $emptyA = $ra === null || $ra === '';
+            $emptyB = $rb === null || $rb === '';
+            if ($emptyA !== $emptyB) {
+                return $emptyA ? 1 : -1;
+            }
+            if (! $emptyA) {
+                $c = strnatcasecmp((string) $ra, (string) $rb);
+                if ($c !== 0) {
+                    return $c;
+                }
+            }
+
+            return strnatcasecmp($a->displayName(), $b->displayName());
+        })->values();
     }
 
     public function attendance(): HasMany

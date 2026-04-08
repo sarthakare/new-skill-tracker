@@ -28,6 +28,10 @@
             </p>
             <dl class="mt-6 grid gap-3 sm:grid-cols-2 text-sm">
                 <div>
+                    <dt class="text-slate-500">Roll number</dt>
+                    <dd class="font-medium text-slate-800">{{ $user->roll_number ?? '—' }}</dd>
+                </div>
+                <div>
                     <dt class="text-slate-500">Department</dt>
                     <dd class="font-medium text-slate-800">{{ $user->department?->name ?? '—' }}</dd>
                 </div>
@@ -130,6 +134,7 @@
 
         <table class="student-report-doc-info-table">
             <tr><td class="student-report-doc-label">Student Name</td><td>{{ $user->name }}</td></tr>
+            <tr><td class="student-report-doc-label">Roll Number</td><td>{{ $user->roll_number ?? '—' }}</td></tr>
             <tr><td class="student-report-doc-label">Email</td><td>{{ $user->email }}</td></tr>
             <tr><td class="student-report-doc-label">Department</td><td>{{ $user->department?->name ?? '—' }}</td></tr>
             <tr><td class="student-report-doc-label">Mobile</td><td>{{ $user->mobile ?? '—' }}</td></tr>

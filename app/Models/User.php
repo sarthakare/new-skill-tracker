@@ -91,6 +91,7 @@ class User extends Authenticatable
         'role',
         'college_id',
         'department_id',
+        'roll_number',
         'mobile',
     ];
 

@@ -47,8 +47,8 @@
                 <thead>
                     <tr class="bg-slate-100 border-b border-border">
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">#</th>
-                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">Student Name</th>
-                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">Student ID</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">Roll no.</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">Name</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2 border-r border-border">Department</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Status</th>
                     </tr>
@@ -61,8 +61,8 @@
                         @endphp
                         <tr class="border-b border-border odd:bg-slate-50/50">
                             <td class="px-4 py-2 text-sm border-r border-border">{{ $index + 1 }}</td>
-                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->student_name }}</td>
-                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->student_identifier ?? '—' }}</td>
+                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->displayRollNumber() ?? '—' }}</td>
+                            <td class="px-4 py-2 text-sm border-r border-border">{{ $student->displayName() }}</td>
                             <td class="px-4 py-2 text-sm border-r border-border">{{ $student->departmentLabel() }}</td>
                             <td class="px-4 py-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status === 'Present' ? 'bg-success/20 text-success' : 'bg-red-100 text-red-700' }}">{{ $status }}</span>
@@ -109,8 +109,8 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Student Name</th>
-                <th>Student ID</th>
+                <th>Roll no.</th>
+                <th>Name</th>
                 <th>Department</th>
                 <th>Status</th>
             </tr>
@@ -123,8 +123,8 @@
                 @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $student->student_name }}</td>
-                    <td>{{ $student->student_identifier ?? '—' }}</td>
+                    <td>{{ $student->displayRollNumber() ?? '—' }}</td>
+                    <td>{{ $student->displayName() }}</td>
                     <td>{{ $student->departmentLabel() }}</td>
                     <td>{{ $status }}</td>
                 </tr>

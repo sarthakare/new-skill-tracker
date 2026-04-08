@@ -55,9 +55,9 @@
                             @foreach($students as $student)
                                 <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5 transition-colors align-top">
                                     <td class="px-5 py-3">
-                                        <div class="text-sm font-medium text-slate-900">{{ $student->student_name }}</div>
+                                        <div class="text-sm font-medium text-slate-900">{{ $student->displayRollNumber() ?? '—' }}</div>
+                                        <div class="text-sm font-medium text-slate-800">{{ $student->displayName() }}</div>
                                         <div class="text-sm text-slate-600">{{ $student->email ?? '—' }}</div>
-                                        <div class="text-xs text-slate-500">{{ $student->student_identifier ?? '—' }}</div>
                                     </td>
                                     <td class="px-5 py-3 text-sm text-slate-600">{{ $student->departmentLabel() ?: '—' }}</td>
                                     <td class="px-5 py-3 text-sm text-slate-600">{{ $student->status }}</td>

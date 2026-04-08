@@ -7,11 +7,19 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE programs MODIFY COLUMN type ENUM('Training', 'Hackathon', 'Seminar', 'Other') NULL");
     }
 
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         DB::statement("ALTER TABLE programs MODIFY COLUMN type ENUM('Training', 'Hackathon', 'Seminar') NULL");
     }
 };

@@ -17,7 +17,8 @@
                     class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
-            <a href="{{ route('college.dashboard') }}" class="flex items-center gap-2 text-primary font-semibold">
+            @include('partials.host-institution-logo', ['class' => 'hidden sm:block h-7 w-auto max-w-[11rem] md:max-w-[13rem] object-contain object-left shrink-0'])
+            <a href="{{ route('college.dashboard') }}" class="flex items-center gap-2 text-primary font-semibold min-w-0">
                 <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
                     <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                 </span>

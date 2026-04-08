@@ -23,7 +23,7 @@ class ProgramAttendanceController extends Controller
 
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
-        $students = ProgramStudent::where('program_id', $program->id)->with('collegeDepartment')->orderBy('student_name')->get();
+        $students = $this->programStudentsOrdered($program);
         $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
         $topics = SyllabusTopic::where('program_id', $program->id)->with('subtopics')->orderBy('sort_order')->get();
         $taughtTopicIds = $session->taughtSyllabus()->pluck('syllabus_topics.id')->toArray();
@@ -78,7 +78,7 @@ class ProgramAttendanceController extends Controller
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
         $program->load(['event', 'college', 'vendorManager', 'independentManager']);
-        $students = ProgramStudent::where('program_id', $program->id)->with('collegeDepartment')->orderBy('student_name')->get();
+        $students = $this->programStudentsOrdered($program);
         $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
 
         $presentCount = $attendance->where('status', 'present')->count();
@@ -96,12 +96,11 @@ class ProgramAttendanceController extends Controller
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
         $program->load(['event', 'college', 'vendorManager', 'independentManager']);
-        $students = ProgramStudent::where('program_id', $program->id)->with('collegeDepartment')->orderBy('student_name')->get();
         $attendance = ProgramAttendance::where('program_session_id', $session->id)->get()->keyBy('program_student_id');
         $taughtTopics = $session->taughtSyllabus()->with('subtopics')->orderBy('sort_order')->get();
 
         $presentCount = $attendance->where('status', 'present')->count();
-        $totalCount = $students->count();
+        $totalCount = ProgramStudent::where('program_id', $program->id)->count();
 
         return view('manager.programs.daily-report', compact('program', 'session', 'credential', 'taughtTopics', 'presentCount', 'totalCount'));
     }
@@ -119,5 +118,17 @@ class ProgramAttendanceController extends Controller
         $latestCompletion = $program->completionRequests->sortByDesc('created_at')->first();
 
         return view('manager.programs.completion-report', compact('program', 'credential', 'topics', 'totalTopics', 'completedTopics', 'totalSubtopics', 'completedSubtopics', 'latestCompletion'));
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, ProgramStudent>
+     */
+    private function programStudentsOrdered(Program $program)
+    {
+        return ProgramStudent::sortByRollThenName(
+            ProgramStudent::where('program_id', $program->id)
+                ->with(['collegeDepartment', 'user'])
+                ->get()
+        );
     }
 }

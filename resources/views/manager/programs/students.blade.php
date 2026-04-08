@@ -36,7 +36,7 @@
                     <select id="user_id" name="user_id" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white">
                         <option value="">Select student…</option>
                         @foreach($registeredStudents as $u)
-                            <option value="{{ $u->id }}">{{ $u->name }} — {{ $u->email }}@if($u->department) ({{ $u->department->name }})@endif</option>
+                            <option value="{{ $u->id }}">@if(filled($u->roll_number)){{ $u->roll_number }} — @endif{{ $u->name }} — {{ $u->email }}@if($u->department) ({{ $u->department->name }})@endif</option>
                         @endforeach
                     </select>
                 </div>
@@ -59,6 +59,10 @@
                 @csrf
                 <input type="hidden" name="mode" value="manual">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Roll no. (optional)</label>
+                        <input type="text" name="student_identifier" value="{{ old('student_identifier') }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="University roll number">
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Name <span class="text-red-500">*</span></label>
                         <input type="text" name="student_name" value="{{ old('student_name') }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('student_name') border-red-500 @enderror">
@@ -84,10 +88,6 @@
                         </select>
                         @error('department_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Student ID (optional)</label>
-                        <input type="text" name="student_identifier" value="{{ old('student_identifier') }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
-                    </div>
                 </div>
                 <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Add student</button>
             </form>
@@ -103,11 +103,11 @@
         <table class="w-full min-w-[900px]">
             <thead>
                 <tr class="bg-slate-100 border-b border-border">
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Roll no.</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Name</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Email</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Phone</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Department</th>
-                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Student ID</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Source</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Status</th>
                     <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Actions</th>
@@ -116,11 +116,11 @@
             <tbody>
                 @forelse($students as $student)
                     <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5 transition-colors">
-                        <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->student_name }}</td>
+                        <td class="px-5 py-3 text-sm text-slate-900 font-medium">{{ $student->displayRollNumber() ?? '—' }}</td>
+                        <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->displayName() }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->email ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->mobile ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">{{ $student->departmentLabel() ?: '—' }}</td>
-                        <td class="px-5 py-3 text-sm text-slate-600">{{ $student->student_identifier ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-slate-600">
                             @if($student->isLinkedToUser())
                                 <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-info-light text-info">Registered</span>

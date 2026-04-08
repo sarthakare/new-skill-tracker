@@ -102,11 +102,17 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $mobileRaw = trim((string) $request->input('mobile', ''));
+        $request->merge([
+            'roll_number' => trim((string) $request->input('roll_number', '')),
+            'mobile' => $mobileRaw === '' ? null : $mobileRaw,
+        ]);
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'confirmed', 'min:8'],
-            'mobile' => ['required', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
+            'mobile' => ['nullable', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
             'college_id' => [
                 'required',
                 Rule::exists('colleges', 'id')->where('status', 'active'),
@@ -115,6 +121,15 @@ class AuthController extends Controller
                 'required',
                 'integer',
                 Rule::exists('departments', 'id')->where('college_id', $request->input('college_id')),
+            ],
+            'roll_number' => [
+                'required',
+                'string',
+                'max:64',
+                Rule::unique('users', 'roll_number')->where(function ($query) use ($request) {
+                    return $query->where('college_id', $request->input('college_id'))
+                        ->where('role', 'STUDENT');
+                }),
             ],
         ]);
 
@@ -125,7 +140,10 @@ class AuthController extends Controller
             'role' => 'STUDENT',
             'college_id' => $validated['college_id'],
             'department_id' => $validated['department_id'],
-            'mobile' => preg_replace('/\s+/', ' ', trim($validated['mobile'])),
+            'roll_number' => $validated['roll_number'],
+            'mobile' => filled($validated['mobile'] ?? null)
+                ? preg_replace('/\s+/', ' ', trim((string) $validated['mobile']))
+                : null,
         ]);
 
         Auth::login($user);

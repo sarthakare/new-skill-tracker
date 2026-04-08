@@ -35,8 +35,8 @@
                     <thead>
                         <tr class="bg-slate-100 border-b border-border">
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3 w-12">Present</th>
-                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Student Name</th>
-                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Student ID</th>
+                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Roll no.</th>
+                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Name</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Department</th>
                         </tr>
                     </thead>
@@ -47,8 +47,8 @@
                                 <td class="px-5 py-3">
                                     <input type="checkbox" name="attendance[]" value="{{ $student->id }}" {{ $record && $record->status === 'present' ? 'checked' : '' }} class="rounded border-slate-300 text-primary focus:ring-primary">
                                 </td>
-                                <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->student_name }}</td>
-                                <td class="px-5 py-3 text-sm text-slate-600">{{ $student->student_identifier ?? '—' }}</td>
+                                <td class="px-5 py-3 text-sm text-slate-900 font-medium">{{ $student->displayRollNumber() ?? '—' }}</td>
+                                <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $student->displayName() }}</td>
                                 <td class="px-5 py-3 text-sm text-slate-600">{{ $student->departmentLabel() }}</td>
                             </tr>
                         @empty
