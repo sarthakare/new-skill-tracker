@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('college_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            $table->unique(['event_id', 'independent_trainer_id']);
+            $table->unique(['event_id', 'independent_trainer_id'], 'eit_event_trainer_unique');
         });
     }
 
