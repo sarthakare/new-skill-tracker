@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('COLLEGE_ADMIN')->after('email');
-            $table->foreignId('college_id')->nullable()->after('role')->constrained()->onDelete('cascade');
+            if (! Schema::hasColumn('users', 'role')) {
+                $table->string('role')->default('COLLEGE_ADMIN')->after('email');
+            }
+            if (! Schema::hasColumn('users', 'college_id')) {
+                $table->foreignId('college_id')->nullable()->after('role')->constrained()->onDelete('cascade');
+            }
         });
     }
 
@@ -23,8 +27,20 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['college_id']);
-            $table->dropColumn(['role', 'college_id']);
+            if (Schema::hasColumn('users', 'college_id')) {
+                $table->dropForeign(['college_id']);
+            }
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $columns = collect(['college_id', 'role'])
+                ->filter(fn (string $column): bool => Schema::hasColumn('users', $column))
+                ->values()
+                ->all();
+
+            if ($columns !== []) {
+                $table->dropColumn($columns);
+            }
         });
     }
 };
