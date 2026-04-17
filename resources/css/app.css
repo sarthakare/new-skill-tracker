@@ -66,3 +66,14 @@ textarea.rounded-input:not([class*="pr-"]) {
 textarea.rounded-input {
     min-height: 4rem;
 }
+
+/* Formal print reports: centered institution logo (student + manager PDFs) */
+.formal-report-doc-logo {
+    display: block;
+    height: 52px;
+    width: auto;
+    max-width: min(100%, 220px);
+    margin: 0 auto 18px auto;
+    object-fit: contain;
+    object-position: center;
+}

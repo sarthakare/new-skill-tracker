@@ -80,6 +80,7 @@
 {{-- Formal print document --}}
 <div id="attendance-print-document" class="hidden print:block attendance-formal-doc">
     <div class="attendance-doc-header">
+        @include('partials.formal-report-logo')
         <h1 class="attendance-doc-title">ATTENDANCE REPORT</h1>
         @if($program->college)
             <p class="attendance-doc-subtitle">Submitted to {{ $program->college->name }}</p>

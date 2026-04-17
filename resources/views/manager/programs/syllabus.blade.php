@@ -41,6 +41,7 @@
 {{-- Printable syllabus - formal document for college submission --}}
 <div id="syllabus-print-document" class="hidden print:block syllabus-formal-doc">
     <div class="syllabus-doc-header">
+        @include('partials.formal-report-logo')
         <h1 class="syllabus-doc-title">SYLLABUS</h1>
         @if($program->college)
             <p class="syllabus-doc-subtitle">Submitted to {{ $program->college->name }}</p>

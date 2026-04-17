@@ -92,6 +92,7 @@
 {{-- Formal print document --}}
 <div id="completion-report-print-document" class="hidden print:block completion-report-formal-doc">
     <div class="completion-report-doc-header">
+        @include('partials.formal-report-logo')
         <h1 class="completion-report-doc-title">COMPLETION REPORT</h1>
         @if($program->college)
             <p class="completion-report-doc-subtitle">Submitted to {{ $program->college->name }}</p>

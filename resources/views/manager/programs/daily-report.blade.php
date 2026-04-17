@@ -74,6 +74,7 @@
 {{-- Formal print document --}}
 <div id="daily-report-print-document" class="hidden print:block daily-report-formal-doc">
     <div class="daily-report-doc-header">
+        @include('partials.formal-report-logo')
         <h1 class="daily-report-doc-title">DAILY REPORT</h1>
         @if($program->college)
             <p class="daily-report-doc-subtitle">Submitted to {{ $program->college->name }}</p>

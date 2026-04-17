@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'judge0' => [
+        'url' => env('JUDGE0_URL', 'http://194.238.16.62:2358'),
+        'token' => env('JUDGE0_AUTH_TOKEN'),
+        'user' => env('JUDGE0_AUTH_USER'),
+        'timeout' => (int) env('JUDGE0_HTTP_TIMEOUT', 60),
+    ],
+
 ];
