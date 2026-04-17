@@ -149,8 +149,8 @@ class ProgramController extends Controller
 
         if (! empty($generatedCredentials)) {
             return redirect()->route('college.events.programs.show', [$event, $program])
-                ->with('generated_program_credentials', [$generatedCredentials])
-                ->with('success', 'Program created successfully. Manager credentials generated below.');
+                ->with('success', 'Program created successfully. Manager login ID and password are saved on this page.')
+                ->with('highlight_new_manager_credentials', true);
         }
 
         return redirect()->route('college.events.programs.index', $event)
@@ -164,10 +164,12 @@ class ProgramController extends Controller
         $program->load(['completionRequests', 'students', 'departments']);
         $credentials = ProgramManagerCredential::where('program_id', $program->id)
             ->where('college_id', Auth::user()->college_id)
+            ->orderByDesc('status')
+            ->orderByDesc('id')
             ->get();
-        $generatedCredentials = session('generated_program_credentials', []);
+        $highlightNewCredentials = (bool) session('highlight_new_manager_credentials', false);
 
-        return view('college.programs.show', compact('event', 'program', 'credentials', 'generatedCredentials'));
+        return view('college.programs.show', compact('event', 'program', 'credentials', 'highlightNewCredentials'));
     }
 
     public function edit(Event $event, Program $program): View
@@ -270,7 +272,13 @@ class ProgramController extends Controller
         if ($executorChanged) {
             ProgramManagerCredential::where('program_id', $program->id)
                 ->where('college_id', Auth::user()->college_id)
-                ->update(['status' => 'inactive']);
+                ->get()
+                ->each(function (ProgramManagerCredential $c) {
+                    $c->forceFill([
+                        'status' => 'inactive',
+                        'last_plain_password' => null,
+                    ])->save();
+                });
 
             $generatedCredentials = $this->createManagerCredential($program);
         }
@@ -285,8 +293,8 @@ class ProgramController extends Controller
 
         if (! empty($generatedCredentials)) {
             return redirect()->route('college.events.programs.show', [$event, $program])
-                ->with('generated_program_credentials', [$generatedCredentials])
-                ->with('success', 'Program updated successfully. New manager credentials generated below.');
+                ->with('success', 'Program updated successfully. New manager login ID and password are saved on this page.')
+                ->with('highlight_new_manager_credentials', true);
         }
 
         return redirect()->route('college.events.programs.index', $event)
@@ -369,6 +377,7 @@ class ProgramController extends Controller
                 'college_id' => $program->college_id,
                 'username' => $username,
                 'password' => Hash::make($password),
+                'last_plain_password' => $password,
                 'status' => 'active',
             ]
         );

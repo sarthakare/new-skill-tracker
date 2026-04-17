@@ -10,7 +10,15 @@
         </span>
         Students
     </h1>
+    <a href="{{ route('college.students.create') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+        Add student
+    </a>
 </div>
+
+@if(session('success'))
+    <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">{{ session('success') }}</div>
+@endif
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex items-center justify-between">
@@ -47,7 +55,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="px-5 py-12 text-center text-slate-500">No student accounts yet. Students can register from the student sign-up page.</td></tr>
+                    <tr><td colspan="7" class="px-5 py-12 text-center text-slate-500">No student accounts yet. <a href="{{ route('college.students.create') }}" class="font-medium text-primary hover:underline">Add a student</a> or they can register from the student sign-up page.</td></tr>
                 @endforelse
             </tbody>
         </table>

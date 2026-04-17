@@ -12,12 +12,7 @@
     </h1>
 </div>
 
-@if(session('success'))
-    <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">{{ session('success') }}</div>
-@endif
-@if(session('error'))
-    <div class="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">{{ session('error') }}</div>
-@endif
+@php($createStudentFormOpen = $errors->any() && old('mode') === 'manual')
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
@@ -26,7 +21,7 @@
     </div>
     <div class="p-5">
         @if($registeredStudents->isEmpty())
-            <p class="text-sm text-slate-600">No registered students left to add (everyone may already be in this program, or there are no student accounts yet). Use <strong>Add manually</strong> below, or ask your college admin to register students first.</p>
+            <p class="text-sm text-slate-600">No registered students left to add (everyone may already be in this program, or there are no student accounts yet). Use <strong>Create student</strong> below, or ask your college admin to register students first.</p>
         @else
             <form action="{{ route('manager.program.students.store', $program) }}" method="POST" class="flex flex-col sm:flex-row sm:items-end gap-4">
                 @csrf
@@ -47,51 +42,80 @@
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
-    <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Add manually</h2>
-        <p class="text-sm text-slate-500 mt-1">For participants without a login — name, email, phone, and department are stored for this program only.</p>
-    </div>
-    <div class="p-5">
-        @if($departments->isEmpty())
-            <p class="text-sm text-amber-800">No departments are set up for this college yet. Ask your college admin to add departments first.</p>
-        @else
-            <form action="{{ route('manager.program.students.store', $program) }}" method="POST" class="space-y-4">
-                @csrf
-                <input type="hidden" name="mode" value="manual">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Roll no. (optional)</label>
-                        <input type="text" name="student_identifier" value="{{ old('student_identifier') }}" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="University roll number">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="student_name" value="{{ old('student_name') }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('student_name') border-red-500 @enderror">
-                        @error('student_name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Email <span class="text-red-500">*</span></label>
-                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('email') border-red-500 @enderror">
-                        @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Phone <span class="text-red-500">*</span></label>
-                        <input type="text" name="mobile" value="{{ old('mobile') }}" required inputmode="tel" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('mobile') border-red-500 @enderror">
-                        @error('mobile')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Department <span class="text-red-500">*</span></label>
-                        <select name="department_id" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white @error('department_id') border-red-500 @enderror">
-                            <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>Select department</option>
-                            @foreach($departments as $d)
-                                <option value="{{ $d->id }}" {{ (string) old('department_id') === (string) $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('department_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                    </div>
-                </div>
-                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Add student</button>
-            </form>
+    <div class="px-5 py-4 border-b border-border bg-primary/5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-slate-800">Create student &amp; add to program</h2>
+            <p class="text-sm text-slate-500 mt-1">Same fields as college admin: roll number, name, email, department, optional mobile, and a password you assign. The form stays hidden until you open it.</p>
+        </div>
+        @if(!$departments->isEmpty())
+            <button type="button"
+                    id="toggle-create-student-form"
+                    aria-expanded="{{ $createStudentFormOpen ? 'true' : 'false' }}"
+                    aria-controls="create-student-panel"
+                    class="inline-flex shrink-0 items-center justify-center gap-2 px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                <span id="toggle-create-student-label">{{ $createStudentFormOpen ? 'Hide form' : 'Create student' }}</span>
+            </button>
         @endif
+    </div>
+    <div id="create-student-panel"
+         data-initial-open="{{ $createStudentFormOpen ? '1' : '0' }}"
+         class="grid transition-[grid-template-rows] duration-300 ease-out {{ $createStudentFormOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]' }}">
+        <div class="min-h-0 overflow-hidden">
+            <div class="px-5 pb-5 pt-0 border-t border-border">
+                @if($departments->isEmpty())
+                    <p class="text-sm text-amber-800 pt-5">No departments are set up for this college yet. Ask your college admin to add departments first.</p>
+                @else
+                    <form action="{{ route('manager.program.students.store', $program) }}" method="POST" class="space-y-4 max-w-xl pt-5">
+                        @csrf
+                        <input type="hidden" name="mode" value="manual">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="sm:col-span-2">
+                                <label for="manager_roll_number" class="block text-sm font-medium text-slate-700 mb-1">Roll number <span class="text-red-500">*</span></label>
+                                <input type="text" id="manager_roll_number" name="roll_number" value="{{ old('roll_number') }}" required autocomplete="off" placeholder="As on university ID" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('roll_number') border-red-500 @enderror">
+                                @error('roll_number')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="manager_student_name" class="block text-sm font-medium text-slate-700 mb-1">Full name <span class="text-red-500">*</span></label>
+                                <input type="text" id="manager_student_name" name="name" value="{{ old('name') }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('name') border-red-500 @enderror">
+                                @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="manager_student_email" class="block text-sm font-medium text-slate-700 mb-1">Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="manager_student_email" name="email" value="{{ old('email') }}" required autocomplete="email" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('email') border-red-500 @enderror">
+                                @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="manager_department_id" class="block text-sm font-medium text-slate-700 mb-1">Department <span class="text-red-500">*</span></label>
+                                <select id="manager_department_id" name="department_id" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white @error('department_id') border-red-500 @enderror">
+                                    <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>Select department</option>
+                                    @foreach($departments as $d)
+                                        <option value="{{ $d->id }}" {{ (string) old('department_id') === (string) $d->id ? 'selected' : '' }}>{{ $d->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('department_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="manager_student_mobile" class="block text-sm font-medium text-slate-700 mb-1">Mobile <span class="text-slate-400 font-normal">(optional)</span></label>
+                                <input type="tel" id="manager_student_mobile" name="mobile" value="{{ old('mobile') }}" inputmode="tel" placeholder="Optional" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('mobile') border-red-500 @enderror">
+                                @error('mobile')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label for="manager_student_password" class="block text-sm font-medium text-slate-700 mb-1">Password <span class="text-red-500">*</span></label>
+                                <input type="password" id="manager_student_password" name="password" required autocomplete="new-password" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('password') border-red-500 @enderror">
+                                @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                                <p class="mt-1 text-xs text-slate-500">At least 8 characters. Give this to the student for sign-in.</p>
+                            </div>
+                            <div>
+                                <label for="manager_student_password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Confirm password <span class="text-red-500">*</span></label>
+                                <input type="password" id="manager_student_password_confirmation" name="password_confirmation" required autocomplete="new-password" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                            </div>
+                        </div>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Create &amp; add student</button>
+                    </form>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 
@@ -147,4 +171,35 @@
         </table>
     </div>
 </div>
+
+@push('scripts')
+<script>
+(function () {
+    var btn = document.getElementById('toggle-create-student-form');
+    var panel = document.getElementById('create-student-panel');
+    var label = document.getElementById('toggle-create-student-label');
+    if (!btn || !panel || !label) return;
+
+    function setOpen(open) {
+        if (open) {
+            panel.classList.remove('grid-rows-[0fr]');
+            panel.classList.add('grid-rows-[1fr]');
+        } else {
+            panel.classList.remove('grid-rows-[1fr]');
+            panel.classList.add('grid-rows-[0fr]');
+        }
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        label.textContent = open ? 'Hide form' : 'Create student';
+    }
+
+    var initial = panel.getAttribute('data-initial-open') === '1';
+    setOpen(initial);
+
+    btn.addEventListener('click', function () {
+        var open = !panel.classList.contains('grid-rows-[1fr]');
+        setOpen(open);
+    });
+})();
+</script>
+@endpush
 @endsection

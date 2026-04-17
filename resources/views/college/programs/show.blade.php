@@ -45,28 +45,27 @@
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
-    <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Manager Credentials</h2>
+    <div class="px-5 py-4 border-b border-border bg-primary/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h2 class="text-lg font-semibold text-slate-800">Manager credentials</h2>
+        <p class="text-sm text-slate-600">
+            Program ID:
+            <span class="font-mono font-semibold text-slate-900 tabular-nums">{{ $program->id }}</span>
+        </p>
     </div>
     <div class="p-5">
-        @if(!empty($generatedCredentials))
-            <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                <strong>New credentials generated:</strong> Copy these now; they are shown once.
+        @if(!empty($highlightNewCredentials))
+            <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                <strong>New manager login generated.</strong> Username and password are stored below for this program. Share them only with the program manager.
             </div>
-            <ul class="space-y-2 mb-4">
-                @foreach($generatedCredentials as $generated)
-                    <li class="rounded-lg border border-border bg-slate-50 px-4 py-3 text-sm">
-                        <div><strong>Username:</strong> {{ $generated['username'] }}</div>
-                        <div><strong>Password:</strong> {{ $generated['password'] }}</div>
-                    </li>
-                @endforeach
-            </ul>
         @endif
+        <p class="text-xs text-slate-500 mb-4">Managers sign in with the <strong>username</strong> (login ID) and <strong>password</strong> below. Passwords are encrypted in the database and shown here for college admins.</p>
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="w-full min-w-[640px]">
                 <thead>
                     <tr class="bg-slate-100 border-b border-border">
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Credential ID</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Username</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Password</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Status</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Created</th>
                     </tr>
@@ -74,12 +73,20 @@
                 <tbody>
                     @forelse($credentials as $credential)
                         <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5">
-                            <td class="px-4 py-3 text-sm font-medium text-slate-900">{{ $credential->username }}</td>
+                            <td class="px-4 py-3 text-sm font-mono tabular-nums text-slate-800">{{ $credential->id }}</td>
+                            <td class="px-4 py-3 text-sm font-medium font-mono text-slate-900">{{ $credential->username }}</td>
+                            <td class="px-4 py-3 text-sm font-mono text-slate-800">
+                                @if($credential->status === 'active' && filled($credential->last_plain_password))
+                                    {{ $credential->last_plain_password }}
+                                @else
+                                    <span class="text-slate-400">—</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ $credential->status }}</td>
                             <td class="px-4 py-3 text-sm text-slate-600">{{ $credential->created_at->format('Y-m-d') }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="3" class="px-4 py-8 text-center text-slate-500">No credentials found.</td></tr>
+                        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No credentials found.</td></tr>
                     @endforelse
                 </tbody>
             </table>

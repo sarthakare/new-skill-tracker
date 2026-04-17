@@ -10,6 +10,7 @@ use App\Models\ProgramStudent;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -107,30 +108,71 @@ class ProgramStudentController extends Controller
                 'status' => 'registered',
             ]);
         } else {
+            $mobileRaw = trim((string) $request->input('mobile', ''));
+            $request->merge([
+                'roll_number' => trim((string) $request->input('roll_number', '')),
+                'mobile' => $mobileRaw === '' ? null : $mobileRaw,
+            ]);
+
             $validated = $request->validate([
-                'student_name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'email', 'max:255'],
-                'mobile' => ['required', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
+                'roll_number' => [
+                    'required',
+                    'string',
+                    'max:64',
+                    Rule::unique('users', 'roll_number')->where(
+                        fn ($query) => $query->where('college_id', $collegeId)->where('role', 'STUDENT')
+                    ),
+                ],
+                'mobile' => ['nullable', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
                 'department_id' => [
                     'required',
                     'integer',
                     Rule::exists('departments', 'id')->where(fn ($q) => $q->where('college_id', $collegeId)),
                 ],
-                'student_identifier' => ['nullable', 'string', 'max:255'],
+                'password' => ['required', 'string', 'min:8', 'confirmed'],
             ]);
 
-            ProgramStudent::create([
-                'college_id' => $collegeId,
-                'program_id' => $program->id,
-                'user_id' => null,
-                'student_name' => $validated['student_name'],
-                'student_identifier' => $validated['student_identifier'] ?? null,
-                'email' => $validated['email'],
-                'mobile' => $validated['mobile'],
-                'department_id' => (int) $validated['department_id'],
-                'department' => Department::whereKey($validated['department_id'])->value('name') ?? '',
-                'status' => 'registered',
-            ]);
+            $departmentName = (string) (Department::whereKey($validated['department_id'])->value('name') ?? '');
+            $mobileNormalized = filled($validated['mobile'] ?? null)
+                ? preg_replace('/\s+/', ' ', trim((string) $validated['mobile']))
+                : null;
+
+            DB::transaction(function () use (
+                $collegeId,
+                $program,
+                $validated,
+                $departmentName,
+                $mobileNormalized
+            ) {
+                $user = User::create([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'password' => $validated['password'],
+                    'role' => 'STUDENT',
+                    'college_id' => $collegeId,
+                    'department_id' => (int) $validated['department_id'],
+                    'roll_number' => $validated['roll_number'],
+                    'mobile' => $mobileNormalized,
+                ]);
+
+                ProgramStudent::create([
+                    'college_id' => $collegeId,
+                    'program_id' => $program->id,
+                    'user_id' => $user->id,
+                    'student_name' => $user->name,
+                    'student_identifier' => $validated['roll_number'],
+                    'email' => $user->email,
+                    'mobile' => $user->mobile,
+                    'department_id' => (int) $validated['department_id'],
+                    'department' => $departmentName !== '' ? $departmentName : '—',
+                    'status' => 'registered',
+                ]);
+            });
+
+            return redirect()->route('manager.program.students.index', $program)
+                ->with('success', 'Student account created and added to this program. Share their email and the password you set so they can sign in.');
         }
 
         return redirect()->route('manager.program.students.index', $program)

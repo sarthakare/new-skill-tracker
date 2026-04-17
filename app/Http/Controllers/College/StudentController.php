@@ -34,6 +34,71 @@ class StudentController extends Controller
         return view('college.students.index', compact('students'));
     }
 
+    public function create(): View
+    {
+        $collegeId = Auth::user()->college_id;
+
+        $departments = Department::where('college_id', $collegeId)
+            ->orderBy('name')
+            ->get();
+
+        return view('college.students.create', compact('departments'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $collegeId = Auth::user()->college_id;
+
+        $mobileRaw = trim((string) $request->input('mobile', ''));
+        $request->merge([
+            'roll_number' => trim((string) $request->input('roll_number', '')),
+            'mobile' => $mobileRaw === '' ? null : $mobileRaw,
+        ]);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
+            'roll_number' => [
+                'required',
+                'string',
+                'max:64',
+                Rule::unique('users', 'roll_number')->where(
+                    fn ($query) => $query->where('college_id', $collegeId)->where('role', 'STUDENT')
+                ),
+            ],
+            'mobile' => ['nullable', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
+            'department_id' => [
+                'required',
+                'integer',
+                Rule::exists('departments', 'id')->where('college_id', $collegeId),
+            ],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $student = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'role' => 'STUDENT',
+            'college_id' => $collegeId,
+            'department_id' => $validated['department_id'],
+            'roll_number' => $validated['roll_number'],
+            'mobile' => filled($validated['mobile'] ?? null)
+                ? preg_replace('/\s+/', ' ', trim((string) $validated['mobile']))
+                : null,
+        ]);
+
+        ActivityLog::create([
+            'college_id' => $collegeId,
+            'user_id' => Auth::id(),
+            'action' => 'student.created',
+            'description' => "Student '{$student->name}' ({$student->email}) was created by college admin",
+        ]);
+
+        return redirect()->route('college.students.index')
+            ->with('success', 'Student account created. Share their email and the password you set so they can sign in.');
+    }
+
     public function edit(User $student): View
     {
         $this->ensureStudentInCollege($student);

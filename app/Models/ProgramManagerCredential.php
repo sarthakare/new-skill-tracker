@@ -14,12 +14,21 @@ class ProgramManagerCredential extends Model
         'manager_id',
         'username',
         'password',
+        'last_plain_password',
         'status',
     ];
 
     protected $hidden = [
         'password',
+        'last_plain_password',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_plain_password' => 'encrypted',
+        ];
+    }
 
     public function college(): BelongsTo
     {
