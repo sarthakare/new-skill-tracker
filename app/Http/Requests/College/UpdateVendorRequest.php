@@ -15,7 +15,7 @@ class UpdateVendorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'in:Training,Certification,Logistics,Other'],
+            'type' => ['required', 'in:Training,Certification,Logistics,Other,Syllabus'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'regex:/^[0-9]+$/', 'max:20'],
             'address' => ['nullable', 'string'],

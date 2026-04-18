@@ -35,6 +35,7 @@
                     <option value="Training" {{ old('type') === 'Training' ? 'selected' : '' }}>Training</option>
                     <option value="Certification" {{ old('type') === 'Certification' ? 'selected' : '' }}>Certification</option>
                     <option value="Logistics" {{ old('type') === 'Logistics' ? 'selected' : '' }}>Logistics</option>
+                    <option value="Syllabus" {{ old('type') === 'Syllabus' ? 'selected' : '' }}>Syllabus</option>
                     <option value="Other" {{ old('type') === 'Other' ? 'selected' : '' }}>Other</option>
                 </select>
                 @error('type')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
