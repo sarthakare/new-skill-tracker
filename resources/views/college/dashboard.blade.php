@@ -71,7 +71,7 @@
     <div class="bg-slate-100 rounded-card border border-slate-200 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">Total Programs</p>
+                <p class="text-sm font-medium text-slate-600">Total Semesters/programs</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['total_programs'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-200">
@@ -82,7 +82,7 @@
     <div class="bg-primary/5 rounded-card border border-primary/20 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">In-Progress Programs</p>
+                <p class="text-sm font-medium text-slate-600">In-Progress Semesters/programs</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['active_programs'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">

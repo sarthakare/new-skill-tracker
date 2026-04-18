@@ -50,7 +50,7 @@
     </div>
 
     <table class="syllabus-doc-info-table">
-        <tr><td class="syllabus-doc-label">Program Name</td><td>{{ $program->name }}</td></tr>
+        <tr><td class="syllabus-doc-label">Semester/program name</td><td>{{ $program->name }}</td></tr>
         @if($program->event)
             <tr><td class="syllabus-doc-label">Year/Event</td><td>{{ $program->event->name }}</td></tr>
         @endif

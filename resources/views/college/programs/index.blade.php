@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Programs')
+@section('title', 'Semesters/programs')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -9,21 +9,21 @@
             <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
                 <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
             </span>
-            Programs for {{ $event->name }}
+            Semesters/programs for {{ $event->name }}
         </h1>
-        <p class="mt-1 text-sm text-slate-500">Manage programs and manager assignments.</p>
+        <p class="mt-1 text-sm text-slate-500">Manage semesters/programs and manager assignments.</p>
     </div>
     <a href="{{ route('college.events.programs.create', $event) }}"
        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-        Add Program
+        Add Semester/program
     </a>
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-slate-800">All Programs</h2>
-        <span class="text-sm text-slate-600">{{ $programs->total() }} {{ Str::plural('program', $programs->total()) }}</span>
+        <h2 class="text-lg font-semibold text-slate-800">All Semesters/programs</h2>
+        <span class="text-sm text-slate-600">{{ $programs->total() }} {{ $programs->total() === 1 ? 'semester/program' : 'semesters/programs' }}</span>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full min-w-[800px]">
@@ -35,7 +35,7 @@
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Duration</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Status</th>
                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Run by</th>
-                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Program Manager</th>
+                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Semester/Program manager</th>
                     <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Actions</th>
                 </tr>
             </thead>
@@ -65,7 +65,7 @@
                                 <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-amber-600 hover:bg-amber-50 transition-colors" title="Edit">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                 </a>
-                                <form action="{{ route('college.events.programs.destroy', [$event, $program]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this program?');">
+                                <form action="{{ route('college.events.programs.destroy', [$event, $program]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this semester/program?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-50 transition-colors" title="Delete">
@@ -77,7 +77,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-5 py-12 text-center text-slate-500">No programs created yet.</td>
+                        <td colspan="8" class="px-5 py-12 text-center text-slate-500">No semesters/programs created yet.</td>
                     </tr>
                 @endforelse
             </tbody>

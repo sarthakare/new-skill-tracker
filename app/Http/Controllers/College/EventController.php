@@ -54,7 +54,7 @@ class EventController extends Controller
         ]);
 
         return redirect()->route('college.events.show', $event)
-            ->with('success', 'Year/Event created successfully. Add programs under this year/event.');
+            ->with('success', 'Year/Event created successfully. Add semesters/programs under this year/event.');
     }
 
     public function show(Event $event): View

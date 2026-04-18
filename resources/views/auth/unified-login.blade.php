@@ -89,7 +89,7 @@
                                    class="w-full pl-10 pr-4 py-2.5 rounded-input border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary @error('username') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror">
                         </div>
                         <p class="mt-1.5 text-xs text-slate-500">
-                            Use email for Super Admin, College Admin, or Student, or username for Program Manager / Vendor access
+                            Use email for Super Admin, College Admin, or Student, or username for Semester/Program Manager / Vendor access
                         </p>
                         @error('username')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

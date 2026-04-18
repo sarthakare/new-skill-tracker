@@ -146,8 +146,8 @@
 
         <section class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/90">
             <div class="border-b border-slate-100 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent px-5 py-4 sm:px-6 sm:py-5">
-                <h2 class="text-base font-bold text-slate-900 sm:text-lg">Programs & attendance</h2>
-                <p class="mt-1 text-sm text-slate-500">Years/events and sessions where you are enrolled as a program participant.</p>
+                <h2 class="text-base font-bold text-slate-900 sm:text-lg">Semesters/programs & attendance</h2>
+                <p class="mt-1 text-sm text-slate-500">Years/events and sessions where you are enrolled as a semester/program participant.</p>
             </div>
             <div class="p-5 sm:p-6">
                 @forelse($enrollments as $enrollment)
@@ -176,7 +176,7 @@
                                 @endif
                             </div>
                             <div class="shrink-0 text-left sm:text-right">
-                                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Program</p>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Semester/program</p>
                                 <p class="mt-1 font-semibold text-slate-800">{{ $program?->name ?? '—' }}</p>
                                 @if($program?->type)
                                     <span class="mt-2 inline-flex rounded-full bg-info-light px-2.5 py-0.5 text-xs font-semibold text-info ring-1 ring-info/15">{{ $program->type }}</span>
@@ -209,11 +209,11 @@
                         </div>
 
                         <div class="mx-5 mb-5 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/95 to-amber-50/50 px-4 py-3.5 sm:mx-6">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Program manager remarks</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Semester/Program manager remarks</p>
                             @if($enrollment->manager_remarks)
                                 <p class="mt-2 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $enrollment->manager_remarks }}</p>
                             @else
-                                <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this program yet.</p>
+                                <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this semester/program yet.</p>
                             @endif
                         </div>
                     </article>
@@ -222,8 +222,8 @@
                         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
                             <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                         </div>
-                        <p class="mt-4 text-sm font-medium text-slate-800">No programs yet</p>
-                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a program manager adds you with your registered account, your years/events, attendance, and remarks will show up here.</p>
+                        <p class="mt-4 text-sm font-medium text-slate-800">No semesters/programs yet</p>
+                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a semester/program manager adds you with your registered account, your years/events, attendance, and remarks will show up here.</p>
                     </div>
                 @endforelse
             </div>
@@ -247,16 +247,16 @@
             <tr><td class="student-report-doc-label">Email</td><td>{{ $user->email }}</td></tr>
             <tr><td class="student-report-doc-label">Department</td><td>{{ $user->department?->name ?? '—' }}</td></tr>
             <tr><td class="student-report-doc-label">Mobile</td><td>{{ $user->mobile ?? '—' }}</td></tr>
-            <tr><td class="student-report-doc-label">Programs Enrolled</td><td>{{ $enrollments->count() }}</td></tr>
+            <tr><td class="student-report-doc-label">Semesters/programs enrolled</td><td>{{ $enrollments->count() }}</td></tr>
         </table>
 
-        <h2 class="student-report-doc-section">Program Summary</h2>
+        <h2 class="student-report-doc-section">Semester/Program summary</h2>
         <table class="student-report-doc-table">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Year/Event</th>
-                    <th>Program</th>
+                    <th>Semester/program</th>
                     <th>Type</th>
                     <th>Sessions Attended</th>
                     <th>Remarks</th>
@@ -282,7 +282,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">No programs assigned yet.</td>
+                        <td colspan="6" class="text-center">No semesters/programs assigned yet.</td>
                     </tr>
                 @endforelse
             </tbody>

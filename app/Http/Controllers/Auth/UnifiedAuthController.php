@@ -154,7 +154,7 @@ class UnifiedAuthController extends Controller
 
             if ($programCredential->college->status !== 'active') {
                 throw ValidationException::withMessages([
-                    'username' => ['The college for this program is inactive.'],
+                    'username' => ['The college for this semester/program is inactive.'],
                 ]);
             }
 
