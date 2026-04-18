@@ -103,7 +103,7 @@
     <table class="completion-report-doc-info-table">
         <tr><td class="completion-report-doc-label">Program Name</td><td>{{ $program->name }}</td></tr>
         @if($program->event)
-            <tr><td class="completion-report-doc-label">Event</td><td>{{ $program->event->name }}</td></tr>
+            <tr><td class="completion-report-doc-label">Year/Event</td><td>{{ $program->event->name }}</td></tr>
         @endif
         @if($program->type)
             <tr><td class="completion-report-doc-label">Type</td><td>{{ $program->type }}</td></tr>

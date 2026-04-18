@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Edit Event')
+@section('title', 'Edit Year/Event')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,7 +8,7 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
         </span>
-        Edit Event
+        Edit Year/Event
     </h1>
     <a href="{{ route('college.events.show', $event) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -18,14 +18,14 @@
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Event details</h2>
+        <h2 class="text-lg font-semibold text-slate-800">Year/Event details</h2>
     </div>
     <div class="p-5">
         <form action="{{ route('college.events.update', $event) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
             <div>
-                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Event Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Year/Event <span class="text-red-500">*</span></label>
                 <input type="text" id="name" name="name" value="{{ old('name', $event->name) }}" required class="w-full rounded-input border @error('name') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
                 @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
@@ -63,7 +63,7 @@
             </div>
             <div class="flex flex-wrap gap-2 justify-end pt-2">
                 <a href="{{ route('college.events.show', $event) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Cancel</a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Update Event</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Update Year/Event</button>
             </div>
         </form>
     </div>

@@ -32,7 +32,7 @@
         <h2 class="text-lg font-semibold text-slate-800">Program Details</h2>
     </div>
     <div class="p-5 space-y-2 text-sm">
-        <p><strong class="text-slate-700">Event:</strong> <span class="text-slate-600">{{ $stats['event_name'] }}</span></p>
+        <p><strong class="text-slate-700">Year/Event:</strong> <span class="text-slate-600">{{ $stats['event_name'] }}</span></p>
         <p><strong class="text-slate-700">Manager:</strong> <span class="text-slate-600">{{ $stats['manager_name'] }}</span></p>
         <p><strong class="text-slate-700">Pending Completion Requests:</strong> <span class="text-slate-600">{{ $stats['pending_completion'] }}</span></p>
     </div>

@@ -96,7 +96,7 @@ class ProgramController extends Controller
 
         if ($this->programNameTakenForEvent($event, $name)) {
             return redirect()->back()
-                ->withErrors(['name' => 'A program with this name already exists for this event.'])
+                ->withErrors(['name' => 'A program with this name already exists for this year/event.'])
                 ->withInput();
         }
 
@@ -123,7 +123,7 @@ class ProgramController extends Controller
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 return redirect()->back()
-                    ->withErrors(['name' => 'A program with this name already exists for this event.'])
+                    ->withErrors(['name' => 'A program with this name already exists for this year/event.'])
                     ->withInput();
             }
             throw $e;
@@ -233,7 +233,7 @@ class ProgramController extends Controller
 
         if ($this->programNameTakenForEvent($event, $name, $program->id)) {
             return redirect()->back()
-                ->withErrors(['name' => 'A program with this name already exists for this event.'])
+                ->withErrors(['name' => 'A program with this name already exists for this year/event.'])
                 ->withInput();
         }
 
@@ -260,7 +260,7 @@ class ProgramController extends Controller
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 return redirect()->back()
-                    ->withErrors(['name' => 'A program with this name already exists for this event.'])
+                    ->withErrors(['name' => 'A program with this name already exists for this year/event.'])
                     ->withInput();
             }
             throw $e;
@@ -408,7 +408,7 @@ class ProgramController extends Controller
     private function ensureCollegeScope(Event $event): void
     {
         if ($event->college_id !== Auth::user()->college_id) {
-            abort(403, 'Unauthorized access to this event.');
+            abort(403, 'Unauthorized access to this year/event.');
         }
     }
 

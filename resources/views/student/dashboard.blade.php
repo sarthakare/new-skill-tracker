@@ -147,7 +147,7 @@
         <section class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/90">
             <div class="border-b border-slate-100 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent px-5 py-4 sm:px-6 sm:py-5">
                 <h2 class="text-base font-bold text-slate-900 sm:text-lg">Programs & attendance</h2>
-                <p class="mt-1 text-sm text-slate-500">Events and sessions where you are enrolled as a program participant.</p>
+                <p class="mt-1 text-sm text-slate-500">Years/events and sessions where you are enrolled as a program participant.</p>
             </div>
             <div class="p-5 sm:p-6">
                 @forelse($enrollments as $enrollment)
@@ -162,7 +162,7 @@
                     <article class="group mb-5 last:mb-0 overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50/90 to-white ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-md hover:ring-slate-300/90">
                         <div class="flex flex-col gap-4 border-b border-slate-100/90 bg-white/60 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
                             <div class="min-w-0">
-                                <p class="text-[11px] font-bold uppercase tracking-wider text-primary/80">Event</p>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-primary/80">Year/Event</p>
                                 <p class="mt-1 text-lg font-bold leading-snug text-slate-900">{{ $event?->name ?? '—' }}</p>
                                 @if($event && ($event->start_date || $event->end_date))
                                     <p class="mt-1.5 flex flex-wrap items-center gap-x-2 text-sm text-slate-500">
@@ -223,7 +223,7 @@
                             <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                         </div>
                         <p class="mt-4 text-sm font-medium text-slate-800">No programs yet</p>
-                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a program manager adds you with your registered account, your events, attendance, and remarks will show up here.</p>
+                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a program manager adds you with your registered account, your years/events, attendance, and remarks will show up here.</p>
                     </div>
                 @endforelse
             </div>
@@ -255,7 +255,7 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Event</th>
+                    <th>Year/Event</th>
                     <th>Program</th>
                     <th>Type</th>
                     <th>Sessions Attended</th>

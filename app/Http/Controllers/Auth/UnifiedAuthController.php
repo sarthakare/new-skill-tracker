@@ -148,7 +148,7 @@ class UnifiedAuthController extends Controller
         if ($programCredential && Hash::check($password, $programCredential->password)) {
             if ($programCredential->program->event->status !== 'Active') {
                 throw ValidationException::withMessages([
-                    'username' => ['This event is not currently active.'],
+                    'username' => ['This year/event is not currently active.'],
                 ]);
             }
 
@@ -180,14 +180,14 @@ class UnifiedAuthController extends Controller
             // Check if event is active
             if ($credential->event->status !== 'Active') {
                 throw ValidationException::withMessages([
-                    'username' => ['This event is not currently active.'],
+                    'username' => ['This year/event is not currently active.'],
                 ]);
             }
 
             // Check if college is active
             if ($credential->college->status !== 'active') {
                 throw ValidationException::withMessages([
-                    'username' => ['The college for this event is inactive.'],
+                    'username' => ['The college for this year/event is inactive.'],
                 ]);
             }
 

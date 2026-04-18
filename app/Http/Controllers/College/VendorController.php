@@ -128,7 +128,7 @@ class VendorController extends Controller
 
         if ($existing) {
             return redirect()->back()
-                ->with('error', 'Vendor is already assigned to this event.');
+                ->with('error', 'Vendor is already assigned to this year/event.');
         }
 
         \App\Models\EventVendor::create([
@@ -142,11 +142,11 @@ class VendorController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'vendor.assigned',
-            'description' => "Vendor '{$vendor->name}' assigned to event '{$event->name}'",
+            'description' => "Vendor '{$vendor->name}' assigned to year/event '{$event->name}'",
         ]);
 
         return redirect()->back()
-            ->with('success', 'Vendor assigned to event successfully.');
+            ->with('success', 'Vendor assigned to year/event successfully.');
     }
 
     public function removeFromEvent(Vendor $vendor, \App\Models\Event $event): RedirectResponse
@@ -169,11 +169,11 @@ class VendorController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'vendor.unassigned',
-            'description' => "Vendor '{$vendor->name}' unassigned from event '{$event->name}'",
+            'description' => "Vendor '{$vendor->name}' unassigned from year/event '{$event->name}'",
         ]);
 
         return redirect()->back()
-            ->with('success', 'Vendor unassigned from event successfully.');
+            ->with('success', 'Vendor unassigned from year/event successfully.');
     }
 
     private function ensureCollegeScope(Vendor $vendor): void

@@ -50,11 +50,11 @@ class EventController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'event.created',
-            'description' => "Event '{$event->name}' was created",
+            'description' => "Year/Event '{$event->name}' was created",
         ]);
 
         return redirect()->route('college.events.show', $event)
-            ->with('success', 'Event created successfully. Add programs under this event.');
+            ->with('success', 'Year/Event created successfully. Add programs under this year/event.');
     }
 
     public function show(Event $event): View
@@ -98,11 +98,11 @@ class EventController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'event.updated',
-            'description' => "Event '{$event->name}' was updated",
+            'description' => "Year/Event '{$event->name}' was updated",
         ]);
 
         return redirect()->route('college.events.show', $event)
-            ->with('success', 'Event updated successfully.');
+            ->with('success', 'Year/Event updated successfully.');
     }
 
     public function destroy(Event $event): RedirectResponse
@@ -116,11 +116,11 @@ class EventController extends Controller
             'college_id' => Auth::user()->college_id,
             'user_id' => Auth::id(),
             'action' => 'event.deleted',
-            'description' => "Event '{$eventName}' was deleted",
+            'description' => "Year/Event '{$eventName}' was deleted",
         ]);
 
         return redirect()->route('college.events.index')
-            ->with('success', 'Event deleted successfully.');
+            ->with('success', 'Year/Event deleted successfully.');
     }
 
     public function toggleStatus(Event $event): RedirectResponse
@@ -135,7 +135,7 @@ class EventController extends Controller
         };
 
         if ($newStatus === $event->status) {
-            return redirect()->back()->with('error', 'Archived events cannot be modified.');
+            return redirect()->back()->with('error', 'Archived years/events cannot be modified.');
         }
         $event->update(['status' => $newStatus]);
 
@@ -144,11 +144,11 @@ class EventController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'event.status_changed',
-            'description' => "Event '{$event->name}' status changed to {$newStatus}",
+            'description' => "Year/Event '{$event->name}' status changed to {$newStatus}",
         ]);
 
         return redirect()->back()
-            ->with('success', "Event status changed to {$newStatus}.");
+            ->with('success', "Year/Event status changed to {$newStatus}.");
     }
 
     public function vendorCredentials(Event $event): View
@@ -170,7 +170,7 @@ class EventController extends Controller
     private function ensureCollegeScope(Event $event): void
     {
         if ($event->college_id !== Auth::user()->college_id) {
-            abort(403, 'Unauthorized access to this event.');
+            abort(403, 'Unauthorized access to this year/event.');
         }
     }
 }

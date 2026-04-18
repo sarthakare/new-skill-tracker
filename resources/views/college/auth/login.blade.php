@@ -20,7 +20,7 @@
                 <span class="text-xl font-semibold tracking-tight">Skill Tracker</span>
             </div>
             <h1 class="text-3xl lg:text-4xl font-bold text-white leading-tight">College Admin</h1>
-            <p class="mt-4 text-white/80 text-lg">Sign in to manage your college events and programs.</p>
+            <p class="mt-4 text-white/80 text-lg">Sign in to manage your college years/events and programs.</p>
         </div>
     </div>
     <div class="flex-1 flex items-center justify-center p-6 sm:p-10 md:p-12">

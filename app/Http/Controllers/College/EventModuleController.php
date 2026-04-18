@@ -74,7 +74,7 @@ class EventModuleController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'module.toggled',
-            'description' => "Module '{$request->module_name}' was {$status} for event '{$event->name}'",
+            'description' => "Module '{$request->module_name}' was {$status} for year/event '{$event->name}'",
         ]);
 
         return redirect()->back()
@@ -84,7 +84,7 @@ class EventModuleController extends Controller
     private function ensureCollegeScope(Event $event): void
     {
         if ($event->college_id !== Auth::user()->college_id) {
-            abort(403, 'Unauthorized access to this event.');
+            abort(403, 'Unauthorized access to this year/event.');
         }
     }
 }

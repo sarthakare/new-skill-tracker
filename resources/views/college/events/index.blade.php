@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Events')
+@section('title', 'Years/Events')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,19 +8,19 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
         </span>
-        Events
+        Years/Events
     </h1>
     <a href="{{ route('college.events.create') }}"
        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-        Create Event
+        Create Year/Event
     </a>
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-slate-800">All Events</h2>
-        <span class="text-sm text-slate-600">{{ $events->total() }} {{ Str::plural('event', $events->total()) }}</span>
+        <h2 class="text-lg font-semibold text-slate-800">All Years/Events</h2>
+        <span class="text-sm text-slate-600">{{ $events->total() }} {{ $events->total() === 1 ? 'year/event' : 'years/events' }}</span>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full min-w-[640px]">
@@ -59,7 +59,7 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </a>
                                 <a href="{{ route('college.events.programs.index', $event) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-primary hover:bg-primary/10 transition-colors" title="Programs for this event">
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-primary hover:bg-primary/10 transition-colors" title="Programs for this year/event">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                                 </a>
                                 <a href="{{ route('college.events.edit', $event) }}"
@@ -83,7 +83,7 @@
                                         </button>
                                     </form>
                                 @endif
-                                <form action="{{ route('college.events.destroy', $event) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                <form action="{{ route('college.events.destroy', $event) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this year/event?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-red-600 hover:bg-red-50 transition-colors" title="Delete">
@@ -95,7 +95,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-5 py-12 text-center text-slate-500">No events found.</td>
+                        <td colspan="6" class="px-5 py-12 text-center text-slate-500">No years/events found.</td>
                     </tr>
                 @endforelse
             </tbody>

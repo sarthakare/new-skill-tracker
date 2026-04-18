@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Vendor Event Login - Skill Tracker</title>
+    <title>Vendor Year/Event Login - Skill Tracker</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans antialiased">
@@ -19,8 +19,8 @@
                 </span>
                 <span class="text-xl font-semibold tracking-tight">Skill Tracker</span>
             </div>
-            <h1 class="text-3xl lg:text-4xl font-bold text-white leading-tight">Vendor Event Access</h1>
-            <p class="mt-4 text-white/80 text-lg">Sign in with your event credentials.</p>
+            <h1 class="text-3xl lg:text-4xl font-bold text-white leading-tight">Vendor year/event access</h1>
+            <p class="mt-4 text-white/80 text-lg">Sign in with your year/event credentials.</p>
         </div>
     </div>
     <div class="flex-1 flex items-center justify-center p-6 sm:p-10 md:p-12">
@@ -36,8 +36,8 @@
             </div>
             <div class="bg-white rounded-card shadow-card border border-slate-200/80 p-8">
                 <div class="text-center mb-6">
-                    <h2 class="text-xl font-semibold text-slate-800">Vendor Event Login</h2>
-                    <p class="text-slate-500 mt-1">Access your assigned event</p>
+                    <h2 class="text-xl font-semibold text-slate-800">Vendor year/event login</h2>
+                    <p class="text-slate-500 mt-1">Access your assigned year/event</p>
                 </div>
                 @if ($errors->any())
                     <div class="mb-4 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
@@ -49,7 +49,7 @@
                 @endif
                 <div class="mb-4 rounded-lg border border-info bg-info/10 px-4 py-3 text-sm text-slate-700 flex items-start gap-2">
                     <svg class="w-5 h-5 shrink-0 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Use the credentials provided by the College Admin for your specific event.</span>
+                    <span>Use the credentials provided by the College Admin for your specific year/event.</span>
                 </div>
                 <form method="POST" action="{{ route('vendor.event.login.post') }}" class="space-y-5">
                     @csrf
@@ -63,12 +63,12 @@
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-1.5">Password <span class="text-red-500">*</span></label>
-                        <x-password-input left-icon id="password" name="password" required placeholder="Enter your event password" class="w-full py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('password') border-red-500 @enderror" />
+                        <x-password-input left-icon id="password" name="password" required placeholder="Enter your year/event password" class="w-full py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('password') border-red-500 @enderror" />
                         @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <button type="submit" class="w-full py-3 px-4 rounded-button font-medium text-white bg-primary hover:bg-primary-hover flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
-                        Login to Event
+                        Login to year/event
                     </button>
                 </form>
             </div>

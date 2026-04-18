@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Create Event')
+@section('title', 'Create Year/Event')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,7 +8,7 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
         </span>
-        Create Event
+        Create Year/Event
     </h1>
     <a href="{{ route('college.events.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -18,14 +18,14 @@
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Event details</h2>
+        <h2 class="text-lg font-semibold text-slate-800">Year/Event details</h2>
     </div>
     <div class="p-5">
         <form action="{{ route('college.events.store') }}" method="POST" class="space-y-4">
             @csrf
 
             <div>
-                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Event Name <span class="text-red-500">*</span></label>
+                <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Year/Event <span class="text-red-500">*</span></label>
                 <input type="text"
                        id="name"
                        name="name"
@@ -93,7 +93,7 @@
 
             <div class="rounded-lg border border-info bg-info/10 px-4 py-3 text-sm text-slate-700 flex items-start gap-2">
                 <svg class="w-5 h-5 shrink-0 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>Event will be created with status <strong>DRAFT</strong>. After saving, add programs under this event and assign Vendor, Independent Trainer, or Internal Manager to each program.</span>
+                <span>Year/Event will be created with status <strong>DRAFT</strong>. After saving, add programs under this year/event and assign Vendor, Independent Trainer, or Internal Manager to each program.</span>
             </div>
 
             <div class="flex flex-wrap gap-2 justify-end pt-2">

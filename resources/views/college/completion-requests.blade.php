@@ -28,7 +28,7 @@
                 <table class="w-full min-w-[800px]">
                     <thead>
                         <tr class="bg-slate-100 border-b border-border">
-                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Event</th>
+                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Year/Event</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Program</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Requested By</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Requested At</th>

@@ -6,7 +6,7 @@
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
         <h1 class="text-2xl font-semibold text-slate-800">{{ $program->name }}</h1>
-        <p class="text-slate-500 text-sm mt-0.5">Event: {{ $event->name }}</p>
+        <p class="text-slate-500 text-sm mt-0.5">Year/Event: {{ $event->name }}</p>
     </div>
     <div class="flex gap-2">
         <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-primary border border-primary/30 hover:bg-primary/10">Edit Program</a>

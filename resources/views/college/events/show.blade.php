@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Event Dashboard')
+@section('title', 'Year/Event Dashboard')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -48,7 +48,7 @@
 <div class="space-y-6">
     <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
         <div class="px-5 py-4 border-b border-border bg-primary/5">
-            <h2 class="text-lg font-semibold text-slate-800">Event Information</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Year/Event information</h2>
         </div>
         <div class="p-5">
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">

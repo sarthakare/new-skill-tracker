@@ -16,7 +16,7 @@
     <div class="bg-primary/5 rounded-card border border-primary/20 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">Total Events</p>
+                <p class="text-sm font-medium text-slate-600">Total Years/Events</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['total_events'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
@@ -27,7 +27,7 @@
     <div class="bg-success-light rounded-card border border-success/20 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">Active Events</p>
+                <p class="text-sm font-medium text-slate-600">Active Years/Events</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['active_events'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-success-light border border-success/30">
@@ -38,7 +38,7 @@
     <div class="bg-info-light rounded-card border border-info/20 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">Completed Events</p>
+                <p class="text-sm font-medium text-slate-600">Completed Years/Events</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['completed_events'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-info-light border border-info/30">
@@ -113,7 +113,7 @@
                 <a href="{{ route('college.events.create') }}"
                    class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-button font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                    Create Event
+                    Create Year/Event
                 </a>
                 <a href="{{ route('college.vendors.create') }}"
                    class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">

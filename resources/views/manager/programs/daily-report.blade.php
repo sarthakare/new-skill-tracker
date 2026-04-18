@@ -85,7 +85,7 @@
     <table class="daily-report-doc-info-table">
         <tr><td class="daily-report-doc-label">Program Name</td><td>{{ $program->name }}</td></tr>
         @if($program->event)
-            <tr><td class="daily-report-doc-label">Event</td><td>{{ $program->event->name }}</td></tr>
+            <tr><td class="daily-report-doc-label">Year/Event</td><td>{{ $program->event->name }}</td></tr>
         @endif
         <tr><td class="daily-report-doc-label">Session</td><td>{{ $session->title }}</td></tr>
         <tr><td class="daily-report-doc-label">Date</td><td>{{ $session->session_date->format('d F Y') }}</td></tr>
