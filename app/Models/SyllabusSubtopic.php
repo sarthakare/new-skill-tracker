@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SyllabusSubtopic extends Model
 {
@@ -17,5 +18,10 @@ class SyllabusSubtopic extends Model
     public function syllabusTopic(): BelongsTo
     {
         return $this->belongsTo(SyllabusTopic::class);
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(SyllabusAssignment::class);
     }
 }

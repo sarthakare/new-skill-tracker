@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProgramStudent;
+use App\Models\SyllabusAssignment;
+use App\Models\SyllabusAssignmentSubmission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +21,54 @@ class Judge0RunController extends Controller
             'source_code' => ['required', 'string', 'max:'.self::MAX_SOURCE_CHARS],
             'language_id' => ['required', 'integer', 'min:1'],
             'stdin' => ['nullable', 'string', 'max:65536'],
+            'assignment_id' => ['nullable', 'integer', 'exists:syllabus_assignments,id'],
         ]);
+
+        $languageId = (int) $validated['language_id'];
+        $assignmentId = isset($validated['assignment_id']) ? (int) $validated['assignment_id'] : null;
+        if ($assignmentId !== null) {
+            $assignment = SyllabusAssignment::query()
+                ->with(['syllabusSubtopic.syllabusTopic'])
+                ->find($assignmentId);
+            if (! $assignment) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'Assignment not found.',
+                ], 422);
+            }
+            $programId = $assignment->programId();
+            if ($programId === null) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'Invalid assignment.',
+                ], 422);
+            }
+            $enrolled = ProgramStudent::query()
+                ->where('user_id', $request->user()->id)
+                ->where('program_id', $programId)
+                ->exists();
+            if (! $enrolled) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'You are not enrolled in the semester/program for this assignment.',
+                ], 403);
+            }
+            if (! $assignment->allowsJudge0LanguageId($languageId)) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'This language is not allowed for this assignment. Choose one of the languages your instructor enabled.',
+                ], 422);
+            }
+            if (SyllabusAssignmentSubmission::query()
+                ->where('user_id', $request->user()->id)
+                ->where('syllabus_assignment_id', $assignmentId)
+                ->exists()) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'This assignment is already submitted and cannot be changed.',
+                ], 422);
+            }
+        }
 
         $baseUrl = rtrim(config('services.judge0.url'), '/');
         if ($baseUrl === '') {
@@ -35,7 +85,7 @@ class Judge0RunController extends Controller
 
         $payload = [
             'source_code' => base64_encode($validated['source_code']),
-            'language_id' => (int) $validated['language_id'],
+            'language_id' => $languageId,
             'stdin' => base64_encode($validated['stdin'] ?? ''),
         ];
 

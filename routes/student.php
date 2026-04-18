@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\UnifiedAuthController;
 use App\Http\Controllers\Student\AuthController;
 use App\Http\Controllers\Student\DashboardController;
 use App\Http\Controllers\Student\Judge0RunController;
+use App\Http\Controllers\Student\SubmitSyllabusAssignmentController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::middleware(['auth', 'student-scope'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/code-run', Judge0RunController::class)->name('code-run');
+        Route::post('/assignments/{assignment}/submit', SubmitSyllabusAssignmentController::class)->name('assignments.submit');
         Route::post('/logout', [UnifiedAuthController::class, 'logout'])->name('logout');
     });
 });

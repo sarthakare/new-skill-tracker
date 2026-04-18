@@ -5,6 +5,7 @@ use App\Http\Controllers\Manager\ProgramCompletionController;
 use App\Http\Controllers\Manager\ProgramDashboardController;
 use App\Http\Controllers\Manager\ProgramSessionController;
 use App\Http\Controllers\Manager\ProgramStudentController;
+use App\Http\Controllers\Manager\SyllabusAssignmentController;
 use App\Http\Controllers\Manager\SyllabusController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +51,11 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::delete('/{program}/syllabus/subtopics/{subtopic}', [SyllabusController::class, 'destroySubtopic'])->name('syllabus.subtopics.destroy');
     Route::post('/{program}/syllabus/subtopics/{subtopic}/toggle-complete', [SyllabusController::class, 'toggleSubtopicComplete'])->name('syllabus.subtopics.toggle-complete');
     Route::post('/{program}/syllabus/subtopics/{subtopic}/schedule', [SyllabusController::class, 'updateSubtopicSchedule'])->name('syllabus.subtopics.schedule');
+
+    Route::get('/{program}/syllabus/subtopics/{subtopic}/assignments/create', [SyllabusAssignmentController::class, 'create'])->name('syllabus.assignments.create');
+    Route::post('/{program}/syllabus/subtopics/{subtopic}/assignments', [SyllabusAssignmentController::class, 'store'])->name('syllabus.assignments.store');
+    Route::get('/{program}/syllabus/assignments/{assignment}/edit', [SyllabusAssignmentController::class, 'edit'])->name('syllabus.assignments.edit');
+    Route::put('/{program}/syllabus/assignments/{assignment}', [SyllabusAssignmentController::class, 'update'])->name('syllabus.assignments.update');
 
     Route::get('/{program}/completion', [ProgramCompletionController::class, 'create'])->name('completion.create');
     Route::post('/{program}/completion', [ProgramCompletionController::class, 'store'])->name('completion.store');

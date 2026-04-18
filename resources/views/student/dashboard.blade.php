@@ -53,97 +53,6 @@
             </div>
         </section>
 
-        {{-- Code runner --}}
-        <section class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.14)] ring-1 ring-slate-200/90">
-            <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50/90 px-5 py-4 sm:px-6">
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-md">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                </span>
-                <h2 class="text-base font-bold text-slate-900">Run code</h2>
-            </div>
-            <div class="space-y-5 p-5 sm:p-6">
-                <div>
-                    <label for="code-run-language" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Language</label>
-                    @php
-                        $judge0Languages = [
-                            ['id' => 45, 'name' => 'Assembly (NASM 2.14.02)'],
-                            ['id' => 46, 'name' => 'Bash (5.0.0)'],
-                            ['id' => 47, 'name' => 'Basic (FBC 1.07.1)'],
-                            ['id' => 75, 'name' => 'C (Clang 7.0.1)'],
-                            ['id' => 76, 'name' => 'C++ (Clang 7.0.1)'],
-                            ['id' => 48, 'name' => 'C (GCC 7.4.0)'],
-                            ['id' => 52, 'name' => 'C++ (GCC 7.4.0)'],
-                            ['id' => 49, 'name' => 'C (GCC 8.3.0)'],
-                            ['id' => 53, 'name' => 'C++ (GCC 8.3.0)'],
-                            ['id' => 50, 'name' => 'C (GCC 9.2.0)'],
-                            ['id' => 54, 'name' => 'C++ (GCC 9.2.0)'],
-                            ['id' => 86, 'name' => 'Clojure (1.10.1)'],
-                            ['id' => 51, 'name' => 'C# (Mono 6.6.0.161)'],
-                            ['id' => 77, 'name' => 'COBOL (GnuCOBOL 2.2)'],
-                            ['id' => 55, 'name' => 'Common Lisp (SBCL 2.0.0)'],
-                            ['id' => 56, 'name' => 'D (DMD 2.089.1)'],
-                            ['id' => 57, 'name' => 'Elixir (1.9.4)'],
-                            ['id' => 58, 'name' => 'Erlang (OTP 22.2)'],
-                            ['id' => 44, 'name' => 'Executable'],
-                            ['id' => 87, 'name' => 'F# (.NET Core SDK 3.1.202)'],
-                            ['id' => 59, 'name' => 'Fortran (GFortran 9.2.0)'],
-                            ['id' => 60, 'name' => 'Go (1.13.5)'],
-                            ['id' => 88, 'name' => 'Groovy (3.0.3)'],
-                            ['id' => 61, 'name' => 'Haskell (GHC 8.8.1)'],
-                            ['id' => 62, 'name' => 'Java (OpenJDK 13.0.1)'],
-                            ['id' => 63, 'name' => 'JavaScript (Node.js 12.14.0)'],
-                            ['id' => 78, 'name' => 'Kotlin (1.3.70)'],
-                            ['id' => 64, 'name' => 'Lua (5.3.5)'],
-                            ['id' => 89, 'name' => 'Multi-file program'],
-                            ['id' => 79, 'name' => 'Objective-C (Clang 7.0.1)'],
-                            ['id' => 65, 'name' => 'OCaml (4.09.0)'],
-                            ['id' => 66, 'name' => 'Octave (5.1.0)'],
-                            ['id' => 67, 'name' => 'Pascal (FPC 3.0.4)'],
-                            ['id' => 85, 'name' => 'Perl (5.28.1)'],
-                            ['id' => 68, 'name' => 'PHP (7.4.1)'],
-                            ['id' => 43, 'name' => 'Plain Text'],
-                            ['id' => 69, 'name' => 'Prolog (GNU Prolog 1.4.5)'],
-                            ['id' => 70, 'name' => 'Python (2.7.17)'],
-                            ['id' => 71, 'name' => 'Python (3.8.1)'],
-                            ['id' => 80, 'name' => 'R (4.0.0)'],
-                            ['id' => 72, 'name' => 'Ruby (2.7.0)'],
-                            ['id' => 73, 'name' => 'Rust (1.40.0)'],
-                            ['id' => 81, 'name' => 'Scala (2.13.2)'],
-                            ['id' => 82, 'name' => 'SQL (SQLite 3.27.2)'],
-                            ['id' => 83, 'name' => 'Swift (5.2.3)'],
-                            ['id' => 74, 'name' => 'TypeScript (3.7.4)'],
-                            ['id' => 84, 'name' => 'Visual Basic.Net (vbnc 0.0.0.5943)'],
-                        ];
-                    @endphp
-                    <select id="code-run-language" class="w-full rounded-xl border-0 bg-slate-100/90 px-4 py-3 text-sm font-medium text-slate-800 shadow-inner ring-1 ring-slate-200/80 focus:outline-none focus:ring-2 focus:ring-primary/35">
-                        @foreach ($judge0Languages as $lang)
-                            <option value="{{ $lang['id'] }}" @selected($lang['id'] === 71)>{{ $lang['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="code-run-source" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Your code</label>
-                    <textarea id="code-run-source" rows="12" class="w-full resize-y rounded-xl border-0 bg-slate-900 px-4 py-3 font-mono text-sm leading-relaxed text-slate-100 shadow-inner ring-1 ring-slate-700/80 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="Paste your code here…" required spellcheck="false"></textarea>
-                </div>
-                <div>
-                    <button type="button" id="code-run-submit" class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover disabled:pointer-events-none disabled:opacity-55">
-                        <span id="code-run-submit-label">Run</span>
-                        <svg id="code-run-spinner" class="hidden h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div id="code-run-result" class="hidden rounded-xl bg-slate-100/80 p-4 text-sm ring-1 ring-slate-200/80 sm:p-5">
-                    <p id="code-run-status" class="mb-4 text-sm font-semibold"></p>
-                    <div id="code-run-sections" class="space-y-4"></div>
-                </div>
-                <p id="code-run-error" class="hidden rounded-xl border border-red-200/90 bg-red-50/95 px-4 py-3 text-sm font-medium text-red-800 shadow-sm"></p>
-            </div>
-        </section>
-
         <section class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/90">
             <div class="border-b border-slate-100 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent px-5 py-4 sm:px-6 sm:py-5">
                 <h2 class="text-base font-bold text-slate-900 sm:text-lg">Semesters/programs & attendance</h2>
@@ -207,6 +116,171 @@
                                 </ul>
                             @endif
                         </div>
+
+                        @php
+                            $syllabusTopics = $syllabusTopicsByProgram->get($program->id, collect());
+                            $assignmentLinks = collect();
+                            foreach ($syllabusTopics as $syllabusTopic) {
+                                foreach ($syllabusTopic->subtopics as $st) {
+                                    foreach ($st->assignments as $asg) {
+                                        $assignmentLinks->push([
+                                            'assignment' => $asg,
+                                            'topic' => $syllabusTopic,
+                                            'subtopic' => $st,
+                                        ]);
+                                    }
+                                }
+                            }
+                        @endphp
+
+                        @if($syllabusTopics->isNotEmpty())
+                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6">
+                                <p class="text-sm font-semibold text-slate-800">Syllabus</p>
+                                <p class="mt-1 text-xs text-slate-500">Course outline for this semester/program. Scheduled dates and times appear when your instructor adds them.</p>
+                                <ol class="mt-3 list-decimal space-y-4 pl-5 text-sm text-slate-800 marker:font-semibold">
+                                    @foreach($syllabusTopics as $topic)
+                                        <li class="pl-1">
+                                            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                                                <span class="font-medium text-slate-900">{{ $topic->title }}</span>
+                                                @if($topic->scheduled_date || $topic->scheduled_time)
+                                                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-200/90 px-2 py-0.5 text-xs font-medium text-slate-700">
+                                                        <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                        {{ trim(($topic->scheduled_date?->format('M j, Y') ?? '') . ' ' . ($topic->scheduled_time ? substr((string) $topic->scheduled_time, 0, 5) : '')) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            @if($topic->subtopics->isNotEmpty())
+                                                <ul class="mt-2 list-disc space-y-1.5 pl-4 text-sm text-slate-700">
+                                                    @foreach($topic->subtopics as $subtopic)
+                                                        <li>
+                                                            <span class="text-slate-800">{{ $subtopic->title }}</span>
+                                                            @if($subtopic->scheduled_date || $subtopic->scheduled_time)
+                                                                <span class="ml-1.5 inline-flex items-center gap-1 rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-600">
+                                                                    {{ trim(($subtopic->scheduled_date?->format('M j, Y') ?? '') . ' ' . ($subtopic->scheduled_time ? substr((string) $subtopic->scheduled_time, 0, 5) : '')) }}
+                                                                </span>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endif
+
+                        @if($assignmentLinks->isNotEmpty())
+                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6" id="program-{{ $program->id }}-assignments">
+                                <p class="text-sm font-semibold text-slate-800">Coding assignments</p>
+                                <p class="mt-1 text-xs text-slate-500">Click <span class="font-medium text-slate-700">Show assignment</span> to open the problem and code runner below.</p>
+                                <ul class="mt-3 space-y-2">
+                                    @foreach($assignmentLinks as $row)
+                                        <li class="rounded-xl bg-white/90 p-3 ring-1 ring-slate-200/70 sm:p-4 {{ $activeAssignment && (int) $activeAssignment->id === (int) $row['assignment']->id ? 'ring-2 ring-primary/40 bg-primary/5' : '' }}">
+                                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                                <div class="min-w-0">
+                                                    <p class="font-medium text-slate-900">{{ $row['assignment']->title }}</p>
+                                                    <p class="mt-0.5 text-xs text-slate-500">{{ $row['topic']->title }} · {{ $row['subtopic']->title }}</p>
+                                                </div>
+                                                <a href="{{ route('student.dashboard', ['assignment' => $row['assignment']->id]) }}#student-run-code" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-hover">
+                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                    Show assignment
+                                                </a>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+
+                                @if($activeAssignment && $program && (int) $activeAssignment->programId() === (int) $program->id)
+                                    <section id="student-run-code" class="mt-5 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.12)] scroll-mt-6">
+                                        <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
+                                            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-md">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                                </svg>
+                                            </span>
+                                            <div class="min-w-0 flex-1">
+                                                <h2 class="text-sm font-bold text-slate-900 sm:text-base">Run code</h2>
+                                                <p class="mt-0.5 text-xs text-slate-600">Languages match what your instructor allowed for this assignment.</p>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-4 p-4 sm:p-5">
+                                            <div class="rounded-xl border border-primary/20 bg-primary/5 px-3 py-3 sm:px-4">
+                                                <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                                    <div class="min-w-0">
+                                                        <p class="text-[11px] font-bold uppercase tracking-wider text-primary/90">Assignment</p>
+                                                        <p class="mt-1 text-sm font-semibold text-slate-900">{{ $activeAssignment->title }}</p>
+                                                        <p class="mt-1 text-xs text-slate-600">
+                                                            <span class="capitalize">{{ $activeAssignment->difficulty }}</span>
+                                                            @if($activeAssignment->languages_supported && count($activeAssignment->languages_supported) > 0)
+                                                                <span class="text-slate-400"> · </span>
+                                                                <span>{{ count($codeRunnerLanguages) }} language{{ count($codeRunnerLanguages) === 1 ? '' : 's' }} available</span>
+                                                            @endif
+                                                        </p>
+                                                        @if(filled($activeAssignment->description))
+                                                            <div class="mt-3 border-t border-primary/15 pt-3 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">{{ $activeAssignment->description }}</div>
+                                                        @endif
+                                                        <div id="assignment-submitted-banner" class="mt-3 rounded-xl border border-emerald-200/90 bg-emerald-50/90 px-3 py-2.5 text-xs font-medium text-emerald-900 sm:text-sm {{ $activeAssignmentSubmitted ? '' : 'hidden' }}">
+                                                            You have submitted this assignment. It is final and cannot be changed.
+                                                        </div>
+                                                    </div>
+                                                    <a href="{{ route('student.dashboard') }}#program-{{ $program->id }}-assignments" class="inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Close runner</a>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" id="code-run-assignment-id" value="{{ $activeAssignment->id }}">
+                                            <div id="assignment-runner-config" class="hidden" data-submit-url="{{ $activeAssignmentSubmitted ? '' : route('student.assignments.submit', $activeAssignment) }}" data-already-submitted="{{ $activeAssignmentSubmitted ? '1' : '0' }}"></div>
+                                            @php
+                                                $runnerLangIds = array_column($codeRunnerLanguages, 'id');
+                                                $defaultRunnerLang = in_array(71, $runnerLangIds, true) ? 71 : ($runnerLangIds[0] ?? 71);
+                                            @endphp
+                                            <div>
+                                                <label for="code-run-language" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Language</label>
+                                                <select id="code-run-language" @disabled($activeAssignmentSubmitted) class="w-full rounded-xl border-0 bg-slate-100/90 px-4 py-3 text-sm font-medium text-slate-800 shadow-inner ring-1 ring-slate-200/80 focus:outline-none focus:ring-2 focus:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60">
+                                                    @foreach ($codeRunnerLanguages as $lang)
+                                                        <option value="{{ $lang['id'] }}" @selected((int) $lang['id'] === (int) $defaultRunnerLang)>{{ $lang['name'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="code-run-source" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Your code</label>
+                                                <textarea id="code-run-source" rows="12" @disabled($activeAssignmentSubmitted) class="w-full resize-y rounded-xl border-0 bg-slate-900 px-4 py-3 font-mono text-sm leading-relaxed text-slate-100 shadow-inner ring-1 ring-slate-700/80 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60" placeholder="Paste your code here…" required spellcheck="false">{{ $activeAssignment->starter_code ?? '' }}</textarea>
+                                            </div>
+                                            <div>
+                                                <button type="button" id="code-run-submit" @disabled($activeAssignmentSubmitted) class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover disabled:pointer-events-none disabled:opacity-55">
+                                                    <span id="code-run-submit-label">Run</span>
+                                                    <svg id="code-run-spinner" class="hidden h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div id="code-run-result" class="hidden rounded-xl bg-slate-100/80 p-4 text-sm ring-1 ring-slate-200/80 sm:p-5">
+                                                <p id="code-run-status" class="mb-4 text-sm font-semibold"></p>
+                                                <div id="code-run-sections" class="space-y-4"></div>
+                                            </div>
+                                            @if(!$activeAssignmentSubmitted)
+                                                <div id="assignment-submit-wrap" class="hidden">
+                                                    <button type="button" id="assignment-submit-open" class="inline-flex items-center gap-2 rounded-xl border border-emerald-300/90 bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-700">
+                                                        Submit assignment
+                                                    </button>
+                                                    <p class="mt-2 text-xs text-slate-500">Shown after your run is <span class="font-medium text-emerald-800">Accepted</span> by the judge.</p>
+                                                </div>
+                                            @endif
+                                            <p id="code-run-error" class="hidden rounded-xl border border-red-200/90 bg-red-50/95 px-4 py-3 text-sm font-medium text-red-800 shadow-sm"></p>
+                                        </div>
+                                        <div id="submit-assignment-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-900/50 p-4" role="dialog" aria-modal="true" aria-labelledby="submit-assignment-modal-title">
+                                            <div class="w-full max-w-md rounded-2xl border border-slate-200/90 bg-white p-6 shadow-xl">
+                                                <h3 id="submit-assignment-modal-title" class="text-base font-bold text-slate-900">Submit this assignment?</h3>
+                                                <p class="mt-3 text-sm leading-relaxed text-slate-600">Are you sure you want to submit? Once submitted, your assignment cannot be changed later.</p>
+                                                <div class="mt-6 flex flex-wrap items-center justify-end gap-2">
+                                                    <button type="button" id="submit-assignment-cancel" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Cancel</button>
+                                                    <button type="button" id="submit-assignment-confirm" class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:pointer-events-none disabled:opacity-55">Yes, submit</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                @endif
+                            </div>
+                        @endif
 
                         <div class="mx-5 mb-5 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/95 to-amber-50/50 px-4 py-3.5 sm:mx-6">
                             <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Semester/Program manager remarks</p>
@@ -361,7 +435,7 @@
             background: #f8fafc;
         }
 
-        @media print {
+        @@media print {
             html, body {
                 overflow: visible !important;
                 height: auto !important;
@@ -389,12 +463,12 @@
             .student-report-formal-doc {
                 overflow: visible !important;
             }
-            @page {
+            @@page {
                 margin: 5mm;
                 size: A4;
             }
-            @page {
-                @bottom-center {
+            @@page {
+                @@bottom-center {
                     content: "Page " counter(page) " of " counter(pages);
                     font-size: 9pt;
                     font-family: 'Times New Roman', Times, serif;
@@ -407,14 +481,135 @@
         (function () {
             const runUrl = @json(route('student.code-run'));
             const btn = document.getElementById('code-run-submit');
+            const sourceEl = document.getElementById('code-run-source');
+            if (!btn || !sourceEl) {
+                return;
+            }
             const spinner = document.getElementById('code-run-spinner');
             const label = document.getElementById('code-run-submit-label');
-            const sourceEl = document.getElementById('code-run-source');
             const langEl = document.getElementById('code-run-language');
+            const assignmentField = document.getElementById('code-run-assignment-id');
             const resultBox = document.getElementById('code-run-result');
             const statusEl = document.getElementById('code-run-status');
             const sectionsEl = document.getElementById('code-run-sections');
             const errEl = document.getElementById('code-run-error');
+            const runnerConfig = document.getElementById('assignment-runner-config');
+            const submitWrap = document.getElementById('assignment-submit-wrap');
+            const submitModal = document.getElementById('submit-assignment-modal');
+            const submitOpenBtn = document.getElementById('assignment-submit-open');
+            const submitCancelBtn = document.getElementById('submit-assignment-cancel');
+            const submitConfirmBtn = document.getElementById('submit-assignment-confirm');
+            const submittedBanner = document.getElementById('assignment-submitted-banner');
+
+            function submitUrl() {
+                return (runnerConfig && runnerConfig.dataset.submitUrl) ? String(runnerConfig.dataset.submitUrl).trim() : '';
+            }
+
+            function alreadySubmittedFlag() {
+                return runnerConfig && runnerConfig.dataset.alreadySubmitted === '1';
+            }
+
+            function isJudge0Accepted(sid, desc) {
+                const n = typeof sid === 'number' ? sid : parseInt(sid, 10);
+                if (!Number.isNaN(n) && n === 3) {
+                    return true;
+                }
+                const d = String(desc || '').toLowerCase().trim();
+                return d === 'accepted' || d.indexOf('accepted') === 0;
+            }
+
+            function setSubmitModalOpen(open) {
+                if (!submitModal) {
+                    return;
+                }
+                if (open) {
+                    submitModal.classList.remove('hidden');
+                    submitModal.classList.add('flex');
+                } else {
+                    submitModal.classList.add('hidden');
+                    submitModal.classList.remove('flex');
+                }
+            }
+
+            function updateSubmitWrapVisibility(sid, desc) {
+                if (!submitWrap || !runnerConfig) {
+                    return;
+                }
+                const url = submitUrl();
+                if (url && !alreadySubmittedFlag() && isJudge0Accepted(sid, desc)) {
+                    submitWrap.classList.remove('hidden');
+                } else {
+                    submitWrap.classList.add('hidden');
+                }
+            }
+
+            function lockRunnerAfterSubmit() {
+                if (runnerConfig) {
+                    runnerConfig.dataset.alreadySubmitted = '1';
+                    runnerConfig.dataset.submitUrl = '';
+                }
+                if (submitWrap) {
+                    submitWrap.classList.add('hidden');
+                }
+                if (submittedBanner) {
+                    submittedBanner.classList.remove('hidden');
+                }
+                sourceEl.disabled = true;
+                langEl.disabled = true;
+                btn.disabled = true;
+                setSubmitModalOpen(false);
+            }
+
+            if (submitOpenBtn && submitModal) {
+                submitOpenBtn.addEventListener('click', function () {
+                    if (!submitUrl() || alreadySubmittedFlag()) {
+                        return;
+                    }
+                    setSubmitModalOpen(true);
+                });
+            }
+            if (submitCancelBtn) {
+                submitCancelBtn.addEventListener('click', function () {
+                    setSubmitModalOpen(false);
+                });
+            }
+            if (submitModal) {
+                submitModal.addEventListener('click', function (e) {
+                    if (e.target === submitModal) {
+                        setSubmitModalOpen(false);
+                    }
+                });
+            }
+            if (submitConfirmBtn) {
+                submitConfirmBtn.addEventListener('click', async function () {
+                    const url = submitUrl();
+                    if (!url || alreadySubmittedFlag()) {
+                        setSubmitModalOpen(false);
+                        return;
+                    }
+                    submitConfirmBtn.disabled = true;
+                    try {
+                        const res = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken(),
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        });
+                        const data = await res.json().catch(function () { return {}; });
+                        if (!res.ok || !data.ok) {
+                            alert(data.error || ('Submit failed (' + res.status + ')'));
+                            return;
+                        }
+                        lockRunnerAfterSubmit();
+                    } catch (e) {
+                        alert('Something went wrong. Try again.');
+                    } finally {
+                        submitConfirmBtn.disabled = false;
+                    }
+                });
+            }
 
             function csrfToken() {
                 const m = document.querySelector('meta[name="csrf-token"]');
@@ -431,6 +626,10 @@
                 errEl.textContent = msg;
                 errEl.classList.remove('hidden');
                 resultBox.classList.add('hidden');
+                const sw = document.getElementById('assignment-submit-wrap');
+                if (sw) {
+                    sw.classList.add('hidden');
+                }
             }
 
             function hideError() {
@@ -466,6 +665,16 @@
                 sectionsEl.innerHTML = '';
 
                 try {
+                    const assignmentRaw = assignmentField && assignmentField.value ? assignmentField.value.trim() : '';
+                    const assignmentId = assignmentRaw !== '' ? parseInt(assignmentRaw, 10) : null;
+                    const payload = {
+                        source_code,
+                        language_id: parseInt(langEl.value, 10),
+                        stdin: '',
+                    };
+                    if (assignmentId != null && !Number.isNaN(assignmentId)) {
+                        payload.assignment_id = assignmentId;
+                    }
                     const res = await fetch(runUrl, {
                         method: 'POST',
                         headers: {
@@ -474,11 +683,7 @@
                             'X-CSRF-TOKEN': csrfToken(),
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: JSON.stringify({
-                            source_code,
-                            language_id: parseInt(langEl.value, 10),
-                            stdin: '',
-                        }),
+                        body: JSON.stringify(payload),
                     });
                     const data = await res.json().catch(function () { return {}; });
 
@@ -519,6 +724,7 @@
                     }
 
                     resultBox.classList.remove('hidden');
+                    updateSubmitWrapVisibility(sid, desc);
                 } catch (e) {
                     showError('Something went wrong. Check your connection and try again.');
                 } finally {

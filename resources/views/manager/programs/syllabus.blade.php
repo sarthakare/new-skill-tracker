@@ -12,7 +12,7 @@
             </span>
             Syllabus - {{ $program->name }}
         </h1>
-        <p class="mt-2 text-slate-600">Add syllabus topics or units and subtopics. Mark each as complete as you teach it.</p>
+        <p class="mt-2 text-slate-600">Add syllabus topics or units and subtopics. Mark each as complete as you teach it. Under each subtopic you can add coding assignments for Judge0-style delivery.</p>
     </div>
     <div class="print:hidden">
         <button type="button" onclick="if(location.hash){history.replaceState(null,'',location.pathname+location.search);}window.print();" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">
@@ -184,7 +184,16 @@
                                     {{ trim(($subtopic->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($subtopic->scheduled_time ? substr($subtopic->scheduled_time, 0, 5) : '')) }}
                                 </span>
                             @endif
-                            <div class="subtopic-actions inline-flex items-center gap-0.5 shrink-0">
+                            @if($subtopic->assignments->isNotEmpty())
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary shrink-0" title="Coding assignments on this subtopic">
+                                    {{ $subtopic->assignments->count() }} assignment{{ $subtopic->assignments->count() === 1 ? '' : 's' }}
+                                </span>
+                            @endif
+                            <div class="subtopic-actions inline-flex items-center gap-0.5 shrink-0 flex-wrap justify-end">
+                                <a href="{{ route('manager.program.syllabus.assignments.create', [$program, $subtopic]) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-primary border border-primary/25 hover:bg-primary/10" title="Create coding assignment for this subtopic">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                                    Assignment
+                                </a>
                                 <button type="button" class="subtopic-edit-btn p-1 rounded text-slate-400 hover:text-slate-600" title="Edit"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
                                 <form action="{{ route('manager.program.syllabus.subtopics.destroy', [$program, $subtopic]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this subtopic?');">
                                     @csrf
@@ -206,6 +215,17 @@
                                 <button type="submit" class="px-3 py-1.5 rounded-button text-sm font-medium text-slate-700 border border-border hover:bg-slate-50">Set</button>
                             </form>
                         </div>
+                        @if($subtopic->assignments->isNotEmpty())
+                            <ul class="mt-1 mb-1 ml-4 border-l-2 border-primary/20 pl-3 space-y-1.5 print:hidden">
+                                @foreach($subtopic->assignments as $syllabusAssignment)
+                                    <li class="flex flex-wrap items-center gap-x-2 gap-y-1 py-0.5 text-sm">
+                                        <span class="text-slate-800">{{ $syllabusAssignment->title }}</span>
+                                        <span class="text-xs text-slate-500 capitalize">({{ $syllabusAssignment->difficulty }})</span>
+                                        <a href="{{ route('manager.program.syllabus.assignments.edit', [$program, $syllabusAssignment]) }}" class="text-xs font-semibold text-primary hover:text-primary-hover hover:underline">Edit</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
                     </li>
                 @empty
                     <li class="py-2 pl-4 text-sm text-slate-500">No subtopics yet. Add one below.</li>

@@ -19,7 +19,7 @@ class SyllabusController extends Controller
             ->firstOrFail();
         $program->load(['event', 'college', 'vendorManager', 'independentManager']);
         $topics = SyllabusTopic::where('program_id', $program->id)
-            ->with('subtopics')
+            ->with(['subtopics.assignments'])
             ->orderBy('sort_order')
             ->get();
 
@@ -59,7 +59,7 @@ class SyllabusController extends Controller
             'sort_order' => $maxOrder + 1,
         ]);
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $topic->id);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$topic->id);
     }
 
     public function updateSubtopicSchedule(Request $request, Program $program, SyllabusSubtopic $subtopic): RedirectResponse
@@ -81,7 +81,7 @@ class SyllabusController extends Controller
             'scheduled_time' => $validated['scheduled_time'],
         ]);
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $subtopic->syllabusTopic->id);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$subtopic->syllabusTopic->id);
     }
 
     public function toggleTopicComplete(Program $program, SyllabusTopic $topic): RedirectResponse
@@ -117,7 +117,7 @@ class SyllabusController extends Controller
             'scheduled_time' => $validated['scheduled_time'],
         ]);
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $topic->id);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$topic->id);
     }
 
     public function updateTopic(Request $request, Program $program, SyllabusTopic $topic): RedirectResponse
@@ -130,7 +130,7 @@ class SyllabusController extends Controller
         ]);
         $topic->update(['title' => $validated['title']]);
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $topic->id);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$topic->id);
     }
 
     public function destroyTopic(Program $program, SyllabusTopic $topic): RedirectResponse
@@ -153,7 +153,7 @@ class SyllabusController extends Controller
         ]);
         $subtopic->update(['title' => $validated['title']]);
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $subtopic->syllabusTopic->id);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$subtopic->syllabusTopic->id);
     }
 
     public function destroySubtopic(Program $program, SyllabusSubtopic $subtopic): RedirectResponse
@@ -164,7 +164,7 @@ class SyllabusController extends Controller
         $topicId = $subtopic->syllabusTopic->id;
         $subtopic->delete();
 
-        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $topicId);
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-'.$topicId);
     }
 
     public function toggleSubtopicComplete(Program $program, SyllabusSubtopic $subtopic): RedirectResponse

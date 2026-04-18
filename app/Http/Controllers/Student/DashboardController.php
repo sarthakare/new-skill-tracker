@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\ProgramAttendance;
 use App\Models\ProgramStudent;
+use App\Models\SyllabusAssignment;
+use App\Models\SyllabusAssignmentSubmission;
+use App\Models\SyllabusTopic;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = auth()->user();
         $user->load(['college', 'department']);
@@ -33,11 +37,46 @@ class DashboardController extends Controller
                 ->groupBy('program_student_id');
         }
 
+        $programIds = $enrollments->pluck('program_id')->unique()->filter()->values();
+        $syllabusTopicsByProgram = $programIds->isEmpty()
+            ? collect()
+            : SyllabusTopic::query()
+                ->whereIn('program_id', $programIds)
+                ->with(['subtopics.assignments'])
+                ->orderBy('sort_order')
+                ->get()
+                ->groupBy('program_id');
+
+        $activeAssignment = null;
+        $activeAssignmentSubmitted = false;
+        $codeRunnerLanguages = config('judge0.languages', []);
+        if ($request->filled('assignment')) {
+            $assignment = SyllabusAssignment::query()
+                ->whereKey($request->integer('assignment'))
+                ->with(['syllabusSubtopic.syllabusTopic'])
+                ->first();
+            if ($assignment) {
+                $pid = $assignment->programId();
+                if ($pid !== null && $enrollments->pluck('program_id')->contains($pid)) {
+                    $activeAssignment = $assignment;
+                    $codeRunnerLanguages = $assignment->allowedJudge0Languages();
+                    $activeAssignmentSubmitted = SyllabusAssignmentSubmission::query()
+                        ->where('user_id', $user->id)
+                        ->where('syllabus_assignment_id', $assignment->id)
+                        ->exists();
+                }
+            }
+        }
+
         return view('student.dashboard', [
             'user' => $user,
             'college' => $user->college,
             'enrollments' => $enrollments,
             'attendanceByEnrollment' => $attendanceByEnrollment,
+            'syllabusTopicsByProgram' => $syllabusTopicsByProgram,
+            'activeAssignment' => $activeAssignment,
+            'activeAssignmentSubmitted' => $activeAssignmentSubmitted,
+            'codeRunnerLanguages' => $codeRunnerLanguages,
         ]);
     }
 }
