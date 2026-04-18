@@ -21,18 +21,25 @@ class ProgramStudentController extends Controller
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
 
+        $program->load('departments');
         $collegeId = $program->college_id;
+        $scopedDeptIds = $program->scopedDepartmentIds();
 
         $assignedUserIds = ProgramStudent::where('program_id', $program->id)
             ->whereNotNull('user_id')
             ->pluck('user_id');
 
-        $registeredStudents = User::query()
+        $registeredStudentsQuery = User::query()
             ->where('college_id', $collegeId)
             ->where('role', 'STUDENT')
             ->whereNotIn('id', $assignedUserIds)
-            ->with('department')
-            ->get()
+            ->with('department');
+
+        if ($scopedDeptIds->isNotEmpty()) {
+            $registeredStudentsQuery->whereIn('department_id', $scopedDeptIds);
+        }
+
+        $registeredStudents = $registeredStudentsQuery->get()
             ->sort(function (User $a, User $b) {
                 $ea = ! filled($a->roll_number);
                 $eb = ! filled($b->roll_number);
@@ -50,10 +57,12 @@ class ProgramStudentController extends Controller
             })
             ->values();
 
-        $departments = Department::where('college_id', $collegeId)->orderBy('name')->get();
+        $departments = $scopedDeptIds->isNotEmpty()
+            ? Department::where('college_id', $collegeId)->whereIn('id', $scopedDeptIds)->orderBy('name')->get()
+            : Department::where('college_id', $collegeId)->orderBy('name')->get();
 
         $students = ProgramStudent::sortByRollThenName(
-            ProgramStudent::where('program_id', $program->id)
+            $program->programStudentsQuery()
                 ->with(['user.department', 'collegeDepartment'])
                 ->latest()
                 ->get()
@@ -92,6 +101,15 @@ class ProgramStudentController extends Controller
 
             $user = User::with('department')->findOrFail($validated['user_id']);
 
+            $program->loadMissing('departments');
+            $scopedIds = $program->scopedDepartmentIds();
+            if ($scopedIds->isNotEmpty()) {
+                if (! $user->department_id || ! $scopedIds->contains((int) $user->department_id)) {
+                    return redirect()->route('manager.program.students.index', $program)
+                        ->with('error', 'This student is not in a department assigned to this semester/program.');
+                }
+            }
+
             $departmentId = $user->department_id;
             $departmentName = $user->department?->name ?? '';
 
@@ -114,6 +132,16 @@ class ProgramStudentController extends Controller
                 'mobile' => $mobileRaw === '' ? null : $mobileRaw,
             ]);
 
+            $program->loadMissing('departments');
+            $scopedIds = $program->scopedDepartmentIds();
+            $departmentRules = [
+                'required',
+                'integer',
+                $scopedIds->isNotEmpty()
+                    ? Rule::in($scopedIds->all())
+                    : Rule::exists('departments', 'id')->where(fn ($q) => $q->where('college_id', $collegeId)),
+            ];
+
             $validated = $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
@@ -126,11 +154,7 @@ class ProgramStudentController extends Controller
                     ),
                 ],
                 'mobile' => ['nullable', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
-                'department_id' => [
-                    'required',
-                    'integer',
-                    Rule::exists('departments', 'id')->where(fn ($q) => $q->where('college_id', $collegeId)),
-                ],
+                'department_id' => $departmentRules,
                 'password' => ['required', 'string', 'min:8', 'confirmed'],
             ]);
 
@@ -181,14 +205,16 @@ class ProgramStudentController extends Controller
 
     public function edit(Program $program, ProgramStudent $student): View
     {
-        if ($student->program_id !== $program->id) {
-            abort(403, 'Unauthorized access to this student.');
-        }
+        $this->ensureProgramStudentInScope($program, $student);
 
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
 
-        $departments = Department::where('college_id', $program->college_id)->orderBy('name')->get();
+        $program->load('departments');
+        $scopedIds = $program->scopedDepartmentIds();
+        $departments = $scopedIds->isNotEmpty()
+            ? Department::where('college_id', $program->college_id)->whereIn('id', $scopedIds)->orderBy('name')->get()
+            : Department::where('college_id', $program->college_id)->orderBy('name')->get();
         $student->load(['user', 'collegeDepartment']);
 
         return view('manager.programs.students-edit', compact('program', 'student', 'credential', 'departments'));
@@ -196,21 +222,25 @@ class ProgramStudentController extends Controller
 
     public function update(Request $request, Program $program, ProgramStudent $student): RedirectResponse
     {
-        if ($student->program_id !== $program->id) {
-            abort(403, 'Unauthorized access to this student.');
-        }
+        $this->ensureProgramStudentInScope($program, $student);
 
         $collegeId = $program->college_id;
+
+        $program->loadMissing('departments');
+        $scopedIds = $program->scopedDepartmentIds();
+        $departmentRules = [
+            'required',
+            'integer',
+            $scopedIds->isNotEmpty()
+                ? Rule::in($scopedIds->all())
+                : Rule::exists('departments', 'id')->where(fn ($q) => $q->where('college_id', $collegeId)),
+        ];
 
         $validated = $request->validate([
             'student_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'mobile' => ['required', 'string', 'max:32', 'regex:/^[\d\s\+\-\(\)]+$/'],
-            'department_id' => [
-                'required',
-                'integer',
-                Rule::exists('departments', 'id')->where(fn ($q) => $q->where('college_id', $collegeId)),
-            ],
+            'department_id' => $departmentRules,
             'student_identifier' => ['nullable', 'string', 'max:255'],
             'manager_remarks' => ['nullable', 'string', 'max:10000'],
         ]);
@@ -231,9 +261,7 @@ class ProgramStudentController extends Controller
 
     public function destroy(Program $program, ProgramStudent $student): RedirectResponse
     {
-        if ($student->program_id !== $program->id) {
-            abort(403, 'Unauthorized access to this student.');
-        }
+        $this->ensureProgramStudentInScope($program, $student);
 
         $student->delete();
 
@@ -246,8 +274,9 @@ class ProgramStudentController extends Controller
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
 
+        $program->loadMissing('departments');
         $students = ProgramStudent::sortByRollThenName(
-            ProgramStudent::where('program_id', $program->id)
+            $program->programStudentsQuery()
                 ->with(['user.department', 'collegeDepartment'])
                 ->latest()
                 ->get()
@@ -273,8 +302,15 @@ class ProgramStudentController extends Controller
                 ->with('error', 'No remarks were submitted.');
         }
 
+        $program->loadMissing('departments');
+        $allowedIds = $program->programStudentsQuery()->pluck('id')->flip();
+        $updated = 0;
+
         foreach ($remarks as $studentId => $text) {
             $studentId = (int) $studentId;
+            if (! isset($allowedIds[$studentId])) {
+                continue;
+            }
             $text = trim((string) ($text ?? ''));
 
             ProgramStudent::where('program_id', $program->id)
@@ -282,9 +318,32 @@ class ProgramStudentController extends Controller
                 ->update([
                     'manager_remarks' => $text === '' ? null : $text,
                 ]);
+            $updated++;
+        }
+
+        if ($updated === 0) {
+            return redirect()->route('manager.program.remarks.index', $program)
+                ->with('error', 'No remarks were saved.');
         }
 
         return redirect()->route('manager.program.remarks.index', $program)
             ->with('success', 'Remarks saved successfully.');
+    }
+
+    private function ensureProgramStudentInScope(Program $program, ProgramStudent $student): void
+    {
+        if ($student->program_id !== $program->id) {
+            abort(403, 'Unauthorized access to this student.');
+        }
+
+        $program->loadMissing('departments');
+        $ids = $program->scopedDepartmentIds();
+        if ($ids->isEmpty()) {
+            return;
+        }
+
+        if ($student->department_id === null || ! $ids->contains((int) $student->department_id)) {
+            abort(404);
+        }
     }
 }

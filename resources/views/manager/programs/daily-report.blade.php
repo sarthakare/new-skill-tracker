@@ -38,7 +38,7 @@
                             @if($topic->subtopics->isNotEmpty())
                                 <ul class="ml-4 mt-1 list-disc list-inside space-y-0.5">
                                     @foreach($topic->subtopics as $sub)
-                                        <li>{{ $sub->title }}</li>
+                                        <li>{{ $sub->title }}@if($sub->scheduled_date || $sub->scheduled_time) <span class="text-slate-500">({{ trim(($sub->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($sub->scheduled_time ? substr($sub->scheduled_time, 0, 5) : '')) }})</span>@endif</li>
                                     @endforeach
                                 </ul>
                             @endif
@@ -107,7 +107,7 @@
                     @if($topic->subtopics->isNotEmpty())
                         <ul class="daily-report-subtopic-list">
                             @foreach($topic->subtopics as $sub)
-                                <li>{{ $sub->title }}</li>
+                                <li>{{ $sub->title }}@if($sub->scheduled_date || $sub->scheduled_time) ({{ trim(($sub->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($sub->scheduled_time ? substr($sub->scheduled_time, 0, 5) : '')) }})@endif</li>
                             @endforeach
                         </ul>
                     @endif

@@ -35,7 +35,7 @@
             </div>
             <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Students</p>
-                <p class="text-xl font-semibold text-slate-800">{{ $program->students->count() }}</p>
+                <p class="text-xl font-semibold text-slate-800">{{ $studentsInScopeCount }}</p>
             </div>
             <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Sessions</p>
@@ -70,7 +70,7 @@
                             <td class="px-4 py-2 text-sm">{{ $topic->title }}</td>
                             <td class="px-4 py-2 text-sm">
                                 @foreach($topic->subtopics as $sub)
-                                    <span class="{{ $sub->is_complete ? 'text-success' : 'text-slate-500' }}">{{ $sub->title }}</span>@if(!$loop->last), @endif
+                                    <span class="{{ $sub->is_complete ? 'text-success' : 'text-slate-500' }}">{{ $sub->title }}@if($sub->scheduled_date || $sub->scheduled_time)<span class="text-slate-400 font-normal"> ({{ trim(($sub->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($sub->scheduled_time ? substr($sub->scheduled_time, 0, 5) : '')) }})</span>@endif</span>@if(!$loop->last), @endif
                                 @endforeach
                                 @if($topic->subtopics->isEmpty())—@endif
                             </td>
@@ -115,7 +115,7 @@
         <tr><td class="completion-report-doc-label">Trainer</td><td>{{ $program->executorLabel() }}</td></tr>
         <tr><td class="completion-report-doc-label">Topics Completed</td><td>{{ $completedTopics }}/{{ $totalTopics }}</td></tr>
         <tr><td class="completion-report-doc-label">Subtopics Completed</td><td>{{ $completedSubtopics }}/{{ $totalSubtopics }}</td></tr>
-        <tr><td class="completion-report-doc-label">Students</td><td>{{ $program->students->count() }}</td></tr>
+        <tr><td class="completion-report-doc-label">Students</td><td>{{ $studentsInScopeCount }}</td></tr>
         <tr><td class="completion-report-doc-label">Sessions</td><td>{{ $program->sessions->count() }}</td></tr>
     </table>
 
@@ -145,7 +145,7 @@
                     <td>{{ $topic->title }}</td>
                     <td>
                         @foreach($topic->subtopics as $sub)
-                            {{ $sub->title }}@if(!$loop->last), @endif
+                            {{ $sub->title }}@if($sub->scheduled_date || $sub->scheduled_time) ({{ trim(($sub->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($sub->scheduled_time ? substr($sub->scheduled_time, 0, 5) : '')) }})@endif@if(!$loop->last), @endif
                         @endforeach
                         @if($topic->subtopics->isEmpty())—@endif
                     </td>

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Program extends Model
 {
@@ -32,6 +34,35 @@ class Program extends Model
     public function departments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'department_program');
+    }
+
+    /**
+     * Department IDs linked on the pivot. Empty means no rows (legacy: do not filter by department).
+     *
+     * @return Collection<int, int>
+     */
+    public function scopedDepartmentIds(): Collection
+    {
+        if ($this->relationLoaded('departments')) {
+            return $this->departments->pluck('id')->unique()->values();
+        }
+
+        return $this->departments()->pluck('id')->unique()->values();
+    }
+
+    /**
+     * Program students visible for this program: enrolled rows whose department matches linked departments.
+     * When the program has no linked departments, returns all enrolled students (legacy).
+     */
+    public function programStudentsQuery(): Builder
+    {
+        $query = ProgramStudent::query()->where('program_id', $this->id);
+        $deptIds = $this->scopedDepartmentIds();
+        if ($deptIds->isNotEmpty()) {
+            $query->whereIn('department_id', $deptIds);
+        }
+
+        return $query;
     }
 
     /**

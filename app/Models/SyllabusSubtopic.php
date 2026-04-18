@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SyllabusSubtopic extends Model
 {
-    protected $fillable = ['syllabus_topic_id', 'title', 'sort_order', 'is_complete'];
+    protected $fillable = ['syllabus_topic_id', 'title', 'sort_order', 'is_complete', 'scheduled_date', 'scheduled_time'];
 
     protected $casts = [
         'is_complete' => 'boolean',
+        'scheduled_date' => 'date',
     ];
 
     public function syllabusTopic(): BelongsTo

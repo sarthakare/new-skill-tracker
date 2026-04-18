@@ -15,13 +15,13 @@ class ProgramDashboardController extends Controller
             ->where('id', session('program_manager_credential_id'))
             ->firstOrFail();
 
-        $program->load(['event', 'students', 'sessions', 'completionRequests']);
+        $program->load(['event', 'departments', 'sessions', 'completionRequests']);
 
         $stats = [
             'program_name' => $program->name,
             'event_name' => $program->event->name,
             'status' => $program->status,
-            'students_count' => $program->students->count(),
+            'students_count' => $program->programStudentsQuery()->count(),
             'sessions_count' => $program->sessions->count(),
             'pending_completion' => $program->completionRequests->where('status', 'pending')->count(),
             'manager_name' => $credential->managerLabel(),

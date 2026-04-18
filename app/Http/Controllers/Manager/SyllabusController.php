@@ -62,6 +62,28 @@ class SyllabusController extends Controller
         return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $topic->id);
     }
 
+    public function updateSubtopicSchedule(Request $request, Program $program, SyllabusSubtopic $subtopic): RedirectResponse
+    {
+        if ($subtopic->syllabusTopic->program_id !== $program->id) {
+            abort(403);
+        }
+        $request->merge([
+            'scheduled_date' => $request->filled('scheduled_date') ? $request->input('scheduled_date') : null,
+            'scheduled_time' => $request->filled('scheduled_time') ? $request->input('scheduled_time') : null,
+        ]);
+        $validated = $request->validate([
+            'scheduled_date' => ['nullable', 'date'],
+            'scheduled_time' => ['nullable', 'date_format:H:i'],
+        ]);
+
+        $subtopic->update([
+            'scheduled_date' => $validated['scheduled_date'],
+            'scheduled_time' => $validated['scheduled_time'],
+        ]);
+
+        return redirect()->route('manager.program.syllabus.index', $program)->withFragment('topic-' . $subtopic->syllabusTopic->id);
+    }
+
     public function toggleTopicComplete(Program $program, SyllabusTopic $topic): RedirectResponse
     {
         if ($topic->program_id !== $program->id) {

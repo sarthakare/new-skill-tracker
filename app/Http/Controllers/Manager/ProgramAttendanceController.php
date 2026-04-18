@@ -43,7 +43,8 @@ class ProgramAttendanceController extends Controller
             'syllabus_topics.*' => ['integer', 'exists:syllabus_topics,id'],
         ]);
 
-        $studentIds = ProgramStudent::where('program_id', $program->id)->pluck('id')->toArray();
+        $program->loadMissing('departments');
+        $studentIds = $program->programStudentsQuery()->pluck('id')->toArray();
         $presentIds = $validated['attendance'] ?? [];
 
         foreach ($studentIds as $studentId) {
@@ -100,7 +101,8 @@ class ProgramAttendanceController extends Controller
         $taughtTopics = $session->taughtSyllabus()->with('subtopics')->orderBy('sort_order')->get();
 
         $presentCount = $attendance->where('status', 'present')->count();
-        $totalCount = ProgramStudent::where('program_id', $program->id)->count();
+        $program->loadMissing('departments');
+        $totalCount = $program->programStudentsQuery()->count();
 
         return view('manager.programs.daily-report', compact('program', 'session', 'credential', 'taughtTopics', 'presentCount', 'totalCount'));
     }
@@ -109,7 +111,8 @@ class ProgramAttendanceController extends Controller
     {
         $credential = ProgramManagerCredential::where('id', session('program_manager_credential_id'))
             ->firstOrFail();
-        $program->load(['syllabusTopics.subtopics', 'students', 'sessions', 'completionRequests', 'event', 'college', 'vendorManager', 'independentManager']);
+        $program->load(['syllabusTopics.subtopics', 'departments', 'sessions', 'completionRequests', 'event', 'college', 'vendorManager', 'independentManager']);
+        $studentsInScopeCount = $program->programStudentsQuery()->count();
         $topics = $program->syllabusTopics;
         $totalTopics = $topics->count();
         $completedTopics = $topics->where('is_complete', true)->count();
@@ -117,7 +120,7 @@ class ProgramAttendanceController extends Controller
         $completedSubtopics = $topics->sum(fn ($t) => $t->subtopics->where('is_complete', true)->count());
         $latestCompletion = $program->completionRequests->sortByDesc('created_at')->first();
 
-        return view('manager.programs.completion-report', compact('program', 'credential', 'topics', 'totalTopics', 'completedTopics', 'totalSubtopics', 'completedSubtopics', 'latestCompletion'));
+        return view('manager.programs.completion-report', compact('program', 'credential', 'topics', 'totalTopics', 'completedTopics', 'totalSubtopics', 'completedSubtopics', 'latestCompletion', 'studentsInScopeCount'));
     }
 
     /**
@@ -125,8 +128,10 @@ class ProgramAttendanceController extends Controller
      */
     private function programStudentsOrdered(Program $program)
     {
+        $program->loadMissing('departments');
+
         return ProgramStudent::sortByRollThenName(
-            ProgramStudent::where('program_id', $program->id)
+            $program->programStudentsQuery()
                 ->with(['collegeDepartment', 'user'])
                 ->get()
         );

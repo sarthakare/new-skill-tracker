@@ -49,6 +49,7 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::put('/{program}/syllabus/subtopics/{subtopic}', [SyllabusController::class, 'updateSubtopic'])->name('syllabus.subtopics.update');
     Route::delete('/{program}/syllabus/subtopics/{subtopic}', [SyllabusController::class, 'destroySubtopic'])->name('syllabus.subtopics.destroy');
     Route::post('/{program}/syllabus/subtopics/{subtopic}/toggle-complete', [SyllabusController::class, 'toggleSubtopicComplete'])->name('syllabus.subtopics.toggle-complete');
+    Route::post('/{program}/syllabus/subtopics/{subtopic}/schedule', [SyllabusController::class, 'updateSubtopicSchedule'])->name('syllabus.subtopics.schedule');
 
     Route::get('/{program}/completion', [ProgramCompletionController::class, 'create'])->name('completion.create');
     Route::post('/{program}/completion', [ProgramCompletionController::class, 'store'])->name('completion.store');
