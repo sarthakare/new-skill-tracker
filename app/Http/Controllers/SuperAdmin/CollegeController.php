@@ -78,7 +78,9 @@ class CollegeController extends Controller
      */
     public function edit(College $college): View
     {
-        return view('super-admin.colleges.edit', compact('college'));
+        $collegeAdmin = $college->collegeAdmins()->first();
+
+        return view('super-admin.colleges.edit', compact('college', 'collegeAdmin'));
     }
 
     /**
@@ -86,7 +88,38 @@ class CollegeController extends Controller
      */
     public function update(UpdateCollegeRequest $request, College $college): RedirectResponse
     {
-        $college->update($request->validated());
+        $validated = $request->validated();
+
+        DB::transaction(function () use ($validated, $college) {
+            $college->update([
+                'name' => $validated['name'],
+                'code' => $validated['code'],
+                'contact_email' => $validated['contact_email'],
+                'status' => $validated['status'],
+            ]);
+
+            $admin = $college->collegeAdmins()->first();
+            $password = $validated['admin_password'] ?? null;
+
+            if ($admin) {
+                $updates = [
+                    'name' => $validated['admin_name'],
+                    'email' => $validated['admin_email'],
+                ];
+                if (filled($password)) {
+                    $updates['password'] = Hash::make($password);
+                }
+                $admin->update($updates);
+            } else {
+                User::create([
+                    'name' => $validated['admin_name'],
+                    'email' => $validated['admin_email'],
+                    'password' => Hash::make($password),
+                    'role' => 'COLLEGE_ADMIN',
+                    'college_id' => $college->id,
+                ]);
+            }
+        });
 
         return redirect()->route('super-admin.colleges.index')
             ->with('success', 'College updated successfully.');

@@ -90,13 +90,11 @@
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password <span class="text-red-500" aria-hidden="true">*</span></label>
-                        <input type="password" id="password" name="password" required autocomplete="new-password"
-                               class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                        <x-password-input id="password" name="password" required autocomplete="new-password" class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" />
                     </div>
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Confirm password <span class="text-red-500" aria-hidden="true">*</span></label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"
-                               class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                        <x-password-input id="password_confirmation" name="password_confirmation" required autocomplete="new-password" class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" />
                     </div>
                     <button type="submit" class="w-full mt-2 py-3 px-4 rounded-button font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                         Create account

@@ -61,13 +61,13 @@
             </div>
             <div>
                 <label for="admin_password" class="block text-sm font-medium text-slate-700 mb-1">Admin Password <span class="text-red-500">*</span></label>
-                <input type="password" id="admin_password" name="admin_password" required class="w-full rounded-input border @error('admin_password') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
+                <x-password-input id="admin_password" name="admin_password" required class="w-full rounded-input border @error('admin_password') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary" />
                 <p class="mt-1 text-xs text-slate-500">Minimum 8 characters. Save this securely after creation.</p>
                 @error('admin_password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label for="admin_password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Confirm Admin Password <span class="text-red-500">*</span></label>
-                <input type="password" id="admin_password_confirmation" name="admin_password_confirmation" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                <x-password-input id="admin_password_confirmation" name="admin_password_confirmation" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" />
             </div>
             <div class="flex flex-wrap gap-2 justify-end pt-2">
                 <a href="{{ route('super-admin.colleges.index') }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Cancel</a>

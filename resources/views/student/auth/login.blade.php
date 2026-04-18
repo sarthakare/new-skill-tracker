@@ -58,8 +58,7 @@
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-1.5">Password <span class="text-red-500">*</span></label>
-                        <input type="password" id="password" name="password" required
-                               class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                        <x-password-input id="password" name="password" required class="w-full px-4 py-2.5 rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" />
                     </div>
                     <div class="flex items-center">
                         <input type="checkbox" id="remember" name="remember" value="1" class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary">

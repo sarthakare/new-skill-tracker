@@ -73,14 +73,12 @@
                 <div class="space-y-4">
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700 mb-1">New password</label>
-                        <input type="password" id="password" name="password" value="" autocomplete="new-password"
-                               class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('password') border-red-500 @enderror">
+                        <x-password-input id="password" name="password" value="" autocomplete="new-password" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('password') border-red-500 @enderror" />
                         @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-slate-700 mb-1">Confirm new password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" value="" autocomplete="new-password"
-                               class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
+                        <x-password-input id="password_confirmation" name="password_confirmation" value="" autocomplete="new-password" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" />
                     </div>
                 </div>
             </div>
