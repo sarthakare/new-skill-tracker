@@ -16,10 +16,6 @@
     </a>
 </div>
 
-@if(session('success'))
-    <div class="mb-4 p-4 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">{{ session('success') }}</div>
-@endif
-
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-slate-800">All students</h2>

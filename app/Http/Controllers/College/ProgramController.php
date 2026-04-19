@@ -85,7 +85,7 @@ class ProgramController extends Controller
         $managerId = $this->resolveManagerId($validated);
 
         if (empty($managerId)) {
-            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Independent Trainer).')->withInput();
+            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Professors/Trainers).')->withInput();
         }
 
         if (! $this->managerBelongsToCollege($validated['manager_type'], $managerId, $collegeId)) {
@@ -229,7 +229,7 @@ class ProgramController extends Controller
         $managerId = $this->resolveManagerId($validated);
 
         if (empty($managerId)) {
-            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Independent Trainer).')->withInput();
+            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Professors/Trainers).')->withInput();
         }
 
         if (! $this->managerBelongsToCollege($validated['manager_type'], $managerId, $collegeId)) {

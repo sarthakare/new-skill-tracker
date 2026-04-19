@@ -79,7 +79,7 @@
                     <select name="manager_type" id="manager_type" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">-- Select who runs the subject/program --</option>
                         <option value="Vendor" {{ old('manager_type', in_array($program->manager_type, ['Vendor','Independent']) ? $program->manager_type : 'Vendor') === 'Vendor' ? 'selected' : '' }}>Vendor</option>
-                        <option value="Independent" {{ old('manager_type', $program->manager_type) === 'Independent' ? 'selected' : '' }}>Independent Trainer</option>
+                        <option value="Independent" {{ old('manager_type', $program->manager_type) === 'Independent' ? 'selected' : '' }}>Professors/Trainers</option>
                     </select>
                 </div>
                 <div class="executor-select hidden mt-3" data-type="Vendor">
@@ -92,15 +92,16 @@
                     </select>
                 </div>
                 <div class="executor-select hidden mt-3" data-type="Independent">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Independent Trainer <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Professors/Trainers <span class="text-red-500">*</span></label>
                     <select name="independent_manager_id" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
-                        <option value="">-- Select Trainer --</option>
+                        <option value="">-- Select --</option>
                         @foreach($independents as $trainer)
                             <option value="{{ $trainer->id }}" {{ old('independent_manager_id', $program->manager_type === 'Independent' ? $program->manager_id : null) == $trainer->id ? 'selected' : '' }}>{{ $trainer->name }}</option>
                         @endforeach
                     </select>
                 </div>
             </div>
+            {{-- Assign Subject/Program manager (internal) — hidden
             <div class="border-t border-border pt-4">
                 <h3 class="text-sm font-semibold text-slate-800 mb-2">Assign Subject/Program manager (internal)</h3>
                 <p class="text-sm text-slate-500 mb-3">Optional. An internal manager can manage students, mark attendance, assign points, and generate reports.</p>
@@ -115,6 +116,8 @@
                     @error('internal_manager_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
+            --}}
+            <input type="hidden" name="internal_manager_id" value="{{ old('internal_manager_id', $program->internal_manager_id ?? ($program->manager_type === 'Internal' ? $program->manager_id : null)) ?? '' }}">
             <div class="flex gap-2 pt-2">
                 <button type="submit" id="program-edit-submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Update</button>
                 <a href="{{ route('college.events.programs.index', $event) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Cancel</a>

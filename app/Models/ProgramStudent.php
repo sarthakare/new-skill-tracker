@@ -138,4 +138,9 @@ class ProgramStudent extends Model
     {
         return $this->hasMany(ProgramFeedback::class);
     }
+
+    public function assignmentRemarks(): HasMany
+    {
+        return $this->hasMany(ProgramStudentAssignmentRemark::class);
+    }
 }

@@ -302,29 +302,45 @@
 
                         @php
                             $remarksSubmissions = $submissionsByProgramId->get($program->id, collect());
+                            $assignmentRemarkRows = $assignmentRemarksByEnrollmentId->get($enrollment->id, collect());
+                            $subsByAssignment = $remarksSubmissions->groupBy('syllabus_assignment_id')->map(fn ($g) => $g->sortByDesc('created_at')->first());
                         @endphp
                         <div class="mx-5 mb-5 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/95 to-amber-50/50 px-4 py-3.5 sm:mx-6">
                             <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Subject/Program manager remarks</p>
-                            @if($remarksSubmissions->isNotEmpty())
+                            @if($subsByAssignment->isNotEmpty())
                                 <div class="mt-3 border-b border-amber-200/50 pb-3">
                                     <p class="text-xs font-semibold text-amber-900/90">Your submitted assignments</p>
-                                    <ul class="mt-2 space-y-2 text-sm">
-                                        @foreach($remarksSubmissions as $sub)
-                                            <li class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                                <span class="font-medium text-slate-900">{{ $sub->syllabusAssignment->title }}</span>
-                                                <span class="inline-flex rounded-md bg-emerald-100/90 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-900">Submitted</span>
-                                                <span class="text-xs text-slate-600 tabular-nums">{{ $sub->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>
+                                    <ul class="mt-2 space-y-3 text-sm">
+                                        @foreach($subsByAssignment as $aid => $sub)
+                                            @php $note = $assignmentRemarkRows->get($aid)?->remarks; @endphp
+                                            <li class="rounded-lg border border-amber-200/40 bg-white/60 px-3 py-2">
+                                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                    <span class="font-medium text-slate-900">{{ $sub->syllabusAssignment->title }}</span>
+                                                    <span class="inline-flex rounded-md bg-emerald-100/90 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-900">Submitted</span>
+                                                    <span class="text-xs text-slate-600 tabular-nums">{{ $sub->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>
+                                                </div>
+                                                @if(filled($note))
+                                                    <p class="mt-2 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap border-l-2 border-amber-400/80 pl-2">{{ $note }}</p>
+                                                @endif
                                             </li>
                                         @endforeach
                                     </ul>
                                 </div>
                             @endif
+                            @foreach($assignmentRemarkRows as $aid => $row)
+                                @if(filled($row->remarks) && ! $subsByAssignment->has($aid))
+                                    <div class="mt-3 rounded-lg border border-amber-200/50 bg-white/50 px-3 py-2">
+                                        <p class="text-xs font-semibold text-amber-900/90">{{ $row->syllabusAssignment?->title ?? 'Assignment' }}</p>
+                                        <p class="mt-1 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $row->remarks }}</p>
+                                    </div>
+                                @endif
+                            @endforeach
                             @if($enrollment->manager_remarks)
-                                <p class="mt-2 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $enrollment->manager_remarks }}</p>
-                            @elseif($remarksSubmissions->isEmpty())
+                                <p class="mt-3 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $enrollment->manager_remarks }}</p>
+                            @elseif($subsByAssignment->isEmpty() && $assignmentRemarkRows->filter(fn ($r) => filled($r->remarks))->isEmpty())
                                 <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this subject/program yet.</p>
-                            @else
-                                <p class="mt-2 text-sm text-slate-600">No additional written remarks from your instructor yet.</p>
+                            @elseif(! $enrollment->manager_remarks && ($subsByAssignment->isNotEmpty() || $assignmentRemarkRows->filter(fn ($r) => filled($r->remarks))->isNotEmpty()))
+                                <p class="mt-2 text-sm text-slate-600">No overall subject/program note from your instructor yet.</p>
                             @endif
                         </div>
                         </div>

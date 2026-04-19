@@ -93,7 +93,7 @@
 
             <div class="rounded-lg border border-info bg-info/10 px-4 py-3 text-sm text-slate-700 flex items-start gap-2">
                 <svg class="w-5 h-5 shrink-0 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>Year/Semester/Event will be created with status <strong>DRAFT</strong>. After saving, add subjects/programs under this year/semester/event and assign Vendor, Independent Trainer, or Internal Manager to each subject/program.</span>
+                <span>Year/Semester/Event will be created with status <strong>DRAFT</strong>. After saving, add subjects/programs under this year/semester/event and assign Vendor, Professors/Trainers, or Internal Manager to each subject/program.</span>
             </div>
 
             <div class="flex flex-wrap gap-2 justify-end pt-2">

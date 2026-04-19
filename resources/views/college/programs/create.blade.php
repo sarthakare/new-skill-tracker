@@ -19,7 +19,7 @@
 @php
     $missingManagers = collect();
     if ($vendors->isEmpty()) $missingManagers->push(['Vendors', route('college.vendors.create')]);
-    if ($independents->isEmpty()) $missingManagers->push(['Independent Trainers', route('college.independent-trainers.create')]);
+    if ($independents->isEmpty()) $missingManagers->push(['Professors/Trainers', route('college.independent-trainers.create')]);
     if ($departments->isEmpty()) $missingManagers->push(['Departments', route('college.departments.create')]);
 @endphp
 @if($missingManagers->isNotEmpty())
@@ -83,13 +83,13 @@
 
             <div class="border-t border-border pt-4 mt-4">
                 <h3 class="text-sm font-semibold text-slate-800 mb-1">Who runs the subject/program?</h3>
-                <p class="text-sm text-slate-500 mb-3">Assign a Vendor or Independent Trainer who will deliver/run the subject/program.</p>
+                <p class="text-sm text-slate-500 mb-3">Assign a Vendor or select from Professors/Trainers for who will deliver/run the subject/program.</p>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Executor type <span class="text-red-500">*</span></label>
                     <select name="manager_type" id="manager_type" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">-- Select who runs the subject/program --</option>
                         <option value="Vendor" {{ old('manager_type') === 'Vendor' ? 'selected' : '' }}>Vendor</option>
-                        <option value="Independent" {{ old('manager_type') === 'Independent' ? 'selected' : '' }}>Independent Trainer</option>
+                        <option value="Independent" {{ old('manager_type') === 'Independent' ? 'selected' : '' }}>Professors/Trainers</option>
                     </select>
                 </div>
                 <div class="executor-select hidden mt-3" data-type="Vendor">
@@ -102,9 +102,9 @@
                     </select>
                 </div>
                 <div class="executor-select hidden mt-3" data-type="Independent">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Independent Trainer <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Professors/Trainers <span class="text-red-500">*</span></label>
                     <select name="independent_manager_id" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
-                        <option value="">-- Select Trainer --</option>
+                        <option value="">-- Select --</option>
                         @foreach($independents as $trainer)
                             <option value="{{ $trainer->id }}" {{ old('independent_manager_id') == $trainer->id ? 'selected' : '' }}>{{ $trainer->name }}</option>
                         @endforeach
@@ -112,6 +112,7 @@
                 </div>
             </div>
 
+            {{-- Assign Subject/Program manager (internal) — hidden
             <div class="border-t border-border pt-4 mt-4">
                 <h3 class="text-sm font-semibold text-slate-800 mb-1">Assign Subject/Program manager (internal)</h3>
                 <p class="text-sm text-slate-500 mb-3">Optional. An internal manager can manage students, mark attendance, assign points, and generate reports.</p>
@@ -126,6 +127,7 @@
                     @error('internal_manager_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
+            --}}
 
             <div class="flex gap-2 pt-2">
                 <button type="submit" id="program-form-submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Save</button>

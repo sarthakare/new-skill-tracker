@@ -48,11 +48,11 @@ class IndependentTrainerController extends Controller
             'college_id' => Auth::user()->college_id,
             'user_id' => Auth::id(),
             'action' => 'independent_trainer.created',
-            'description' => "Independent trainer '{$trainer->name}' was created",
+            'description' => "Professors/Trainers '{$trainer->name}' was created",
         ]);
 
         return redirect()->route('college.independent-trainers.index')
-            ->with('success', 'Independent trainer created successfully.');
+            ->with('success', 'Professors/Trainers entry created successfully.');
     }
 
     public function edit(IndependentTrainer $independentTrainer): View
@@ -79,11 +79,11 @@ class IndependentTrainerController extends Controller
             'college_id' => Auth::user()->college_id,
             'user_id' => Auth::id(),
             'action' => 'independent_trainer.updated',
-            'description' => "Independent trainer '{$independentTrainer->name}' was updated",
+            'description' => "Professors/Trainers '{$independentTrainer->name}' was updated",
         ]);
 
         return redirect()->route('college.independent-trainers.index')
-            ->with('success', 'Independent trainer updated successfully.');
+            ->with('success', 'Professors/Trainers entry updated successfully.');
     }
 
     public function destroy(IndependentTrainer $independentTrainer): RedirectResponse
@@ -97,11 +97,11 @@ class IndependentTrainerController extends Controller
             'college_id' => Auth::user()->college_id,
             'user_id' => Auth::id(),
             'action' => 'independent_trainer.deleted',
-            'description' => "Independent trainer '{$trainerName}' was deleted",
+            'description' => "Professors/Trainers '{$trainerName}' was deleted",
         ]);
 
         return redirect()->route('college.independent-trainers.index')
-            ->with('success', 'Independent trainer deleted successfully.');
+            ->with('success', 'Professors/Trainers entry deleted successfully.');
     }
 
     private function ensureCollegeScope(IndependentTrainer $trainer): void

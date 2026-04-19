@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Edit Independent Trainer')
+@section('title', 'Edit Professors/Trainers')
 
 @section('content')
 <div class="mb-6">
@@ -8,13 +8,13 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
         </span>
-        Edit Independent Trainer
+        Edit Professors/Trainers
     </h1>
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Trainer details</h2>
+        <h2 class="text-lg font-semibold text-slate-800">Professors/Trainers details</h2>
     </div>
     <div class="p-5">
         <form action="{{ route('college.independent-trainers.update', $independentTrainer) }}" method="POST" class="space-y-4">

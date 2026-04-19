@@ -135,7 +135,7 @@
             </table>
             @else
             <div class="p-8 text-center text-slate-500 text-sm">
-                No subjects/programs yet. <a href="{{ route('college.events.programs.create', $event) }}" class="text-primary font-medium hover:underline">Add a subject/program</a> and assign who runs it (Vendor or Independent Trainer) and an internal Subject/Program manager.
+                No subjects/programs yet. <a href="{{ route('college.events.programs.create', $event) }}" class="text-primary font-medium hover:underline">Add a subject/program</a> and assign who runs it (Vendor or Professors/Trainers) and an internal Subject/Program manager.
             </div>
             @endif
         </div>

@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Add Independent Trainer')
+@section('title', 'Add Professors/Trainers')
 
 @section('content')
 <div class="mb-6">
@@ -8,13 +8,13 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
         </span>
-        Add Independent Trainer
+        Add Professors/Trainers
     </h1>
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Trainer details</h2>
+        <h2 class="text-lg font-semibold text-slate-800">Professors/Trainers details</h2>
     </div>
     <div class="p-5">
         <form action="{{ route('college.independent-trainers.store') }}" method="POST" class="space-y-4">

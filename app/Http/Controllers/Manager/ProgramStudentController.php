@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Program;
 use App\Models\ProgramManagerCredential;
 use App\Models\ProgramStudent;
+use App\Models\ProgramStudentAssignmentRemark;
 use App\Models\SyllabusAssignment;
 use App\Models\SyllabusAssignmentSubmission;
 use App\Models\User;
@@ -288,11 +289,29 @@ class ProgramStudentController extends Controller
 
         $submissionGroupsByUserId = $this->submissionGroupsForProgramStudents($program, $students);
 
+        $programAssignments = $this->programAssignmentsOrderedForProgram($program);
+        $assignmentIds = $programAssignments->pluck('id');
+
+        $assignmentRemarksLookup = collect();
+        if ($assignmentIds->isNotEmpty() && $students->isNotEmpty()) {
+            $assignmentRemarksLookup = ProgramStudentAssignmentRemark::query()
+                ->whereIn('program_student_id', $students->pluck('id'))
+                ->whereIn('syllabus_assignment_id', $assignmentIds)
+                ->get()
+                ->groupBy('program_student_id')
+                ->map(fn (Collection $rows) => $rows->keyBy('syllabus_assignment_id'));
+        }
+
+        $latestSubmissionByUserAssignmentKey = $this->latestSubmissionsKeyedByUserAndAssignment($submissionGroupsByUserId);
+
         return view('manager.programs.remarks', compact(
             'program',
             'students',
             'credential',
-            'submissionGroupsByUserId'
+            'submissionGroupsByUserId',
+            'programAssignments',
+            'assignmentRemarksLookup',
+            'latestSubmissionByUserAssignmentKey'
         ));
     }
 
@@ -301,21 +320,26 @@ class ProgramStudentController extends Controller
         $validated = $request->validate([
             'remarks' => ['nullable', 'array'],
             'remarks.*' => ['nullable', 'string', 'max:10000'],
+            'assignment_remarks' => ['nullable', 'array'],
+            'assignment_remarks.*' => ['nullable', 'array'],
+            'assignment_remarks.*.*' => ['nullable', 'string', 'max:10000'],
         ]);
 
         $remarks = $validated['remarks'] ?? [];
-        if (empty($remarks)) {
-            return redirect()->route('manager.program.remarks.index', $program)
-                ->with('error', 'No remarks were submitted.');
-        }
+        $assignmentRemarks = $validated['assignment_remarks'] ?? [];
 
         $program->loadMissing('departments');
-        $allowedIds = $program->programStudentsQuery()->pluck('id')->flip();
+        $allowedStudentIds = $program->programStudentsQuery()->pluck('id')->flip();
+        $allowedAssignmentIds = SyllabusAssignment::query()
+            ->whereHas('syllabusSubtopic.syllabusTopic', fn ($q) => $q->where('program_id', $program->id))
+            ->pluck('id')
+            ->flip();
+
         $updated = 0;
 
         foreach ($remarks as $studentId => $text) {
             $studentId = (int) $studentId;
-            if (! isset($allowedIds[$studentId])) {
+            if (! isset($allowedStudentIds[$studentId])) {
                 continue;
             }
             $text = trim((string) ($text ?? ''));
@@ -328,6 +352,35 @@ class ProgramStudentController extends Controller
             $updated++;
         }
 
+        foreach ($assignmentRemarks as $programStudentId => $byAssignment) {
+            $programStudentId = (int) $programStudentId;
+            if (! isset($allowedStudentIds[$programStudentId]) || ! is_array($byAssignment)) {
+                continue;
+            }
+            foreach ($byAssignment as $assignmentId => $text) {
+                $assignmentId = (int) $assignmentId;
+                if (! isset($allowedAssignmentIds[$assignmentId])) {
+                    continue;
+                }
+                $text = trim((string) ($text ?? ''));
+                if ($text === '') {
+                    ProgramStudentAssignmentRemark::query()
+                        ->where('program_student_id', $programStudentId)
+                        ->where('syllabus_assignment_id', $assignmentId)
+                        ->delete();
+                } else {
+                    ProgramStudentAssignmentRemark::updateOrCreate(
+                        [
+                            'program_student_id' => $programStudentId,
+                            'syllabus_assignment_id' => $assignmentId,
+                        ],
+                        ['remarks' => $text]
+                    );
+                }
+                $updated++;
+            }
+        }
+
         if ($updated === 0) {
             return redirect()->route('manager.program.remarks.index', $program)
                 ->with('error', 'No remarks were saved.');
@@ -335,6 +388,40 @@ class ProgramStudentController extends Controller
 
         return redirect()->route('manager.program.remarks.index', $program)
             ->with('success', 'Remarks saved successfully.');
+    }
+
+    /**
+     * @return Collection<int, SyllabusAssignment>
+     */
+    private function programAssignmentsOrderedForProgram(Program $program): Collection
+    {
+        return SyllabusAssignment::query()
+            ->whereHas('syllabusSubtopic.syllabusTopic', fn ($q) => $q->where('program_id', $program->id))
+            ->with(['syllabusSubtopic.syllabusTopic'])
+            ->get()
+            ->sortBy([
+                fn (SyllabusAssignment $a) => $a->syllabusSubtopic->syllabusTopic->sort_order ?? 0,
+                fn (SyllabusAssignment $a) => $a->syllabusSubtopic->sort_order ?? 0,
+                fn (SyllabusAssignment $a) => $a->id,
+            ])
+            ->values();
+    }
+
+    /**
+     * @param  Collection<int, Collection<int, SyllabusAssignmentSubmission>>  $submissionGroupsByUserId
+     * @return array<string, SyllabusAssignmentSubmission>
+     */
+    private function latestSubmissionsKeyedByUserAndAssignment(Collection $submissionGroupsByUserId): array
+    {
+        $out = [];
+        foreach ($submissionGroupsByUserId as $userId => $subs) {
+            $byAssignment = $subs->groupBy('syllabus_assignment_id')->map(fn (Collection $g) => $g->first());
+            foreach ($byAssignment as $assignmentId => $submission) {
+                $out[(int) $userId.'-'.(int) $assignmentId] = $submission;
+            }
+        }
+
+        return $out;
     }
 
     /**

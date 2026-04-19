@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\ProgramAttendance;
 use App\Models\ProgramStudent;
+use App\Models\ProgramStudentAssignmentRemark;
 use App\Models\SyllabusAssignment;
 use App\Models\SyllabusAssignmentSubmission;
 use App\Models\SyllabusTopic;
@@ -55,6 +56,16 @@ class DashboardController extends Controller
             }
         }
 
+        $assignmentRemarksByEnrollmentId = collect();
+        if ($enrollments->isNotEmpty()) {
+            $assignmentRemarksByEnrollmentId = ProgramStudentAssignmentRemark::query()
+                ->whereIn('program_student_id', $enrollments->pluck('id'))
+                ->with(['syllabusAssignment'])
+                ->get()
+                ->groupBy('program_student_id')
+                ->map(fn ($rows) => $rows->keyBy('syllabus_assignment_id'));
+        }
+
         $syllabusTopicsByProgram = $programIds->isEmpty()
             ? collect()
             : SyllabusTopic::query()
@@ -98,6 +109,7 @@ class DashboardController extends Controller
             'activeAssignmentSubmission' => $activeAssignmentSubmission,
             'codeRunnerLanguages' => $codeRunnerLanguages,
             'submissionsByProgramId' => $submissionsByProgramId,
+            'assignmentRemarksByEnrollmentId' => $assignmentRemarksByEnrollmentId,
         ]);
     }
 }
