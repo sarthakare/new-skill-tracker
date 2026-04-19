@@ -8,6 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Recover from a failed run that left the table without recording the migration (MySQL).
+        Schema::dropIfExists('syllabus_assignment_submissions');
+
         Schema::create('syllabus_assignment_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
