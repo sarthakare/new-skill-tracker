@@ -14,7 +14,8 @@ return new class extends Migration
             $table->foreignId('syllabus_assignment_id')->constrained()->onDelete('cascade');
             $table->timestamps();
 
-            $table->unique(['user_id', 'syllabus_assignment_id']);
+            // MySQL max identifier length is 64; Laravel's default name exceeds that for this table.
+            $table->unique(['user_id', 'syllabus_assignment_id'], 'sas_user_assignment_unique');
         });
     }
 
