@@ -59,7 +59,8 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Remarks for this student</label>
-                    <p class="text-xs text-slate-500 mb-2">Visible to the student on their dashboard for this subject/program.</p>
+                    <p class="text-xs text-slate-500 mb-2">Submitted assignments are listed first (use <span class="font-medium text-slate-600">View submission</span> for code). Free-text remarks below are visible to the student on their dashboard for this subject/program.</p>
+                    @include('manager.partials.student-assignment-submissions', ['submissions' => $assignmentSubmissions ?? collect()])
                     <textarea name="manager_remarks" rows="4" placeholder="Optional feedback, notes, or recognition…" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('manager_remarks') border-red-500 @enderror">{{ old('manager_remarks', $student->manager_remarks) }}</textarea>
                     @error('manager_remarks')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>

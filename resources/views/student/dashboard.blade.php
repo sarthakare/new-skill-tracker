@@ -300,12 +300,31 @@
                             </div>
                         @endif
 
+                        @php
+                            $remarksSubmissions = $submissionsByProgramId->get($program->id, collect());
+                        @endphp
                         <div class="mx-5 mb-5 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/95 to-amber-50/50 px-4 py-3.5 sm:mx-6">
                             <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Subject/Program manager remarks</p>
+                            @if($remarksSubmissions->isNotEmpty())
+                                <div class="mt-3 border-b border-amber-200/50 pb-3">
+                                    <p class="text-xs font-semibold text-amber-900/90">Your submitted assignments</p>
+                                    <ul class="mt-2 space-y-2 text-sm">
+                                        @foreach($remarksSubmissions as $sub)
+                                            <li class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                <span class="font-medium text-slate-900">{{ $sub->syllabusAssignment->title }}</span>
+                                                <span class="inline-flex rounded-md bg-emerald-100/90 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-900">Submitted</span>
+                                                <span class="text-xs text-slate-600 tabular-nums">{{ $sub->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             @if($enrollment->manager_remarks)
                                 <p class="mt-2 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $enrollment->manager_remarks }}</p>
-                            @else
+                            @elseif($remarksSubmissions->isEmpty())
                                 <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this subject/program yet.</p>
+                            @else
+                                <p class="mt-2 text-sm text-slate-600">No additional written remarks from your instructor yet.</p>
                             @endif
                         </div>
                         </div>

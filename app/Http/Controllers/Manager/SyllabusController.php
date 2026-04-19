@@ -19,7 +19,7 @@ class SyllabusController extends Controller
             ->firstOrFail();
         $program->load(['event', 'college', 'vendorManager', 'independentManager']);
         $topics = SyllabusTopic::where('program_id', $program->id)
-            ->with(['subtopics.assignments.submissions.user'])
+            ->with(['subtopics.assignments'])
             ->orderBy('sort_order')
             ->get();
 

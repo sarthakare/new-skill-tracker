@@ -7,9 +7,12 @@ use App\Models\Department;
 use App\Models\Program;
 use App\Models\ProgramManagerCredential;
 use App\Models\ProgramStudent;
+use App\Models\SyllabusAssignment;
+use App\Models\SyllabusAssignmentSubmission;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -216,8 +219,9 @@ class ProgramStudentController extends Controller
             ? Department::where('college_id', $program->college_id)->whereIn('id', $scopedIds)->orderBy('name')->get()
             : Department::where('college_id', $program->college_id)->orderBy('name')->get();
         $student->load(['user', 'collegeDepartment']);
+        $assignmentSubmissions = $this->submissionsForProgramStudent($program, $student);
 
-        return view('manager.programs.students-edit', compact('program', 'student', 'credential', 'departments'));
+        return view('manager.programs.students-edit', compact('program', 'student', 'credential', 'departments', 'assignmentSubmissions'));
     }
 
     public function update(Request $request, Program $program, ProgramStudent $student): RedirectResponse
@@ -282,10 +286,13 @@ class ProgramStudentController extends Controller
                 ->get()
         );
 
+        $submissionGroupsByUserId = $this->submissionGroupsForProgramStudents($program, $students);
+
         return view('manager.programs.remarks', compact(
             'program',
             'students',
-            'credential'
+            'credential',
+            'submissionGroupsByUserId'
         ));
     }
 
@@ -328,6 +335,58 @@ class ProgramStudentController extends Controller
 
         return redirect()->route('manager.program.remarks.index', $program)
             ->with('success', 'Remarks saved successfully.');
+    }
+
+    /**
+     * @return Collection<int, Collection<int, SyllabusAssignmentSubmission>>
+     */
+    private function submissionGroupsForProgramStudents(Program $program, Collection $students): Collection
+    {
+        $assignmentIds = SyllabusAssignment::query()
+            ->whereHas('syllabusSubtopic.syllabusTopic', fn ($q) => $q->where('program_id', $program->id))
+            ->pluck('id');
+
+        if ($assignmentIds->isEmpty()) {
+            return collect();
+        }
+
+        $userIds = $students->pluck('user_id')->filter()->unique()->values();
+        if ($userIds->isEmpty()) {
+            return collect();
+        }
+
+        return SyllabusAssignmentSubmission::query()
+            ->whereIn('syllabus_assignment_id', $assignmentIds)
+            ->whereIn('user_id', $userIds)
+            ->with(['syllabusAssignment'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->groupBy('user_id');
+    }
+
+    /**
+     * @return Collection<int, SyllabusAssignmentSubmission>
+     */
+    private function submissionsForProgramStudent(Program $program, ProgramStudent $student): Collection
+    {
+        if (! $student->user_id) {
+            return collect();
+        }
+
+        $assignmentIds = SyllabusAssignment::query()
+            ->whereHas('syllabusSubtopic.syllabusTopic', fn ($q) => $q->where('program_id', $program->id))
+            ->pluck('id');
+
+        if ($assignmentIds->isEmpty()) {
+            return collect();
+        }
+
+        return SyllabusAssignmentSubmission::query()
+            ->where('user_id', $student->user_id)
+            ->whereIn('syllabus_assignment_id', $assignmentIds)
+            ->with(['syllabusAssignment'])
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     private function ensureProgramStudentInScope(Program $program, ProgramStudent $student): void

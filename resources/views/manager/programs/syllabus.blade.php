@@ -12,7 +12,6 @@
     $assignmentCount = $topics->sum(fn ($t) => $t->subtopics->sum(fn ($s) => $s->assignments->count()));
     $topicPct = $topicCount > 0 ? (int) min(100, round(100 * $topicsDone / $topicCount)) : 0;
     $subPct = $subtopicCount > 0 ? (int) min(100, round(100 * $subtopicsDone / $subtopicCount)) : 0;
-    $judge0LanguagesById = collect(config('judge0.languages', []))->keyBy('id');
 @endphp
 
 <div class="relative -mx-4 -mt-2 px-4 sm:-mx-6 sm:px-6 print:hidden">
@@ -322,29 +321,6 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        @if($syllabusAssignment->submissions->isNotEmpty())
-                                            <div class="border-t border-slate-100/80 bg-slate-50/60 px-1.5 py-2 sm:px-2">
-                                                <p class="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">Student submissions</p>
-                                                <ul class="space-y-2">
-                                                    @foreach($syllabusAssignment->submissions as $studentSubmission)
-                                                        <li class="rounded-md bg-white p-2.5 ring-1 ring-slate-200/80">
-                                                            <div class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
-                                                                <span class="text-sm font-semibold text-slate-800">{{ $studentSubmission->user?->name ?? 'Student' }}</span>
-                                                                <span class="text-xs font-medium text-slate-500 tabular-nums" title="Assignment submission date and time">Submitted {{ $studentSubmission->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>
-                                                            </div>
-                                                            @if($studentSubmission->judge0_language_id)
-                                                                <p class="mt-1 text-xs text-slate-500">{{ data_get($judge0LanguagesById->get($studentSubmission->judge0_language_id), 'name') ?? ('Language #'.$studentSubmission->judge0_language_id) }}</p>
-                                                            @endif
-                                                            @if(filled($studentSubmission->source_code))
-                                                                <pre class="mt-2 max-h-56 overflow-auto rounded border border-slate-200 bg-slate-950 p-2.5 font-mono text-[11px] leading-relaxed text-slate-100 sm:text-xs">{{ $studentSubmission->source_code }}</pre>
-                                                            @else
-                                                                <p class="mt-2 text-xs text-slate-500">No source code was stored for this submission.</p>
-                                                            @endif
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endif
                                     </li>
                                 @endforeach
                             </ul>

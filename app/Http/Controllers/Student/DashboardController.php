@@ -38,6 +38,23 @@ class DashboardController extends Controller
         }
 
         $programIds = $enrollments->pluck('program_id')->unique()->filter()->values();
+
+        $submissionsByProgramId = collect();
+        if ($programIds->isNotEmpty()) {
+            $assignmentIds = SyllabusAssignment::query()
+                ->whereHas('syllabusSubtopic.syllabusTopic', fn ($q) => $q->whereIn('program_id', $programIds))
+                ->pluck('id');
+            if ($assignmentIds->isNotEmpty()) {
+                $submissionsByProgramId = SyllabusAssignmentSubmission::query()
+                    ->where('user_id', $user->id)
+                    ->whereIn('syllabus_assignment_id', $assignmentIds)
+                    ->with(['syllabusAssignment.syllabusSubtopic.syllabusTopic'])
+                    ->orderByDesc('created_at')
+                    ->get()
+                    ->groupBy(fn (SyllabusAssignmentSubmission $s) => $s->syllabusAssignment->programId());
+            }
+        }
+
         $syllabusTopicsByProgram = $programIds->isEmpty()
             ? collect()
             : SyllabusTopic::query()
@@ -80,6 +97,7 @@ class DashboardController extends Controller
             'activeAssignmentSubmitted' => $activeAssignmentSubmitted,
             'activeAssignmentSubmission' => $activeAssignmentSubmission,
             'codeRunnerLanguages' => $codeRunnerLanguages,
+            'submissionsByProgramId' => $submissionsByProgramId,
         ]);
     }
 }

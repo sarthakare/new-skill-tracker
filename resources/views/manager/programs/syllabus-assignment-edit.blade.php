@@ -108,10 +108,8 @@
                 @error('expected_output')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div class="flex flex-wrap items-center gap-2 pt-2">
-                <button type="submit" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-button font-medium text-white bg-primary shadow-sm transition hover:bg-primary-hover" title="Save changes" aria-label="Save changes">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                </button>
-                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex h-10 items-center justify-center rounded-button border border-border px-4 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
+                <button type="submit" class="inline-flex items-center justify-center rounded-button bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover">Save changes</button>
+                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex items-center justify-center rounded-button border border-border px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
             </div>
         </form>
     </div>
