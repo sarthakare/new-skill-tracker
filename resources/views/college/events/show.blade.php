@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Year/Event Dashboard')
+@section('title', 'Year/Semester/Event Dashboard')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -17,7 +17,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Add Semester/program
+            Add Subject/program
         </a>
         <a href="{{ route('college.events.edit', $event) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-primary/10 rounded-card border border-primary/20 shadow-card p-5">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Semesters/programs</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Subjects/programs</p>
         <p class="text-2xl font-bold text-slate-800">{{ $event->programs->count() }}</p>
     </div>
     <div class="rounded-card border shadow-card p-5 {{ $event->status === 'Active' ? 'bg-success/10 border-success/20' : ($event->status === 'Completed' ? 'bg-slate-100 border-slate-200' : 'bg-warning/10 border-warning/20') }}">
@@ -56,7 +56,7 @@
 <div class="space-y-6">
     <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
         <div class="px-5 py-4 border-b border-border bg-primary/5">
-            <h2 class="text-lg font-semibold text-slate-800">Year/Event information</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Year/Semester/Event information</h2>
         </div>
         <div class="p-5">
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">
@@ -88,12 +88,12 @@
 
     <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
         <div class="px-5 py-4 border-b border-border bg-primary/5 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-800">Semesters/programs</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Subjects/programs</h2>
             <a href="{{ route('college.events.programs.create', $event) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-button text-sm font-medium text-white bg-primary hover:bg-primary-hover">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Add Semester/program
+                Add Subject/program
             </a>
         </div>
         <div class="overflow-x-auto">
@@ -108,7 +108,7 @@
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Mode</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Status</th>
                         <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Run by</th>
-                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Semester/Program manager</th>
+                        <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Subject/Program manager</th>
                         <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Actions</th>
                     </tr>
                 </thead>
@@ -135,7 +135,7 @@
             </table>
             @else
             <div class="p-8 text-center text-slate-500 text-sm">
-                No semesters/programs yet. <a href="{{ route('college.events.programs.create', $event) }}" class="text-primary font-medium hover:underline">Add a semester/program</a> and assign who runs it (Vendor or Independent Trainer) and an internal Semester/Program manager.
+                No subjects/programs yet. <a href="{{ route('college.events.programs.create', $event) }}" class="text-primary font-medium hover:underline">Add a subject/program</a> and assign who runs it (Vendor or Independent Trainer) and an internal Subject/Program manager.
             </div>
             @endif
         </div>

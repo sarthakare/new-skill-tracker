@@ -13,7 +13,7 @@
         Remarks - {{ $program->name }}
     </h1>
     <p class="mt-2 text-sm text-slate-600">
-        Remarks are visible to students on their dashboard for this semester/program.
+        Remarks are visible to students on their dashboard for this subject/program.
     </p>
 </div>
 
@@ -35,7 +35,7 @@
 
     @if($students->isEmpty())
         <div class="p-5">
-            <p class="text-sm text-slate-600">No students have been added to this semester/program yet.</p>
+            <p class="text-sm text-slate-600">No students have been added to this subject/program yet.</p>
         </div>
     @else
         <div class="p-5">

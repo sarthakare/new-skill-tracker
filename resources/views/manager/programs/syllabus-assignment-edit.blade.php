@@ -65,6 +65,19 @@
                     @error('time_limit')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="assignment_starts_on" class="mb-1 block text-sm font-medium text-slate-700">Available from <span class="font-normal text-slate-500">(optional)</span></label>
+                    <input type="date" id="assignment_starts_on" name="starts_on" value="{{ old('starts_on', $assignment->starts_on?->format('Y-m-d')) }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('starts_on') border-red-500 @enderror">
+                    @error('starts_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="assignment_ends_on" class="mb-1 block text-sm font-medium text-slate-700">Available until <span class="font-normal text-slate-500">(optional)</span></label>
+                    <input type="date" id="assignment_ends_on" name="ends_on" value="{{ old('ends_on', $assignment->ends_on?->format('Y-m-d')) }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('ends_on') border-red-500 @enderror">
+                    @error('ends_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 -mt-2">Optional window when this assignment is considered active. End date must be on or after the start date.</p>
             <div>
                 <span class="block text-sm font-medium text-slate-700 mb-1">Languages students may use <span class="text-slate-500 font-normal">(optional, same list as “Run code” on the student dashboard)</span></span>
                 <p class="text-xs text-slate-500 mb-2">Select one or more Judge0 languages. Stored as language IDs so they match the student code runner.</p>
@@ -94,10 +107,28 @@
                 <textarea id="assignment_expected_output" name="expected_output" rows="4" placeholder="Exact stdout you expect for the test cases above" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary font-mono text-sm @error('expected_output') border-red-500 @enderror">{{ old('expected_output', $assignment->expected_output) }}</textarea>
                 @error('expected_output')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
-            <div class="flex flex-wrap items-center gap-3 pt-2">
-                <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Save changes</button>
-                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex items-center justify-center px-5 py-2.5 rounded-button font-medium text-slate-700 border border-border hover:bg-slate-50">Cancel</a>
+            <div class="flex flex-wrap items-center gap-2 pt-2">
+                <button type="submit" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-button font-medium text-white bg-primary shadow-sm transition hover:bg-primary-hover" title="Save changes" aria-label="Save changes">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </button>
+                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex h-10 items-center justify-center rounded-button border border-border px-4 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
             </div>
+        </form>
+    </div>
+</div>
+
+<div class="mt-6 max-w-3xl overflow-hidden rounded-card border border-red-200/80 bg-red-50/40">
+    <div class="border-b border-red-100/80 px-5 py-3">
+        <h2 class="text-sm font-semibold text-red-900">Delete assignment</h2>
+        <p class="mt-0.5 text-xs text-red-800/85">Remove this assignment permanently. Submissions are removed with it.</p>
+    </div>
+    <div class="p-5">
+        <form action="{{ route('manager.program.syllabus.assignments.destroy', [$program, $assignment]) }}" method="POST" onsubmit="return confirm('Delete this assignment? This cannot be undone.');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-button text-red-600 transition hover:bg-red-50" title="Delete assignment" aria-label="Delete assignment">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
         </form>
     </div>
 </div>

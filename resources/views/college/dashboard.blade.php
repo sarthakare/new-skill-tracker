@@ -71,7 +71,7 @@
     <div class="bg-slate-100 rounded-card border border-slate-200 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">Total Semesters/programs</p>
+                <p class="text-sm font-medium text-slate-600">Total Subjects/programs</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['total_programs'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-slate-200">
@@ -82,7 +82,7 @@
     <div class="bg-primary/5 rounded-card border border-primary/20 shadow-card p-5 hover:shadow-card-hover transition-shadow">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-slate-600">In-Progress Semesters/programs</p>
+                <p class="text-sm font-medium text-slate-600">In-Progress Subjects/programs</p>
                 <p class="mt-1 text-2xl font-bold text-slate-900">{{ $stats['active_programs'] }}</p>
             </div>
             <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10">
@@ -113,7 +113,7 @@
                 <a href="{{ route('college.events.create') }}"
                    class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-button font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                    Create Year/Event
+                    Create Year/Semester/Event
                 </a>
                 <a href="{{ route('college.vendors.create') }}"
                    class="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">

@@ -96,7 +96,7 @@ class ProgramStudentController extends Controller
 
             if (ProgramStudent::where('program_id', $program->id)->where('user_id', $validated['user_id'])->exists()) {
                 return redirect()->route('manager.program.students.index', $program)
-                    ->with('error', 'That student is already in this semester/program.');
+                    ->with('error', 'That student is already in this subject/program.');
             }
 
             $user = User::with('department')->findOrFail($validated['user_id']);
@@ -106,7 +106,7 @@ class ProgramStudentController extends Controller
             if ($scopedIds->isNotEmpty()) {
                 if (! $user->department_id || ! $scopedIds->contains((int) $user->department_id)) {
                     return redirect()->route('manager.program.students.index', $program)
-                        ->with('error', 'This student is not in a department assigned to this semester/program.');
+                        ->with('error', 'This student is not in a department assigned to this subject/program.');
                 }
             }
 
@@ -196,7 +196,7 @@ class ProgramStudentController extends Controller
             });
 
             return redirect()->route('manager.program.students.index', $program)
-                ->with('success', 'Student account created and added to this semester/program. Share their email and the password you set so they can sign in.');
+                ->with('success', 'Student account created and added to this subject/program. Share their email and the password you set so they can sign in.');
         }
 
         return redirect()->route('manager.program.students.index', $program)

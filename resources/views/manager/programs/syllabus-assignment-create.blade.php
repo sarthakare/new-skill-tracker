@@ -64,6 +64,19 @@
                     @error('time_limit')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="assignment_starts_on" class="mb-1 block text-sm font-medium text-slate-700">Available from <span class="font-normal text-slate-500">(optional)</span></label>
+                    <input type="date" id="assignment_starts_on" name="starts_on" value="{{ old('starts_on') }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('starts_on') border-red-500 @enderror">
+                    @error('starts_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="assignment_ends_on" class="mb-1 block text-sm font-medium text-slate-700">Available until <span class="font-normal text-slate-500">(optional)</span></label>
+                    <input type="date" id="assignment_ends_on" name="ends_on" value="{{ old('ends_on') }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('ends_on') border-red-500 @enderror">
+                    @error('ends_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 -mt-2">Optional window when this assignment is considered active. End date must be on or after the start date.</p>
             <div>
                 <span class="block text-sm font-medium text-slate-700 mb-1">Languages students may use <span class="text-slate-500 font-normal">(optional, same list as “Run code” on the student dashboard)</span></span>
                 <p class="text-xs text-slate-500 mb-2">Select one or more Judge0 languages. Stored as language IDs so they match the student code runner.</p>
@@ -93,9 +106,11 @@
                 <textarea id="assignment_expected_output" name="expected_output" rows="4" placeholder="Exact stdout you expect for the test cases above" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary font-mono text-sm @error('expected_output') border-red-500 @enderror">{{ old('expected_output') }}</textarea>
                 @error('expected_output')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
-            <div class="flex flex-wrap items-center gap-3 pt-2">
-                <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Save assignment</button>
-                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex items-center justify-center px-5 py-2.5 rounded-button font-medium text-slate-700 border border-border hover:bg-slate-50">Cancel</a>
+            <div class="flex flex-wrap items-center gap-2 pt-2">
+                <button type="submit" class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-button font-medium text-white bg-primary shadow-sm transition hover:bg-primary-hover" title="Save assignment" aria-label="Save assignment">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </button>
+                <a href="{{ route('manager.program.syllabus.index', $program) }}#topic-{{ $subtopic->syllabus_topic_id }}" class="inline-flex h-10 items-center justify-center rounded-button border border-border px-4 text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</a>
             </div>
         </form>
     </div>

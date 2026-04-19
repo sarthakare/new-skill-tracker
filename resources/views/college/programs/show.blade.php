@@ -1,15 +1,15 @@
 @extends('college.layouts.app')
 
-@section('title', 'Semester/program details')
+@section('title', 'Subject/program details')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
     <div>
         <h1 class="text-2xl font-semibold text-slate-800">{{ $program->name }}</h1>
-        <p class="text-slate-500 text-sm mt-0.5">Year/Event: {{ $event->name }}</p>
+        <p class="text-slate-500 text-sm mt-0.5">Year/Semester/Event: {{ $event->name }}</p>
     </div>
     <div class="flex gap-2">
-        <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-primary border border-primary/30 hover:bg-primary/10">Edit Semester/program</a>
+        <a href="{{ route('college.events.programs.edit', [$event, $program]) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-primary border border-primary/30 hover:bg-primary/10">Edit Subject/program</a>
         <a href="{{ route('college.events.programs.index', $event) }}" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50">Back</a>
     </div>
 </div>
@@ -34,7 +34,7 @@
         <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->executorLabel() }}</p>
     </div>
     <div class="bg-white rounded-card border border-border shadow-card p-4">
-        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Semester/Program manager</p>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Subject/Program manager</p>
         <p class="text-lg font-semibold text-slate-800 mt-0.5">{{ $program->oversightManager?->name ?? '—' }}</p>
         @if($program->oversightManager)<p class="text-xs text-slate-500 mt-0.5">{{ $program->oversightManager->department?->name ?? '—' }}</p>@endif
     </div>
@@ -48,14 +48,14 @@
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <h2 class="text-lg font-semibold text-slate-800">Manager credentials</h2>
         <p class="text-sm text-slate-600">
-            Semester/Program ID:
+            Subject/Program ID:
             <span class="font-mono font-semibold text-slate-900 tabular-nums">{{ $program->id }}</span>
         </p>
     </div>
     <div class="p-5">
         @if(!empty($highlightNewCredentials))
             <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                <strong>New manager login generated.</strong> Username and password are stored below for this semester/program. Share them only with the semester/program manager.
+                <strong>New manager login generated.</strong> Username and password are stored below for this subject/program. Share them only with the subject/program manager.
             </div>
         @endif
         <p class="text-xs text-slate-500 mb-4">Managers sign in with the <strong>username</strong> (login ID) and <strong>password</strong> below. Passwords are encrypted in the database and shown here for college admins.</p>

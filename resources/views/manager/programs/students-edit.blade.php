@@ -11,7 +11,7 @@
         Edit student - {{ $program->name }}
     </h1>
     @if($student->isLinkedToUser())
-        <p class="mt-2 text-sm text-slate-600">This row is linked to a registered student account. Changes here apply to this semester/program only (they do not change the college login profile).</p>
+        <p class="mt-2 text-sm text-slate-600">This row is linked to a registered student account. Changes here apply to this subject/program only (they do not change the college login profile).</p>
     @endif
 </div>
 
@@ -59,7 +59,7 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Remarks for this student</label>
-                    <p class="text-xs text-slate-500 mb-2">Visible to the student on their dashboard for this semester/program.</p>
+                    <p class="text-xs text-slate-500 mb-2">Visible to the student on their dashboard for this subject/program.</p>
                     <textarea name="manager_remarks" rows="4" placeholder="Optional feedback, notes, or recognition…" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('manager_remarks') border-red-500 @enderror">{{ old('manager_remarks', $student->manager_remarks) }}</textarea>
                     @error('manager_remarks')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>

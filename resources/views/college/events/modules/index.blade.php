@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Year/Event modules')
+@section('title', 'Year/Semester/Event modules')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,18 +8,18 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
         </span>
-        Year/Event modules - {{ $event->name }}
+        Year/Semester/Event modules - {{ $event->name }}
     </h1>
     <a href="{{ route('college.events.show', $event) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        Back to year/event
+        Back to year/semester/event
     </a>
 </div>
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
         <h2 class="text-lg font-semibold text-slate-800">Manage Modules</h2>
-        <p class="mt-1 text-sm text-slate-500">Enable or disable modules for this year/event. Disabled modules will not be accessible.</p>
+        <p class="mt-1 text-sm text-slate-500">Enable or disable modules for this year/semester/event. Disabled modules will not be accessible.</p>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full">

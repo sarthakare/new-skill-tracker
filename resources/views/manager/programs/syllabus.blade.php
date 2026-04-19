@@ -4,36 +4,111 @@
 @section('title_suffix', '')
 
 @section('content')
-<div class="mb-6 flex flex-wrap items-start justify-between gap-4 print:hidden">
-    <div>
-        <h1 class="flex items-center gap-2 text-2xl font-semibold text-slate-800">
-            <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
-                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-            </span>
-            Syllabus - {{ $program->name }}
-        </h1>
-        <p class="mt-2 text-slate-600">Add syllabus topics or units and subtopics. Mark each as complete as you teach it. Under each subtopic you can add coding assignments for Judge0-style delivery.</p>
-    </div>
-    <div class="print:hidden">
-        <button type="button" onclick="if(location.hash){history.replaceState(null,'',location.pathname+location.search);}window.print();" class="inline-flex items-center gap-2 px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2h-6a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-            Print
-        </button>
+@php
+    $topicCount = $topics->count();
+    $topicsDone = $topics->where('is_complete', true)->count();
+    $subtopicCount = $topics->sum(fn ($t) => $t->subtopics->count());
+    $subtopicsDone = $topics->sum(fn ($t) => $t->subtopics->where('is_complete', true)->count());
+    $assignmentCount = $topics->sum(fn ($t) => $t->subtopics->sum(fn ($s) => $s->assignments->count()));
+    $topicPct = $topicCount > 0 ? (int) min(100, round(100 * $topicsDone / $topicCount)) : 0;
+    $subPct = $subtopicCount > 0 ? (int) min(100, round(100 * $subtopicsDone / $subtopicCount)) : 0;
+    $judge0LanguagesById = collect(config('judge0.languages', []))->keyBy('id');
+@endphp
+
+<div class="relative -mx-4 -mt-2 px-4 sm:-mx-6 sm:px-6 print:hidden">
+    <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div class="absolute -right-20 -top-16 h-64 w-64 rounded-full bg-primary/[0.11] blur-3xl"></div>
+        <div class="absolute left-1/4 top-40 h-56 w-56 -translate-x-1/2 rounded-full bg-sky-400/[0.12] blur-3xl"></div>
+        <div class="absolute -bottom-8 right-1/3 h-40 w-40 rounded-full bg-violet-400/[0.10] blur-3xl"></div>
     </div>
 </div>
 
-<div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6 print:hidden">
-    <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">Add topic/unit name</h2>
-    </div>
-    <div class="p-5">
-        <form action="{{ route('manager.program.syllabus.topics.store', $program) }}" method="POST" class="flex flex-wrap items-end gap-3">
-            @csrf
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-sm font-medium text-slate-700 mb-1">Topic or unit name</label>
-                <input type="text" name="title" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="e.g. Unit 1 — Introduction to Python" required>
+{{-- Hero --}}
+<div class="relative mb-5 overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white via-slate-50/90 to-indigo-50/50 shadow-[0_8px_30px_-12px_rgba(67,56,202,0.2)] print:hidden">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%234338ca\' fill-opacity=\'0.035\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E')] opacity-70"></div>
+    <div class="relative flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5">
+        <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2.5">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-sky-500/15 text-primary ring-1 ring-primary/15">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                </span>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Syllabus</h1>
+                    <p class="mt-0.5 truncate text-sm font-medium text-slate-600 sm:text-base" title="{{ $program->name }}">{{ $program->name }}</p>
+                </div>
             </div>
-            <button type="submit" class="inline-flex items-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Add topic/unit name</button>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
+                Build units and subtopics, schedule sessions, and track progress as you teach. Add coding assignments under any subtopic for Judge0-style delivery.
+            </p>
+            @if($topicCount > 0)
+                <div class="mt-3 grid max-w-lg gap-2 sm:grid-cols-2">
+                    <div>
+                        <div class="flex justify-between text-xs font-medium text-slate-600">
+                            <span>Topics complete</span>
+                            <span class="tabular-nums">{{ $topicsDone }}/{{ $topicCount }}</span>
+                        </div>
+                        <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200/80">
+                            <div class="h-full rounded-full bg-gradient-to-r from-primary to-sky-500 transition-all" style="width: {{ $topicPct }}%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-medium text-slate-600">
+                            <span>Subtopics complete</span>
+                            <span class="tabular-nums">{{ $subtopicsDone }}/{{ $subtopicCount }}</span>
+                        </div>
+                        <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200/80">
+                            <div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all" style="width: {{ $subPct }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+        <div class="flex shrink-0 sm:items-start">
+            <button type="button" onclick="if(location.hash){history.replaceState(null,'',location.pathname+location.search);}window.print();" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover sm:w-auto">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2h-6a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                Print formal syllabus
+            </button>
+        </div>
+    </div>
+</div>
+
+{{-- Quick stats --}}
+<div class="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 print:hidden">
+    <div class="rounded-lg border border-slate-200/90 bg-white p-3 shadow-sm">
+        <p class="text-xs font-medium text-slate-500">Topics</p>
+        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">{{ $topicCount }}</p>
+    </div>
+    <div class="rounded-lg border border-slate-200/90 bg-white p-3 shadow-sm">
+        <p class="text-xs font-medium text-slate-500">Subtopics</p>
+        <p class="mt-1 text-2xl font-bold tabular-nums text-slate-900">{{ $subtopicCount }}</p>
+    </div>
+    <div class="rounded-lg border border-emerald-200/70 bg-gradient-to-br from-emerald-50/90 to-white p-3 shadow-sm">
+        <p class="text-xs font-medium text-emerald-800/80">Done</p>
+        <p class="mt-1 text-2xl font-bold tabular-nums text-emerald-950">{{ $topicsDone + $subtopicsDone }}</p>
+        <p class="mt-0.5 text-[11px] text-emerald-800/70">items marked complete</p>
+    </div>
+    <div class="rounded-lg border border-violet-200/70 bg-gradient-to-br from-violet-50/90 to-white p-3 shadow-sm">
+        <p class="text-xs font-medium text-violet-800/80">Assignments</p>
+        <p class="mt-1 text-2xl font-bold tabular-nums text-violet-950">{{ $assignmentCount }}</p>
+    </div>
+</div>
+
+<div class="relative mb-5 overflow-hidden rounded-xl border border-slate-200/90 bg-white/90 shadow-sm ring-1 ring-slate-200/50 backdrop-blur-sm print:hidden">
+    <div class="border-b border-slate-100 bg-gradient-to-r from-primary/[0.07] via-white to-sky-50/40 px-4 py-3">
+        <h2 class="text-base font-semibold text-slate-900">Add topic or unit</h2>
+        <p class="mt-0.5 text-xs text-slate-500">Create a new top-level section for your syllabus</p>
+    </div>
+    <div class="p-4">
+        <form action="{{ route('manager.program.syllabus.topics.store', $program) }}" method="POST" class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-end">
+            @csrf
+            <div class="min-w-0 flex-1 sm:min-w-[240px]">
+                <label class="mb-1 block text-sm font-medium text-slate-700">Topic or unit name</label>
+                <input type="text" name="title" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary" placeholder="e.g. Unit 1 — Introduction to Python" required>
+            </div>
+            <button type="submit" class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary/20 transition hover:bg-primary-hover">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                Add topic
+            </button>
         </form>
     </div>
 </div>
@@ -50,9 +125,9 @@
     </div>
 
     <table class="syllabus-doc-info-table">
-        <tr><td class="syllabus-doc-label">Semester/program name</td><td>{{ $program->name }}</td></tr>
+        <tr><td class="syllabus-doc-label">Subject/program name</td><td>{{ $program->name }}</td></tr>
         @if($program->event)
-            <tr><td class="syllabus-doc-label">Year/Event</td><td>{{ $program->event->name }}</td></tr>
+            <tr><td class="syllabus-doc-label">Year/Semester/Event</td><td>{{ $program->event->name }}</td></tr>
         @endif
         @if($program->type)
             <tr><td class="syllabus-doc-label">Type</td><td>{{ $program->type }}</td></tr>
@@ -99,9 +174,10 @@
 </div>
 
 @forelse($topics as $topic)
-    <div class="topic-card bg-white rounded-card border border-border shadow-card overflow-hidden mb-4 print:hidden" id="topic-{{ $topic->id }}">
-        <div class="px-5 py-4 border-b border-border bg-slate-50/80">
-            <div class="syllabus-schedule-block mb-3">
+    <div class="topic-card group relative mb-3 overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm transition-shadow print:hidden hover:shadow-md" id="topic-{{ $topic->id }}">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-primary via-primary/70 to-sky-500 opacity-90"></div>
+        <div class="border-b border-slate-100 bg-gradient-to-r from-slate-50/90 via-white to-indigo-50/30 px-4 py-3">
+            <div class="syllabus-schedule-block mb-2">
                 <div class="flex flex-wrap items-center gap-2 w-full min-w-0">
                     <form action="{{ route('manager.program.syllabus.topics.toggle-complete', [$program, $topic]) }}" method="POST" class="inline shrink-0">
                         @csrf
@@ -122,44 +198,44 @@
                         </form>
                     </div>
                     @if($topic->scheduled_date || $topic->scheduled_time)
-                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-700 shrink-0">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200/80 shadow-sm">
+                            <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                             {{ trim(($topic->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '')) }}
                         </span>
                     @endif
-                    <div class="topic-actions inline-flex items-center gap-1 shrink-0">
-                        <button type="button" class="topic-edit-btn p-1.5 rounded text-slate-500 hover:bg-slate-200 hover:text-slate-700" title="Edit topic or unit name">
+                    <div class="topic-actions inline-flex items-center gap-0.5 shrink-0 rounded-lg bg-white/80 p-0.5 ring-1 ring-slate-200/70">
+                        <button type="button" class="topic-edit-btn rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" title="Edit topic or unit name">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
                         <form action="{{ route('manager.program.syllabus.topics.destroy', [$program, $topic]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this topic/unit and all its subtopics?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="p-1.5 rounded text-slate-500 hover:bg-red-100 hover:text-red-600" title="Delete topic or unit">
+                            <button type="submit" class="rounded-md p-1.5 text-slate-500 transition hover:bg-red-50 hover:text-red-600" title="Delete topic or unit">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                             </button>
                         </form>
-                        <button type="button" class="syllabus-schedule-toggle p-1.5 rounded text-slate-500 hover:bg-slate-200 hover:text-slate-700" title="Schedule date and time" aria-label="Schedule date and time">
+                        <button type="button" class="syllabus-schedule-toggle rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" title="Schedule date and time" aria-label="Schedule date and time">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
                 </div>
-                <div class="syllabus-schedule-panel hidden mt-2">
+                <div class="syllabus-schedule-panel hidden mt-2 rounded-lg border border-slate-200/80 bg-slate-50/50 p-2">
                     <form action="{{ route('manager.program.syllabus.topics.schedule', [$program, $topic]) }}" method="POST" class="flex flex-wrap items-center gap-2">
                         @csrf
                         <label class="text-sm text-slate-500">Date</label>
-                        <input type="date" name="scheduled_date" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[150px]" value="{{ $topic->scheduled_date?->format('Y-m-d') }}">
+                        <input type="date" name="scheduled_date" class="w-[150px] rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary" value="{{ $topic->scheduled_date?->format('Y-m-d') }}">
                         <label class="text-sm text-slate-500">Time</label>
-                        <input type="time" name="scheduled_time" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[125px]" value="{{ $topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '' }}">
-                        <button type="submit" class="px-3 py-1.5 rounded-button text-sm font-medium text-slate-700 border border-border hover:bg-slate-50">Set</button>
+                        <input type="time" name="scheduled_time" class="w-[125px] rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary" value="{{ $topic->scheduled_time ? substr($topic->scheduled_time, 0, 5) : '' }}">
+                        <button type="submit" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-primary/30 hover:bg-primary/5">Set</button>
                     </form>
                 </div>
             </div>
         </div>
-        <div class="p-5 pt-0">
-            <ul class="space-y-0">
+        <div class="px-4 pb-3 pt-0.5">
+            <ul class="space-y-1.5">
                 @forelse($topic->subtopics as $subtopic)
-                    <li class="border-b border-border last:border-0 syllabus-schedule-block">
-                        <div class="flex flex-wrap items-center gap-2 py-2 pl-4 min-w-0 w-full">
+                    <li class="syllabus-schedule-block rounded-lg border border-slate-100 bg-slate-50/40 transition hover:border-slate-200/90 hover:bg-slate-50/70">
+                        <div class="flex min-w-0 w-full flex-nowrap items-center gap-2 overflow-x-auto overscroll-x-contain px-2.5 py-2 sm:gap-2 sm:px-3">
                             <form action="{{ route('manager.program.syllabus.subtopics.toggle-complete', [$program, $subtopic]) }}" method="POST" class="inline shrink-0">
                                 @csrf
                                 <button type="submit" class="p-0 text-inherit no-underline hover:opacity-80" title="{{ $subtopic->is_complete ? 'Mark incomplete' : 'Mark complete' }}">
@@ -179,70 +255,124 @@
                                 </form>
                             </div>
                             @if($subtopic->scheduled_date || $subtopic->scheduled_time)
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-700 shrink-0">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200/80">
+                                    <svg class="h-3.5 w-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                     {{ trim(($subtopic->scheduled_date?->format('M d, Y') ?? '') . ' ' . ($subtopic->scheduled_time ? substr($subtopic->scheduled_time, 0, 5) : '')) }}
                                 </span>
                             @endif
-                            @if($subtopic->assignments->isNotEmpty())
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary shrink-0" title="Coding assignments on this subtopic">
-                                    {{ $subtopic->assignments->count() }} assignment{{ $subtopic->assignments->count() === 1 ? '' : 's' }}
-                                </span>
-                            @endif
-                            <div class="subtopic-actions inline-flex items-center gap-0.5 shrink-0 flex-wrap justify-end">
-                                <a href="{{ route('manager.program.syllabus.assignments.create', [$program, $subtopic]) }}" class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-primary border border-primary/25 hover:bg-primary/10" title="Create coding assignment for this subtopic">
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            <div class="subtopic-actions inline-flex shrink-0 flex-nowrap items-center gap-1.5 rounded-md bg-white/90 py-0.5 pl-0.5 pr-1 ring-1 ring-slate-200/60 sm:gap-2 sm:pr-1.5">
+                                <a href="{{ route('manager.program.syllabus.assignments.create', [$program, $subtopic]) }}" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold text-primary ring-1 ring-primary/20 transition hover:bg-primary/10" title="Create coding assignment for this subtopic">
+                                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                                     Assignment
                                 </a>
-                                <button type="button" class="subtopic-edit-btn p-1 rounded text-slate-400 hover:text-slate-600" title="Edit"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
-                                <form action="{{ route('manager.program.syllabus.subtopics.destroy', [$program, $subtopic]) }}" method="POST" class="inline" onsubmit="return confirm('Delete this subtopic?');">
+                                <button type="button" class="subtopic-edit-btn inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" title="Edit"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
+                                <form action="{{ route('manager.program.syllabus.subtopics.destroy', [$program, $subtopic]) }}" method="POST" class="inline shrink-0" onsubmit="return confirm('Delete this subtopic?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-1 rounded text-slate-400 hover:text-red-600" title="Delete"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                                    <button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-red-50 hover:text-red-600" title="Delete"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                                 </form>
-                                <button type="button" class="syllabus-schedule-toggle p-1 rounded text-slate-400 hover:text-slate-600" title="Schedule date and time" aria-label="Schedule date and time">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <button type="button" class="syllabus-schedule-toggle inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" title="Schedule date and time" aria-label="Schedule date and time">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 </button>
                             </div>
                         </div>
-                        <div class="syllabus-schedule-panel hidden pb-2 pl-4">
-                            <form action="{{ route('manager.program.syllabus.subtopics.schedule', [$program, $subtopic]) }}" method="POST" class="flex flex-wrap items-center gap-2">
+                        <div class="syllabus-schedule-panel hidden border-t border-slate-100/80 px-2.5 pb-2 pt-1.5 sm:px-3">
+                            <form action="{{ route('manager.program.syllabus.subtopics.schedule', [$program, $subtopic]) }}" method="POST" class="flex flex-wrap items-center gap-2 rounded-md bg-white/70 p-1.5 ring-1 ring-slate-200/60">
                                 @csrf
                                 <label class="text-sm text-slate-500">Date</label>
-                                <input type="date" name="scheduled_date" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[150px] text-sm" value="{{ $subtopic->scheduled_date?->format('Y-m-d') }}">
+                                <input type="date" name="scheduled_date" class="w-[150px] rounded-input border border-slate-300 text-sm focus:border-primary focus:ring-2 focus:ring-primary" value="{{ $subtopic->scheduled_date?->format('Y-m-d') }}">
                                 <label class="text-sm text-slate-500">Time</label>
-                                <input type="time" name="scheduled_time" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary w-[125px] text-sm" value="{{ $subtopic->scheduled_time ? substr($subtopic->scheduled_time, 0, 5) : '' }}">
-                                <button type="submit" class="px-3 py-1.5 rounded-button text-sm font-medium text-slate-700 border border-border hover:bg-slate-50">Set</button>
+                                <input type="time" name="scheduled_time" class="w-[125px] rounded-input border border-slate-300 text-sm focus:border-primary focus:ring-2 focus:ring-primary" value="{{ $subtopic->scheduled_time ? substr($subtopic->scheduled_time, 0, 5) : '' }}">
+                                <button type="submit" class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-primary/30 hover:bg-primary/5">Set</button>
                             </form>
                         </div>
                         @if($subtopic->assignments->isNotEmpty())
-                            <ul class="mt-1 mb-1 ml-4 border-l-2 border-primary/20 pl-3 space-y-1.5 print:hidden">
+                            <ul class="mx-2 mb-2 space-y-1 border-l-2 border-primary/30 pl-2 print:hidden sm:mx-2.5 sm:pl-2.5">
                                 @foreach($subtopic->assignments as $syllabusAssignment)
-                                    <li class="flex flex-wrap items-center gap-x-2 gap-y-1 py-0.5 text-sm">
-                                        <span class="text-slate-800">{{ $syllabusAssignment->title }}</span>
-                                        <span class="text-xs text-slate-500 capitalize">({{ $syllabusAssignment->difficulty }})</span>
-                                        <a href="{{ route('manager.program.syllabus.assignments.edit', [$program, $syllabusAssignment]) }}" class="text-xs font-semibold text-primary hover:text-primary-hover hover:underline">Edit</a>
+                                    @php
+                                        $rangeLabel = '';
+                                        if ($syllabusAssignment->starts_on && $syllabusAssignment->ends_on) {
+                                            $rangeLabel = $syllabusAssignment->starts_on->format('M j, Y').' – '.$syllabusAssignment->ends_on->format('M j, Y');
+                                        } elseif ($syllabusAssignment->starts_on) {
+                                            $rangeLabel = 'From '.$syllabusAssignment->starts_on->format('M j, Y');
+                                        } elseif ($syllabusAssignment->ends_on) {
+                                            $rangeLabel = 'Until '.$syllabusAssignment->ends_on->format('M j, Y');
+                                        }
+                                    @endphp
+                                    <li class="overflow-hidden rounded-md bg-white/80 text-sm ring-1 ring-slate-100">
+                                        <div class="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-x-auto py-1.5 px-1.5">
+                                            <span class="inline-flex shrink-0 items-center rounded-md border border-red-500 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-red-700">Assignment</span>
+                                            <span class="min-w-0 flex-1 font-medium text-slate-800">{{ $syllabusAssignment->title }}</span>
+                                            @if($rangeLabel !== '')
+                                                <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200/80" title="Availability">
+                                                    <svg class="h-3 w-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                    {{ $rangeLabel }}
+                                                </span>
+                                            @endif
+                                            <div class="inline-flex shrink-0 flex-nowrap items-center gap-1">
+                                                <a href="{{ route('manager.program.syllabus.assignments.edit', [$program, $syllabusAssignment]) }}" class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-primary transition hover:bg-primary/10" title="Edit assignment" aria-label="Edit assignment">
+                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                </a>
+                                                <form action="{{ route('manager.program.syllabus.assignments.destroy', [$program, $syllabusAssignment]) }}" method="POST" class="inline shrink-0" onsubmit="return confirm('Delete this assignment? This cannot be undone.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-red-50 hover:text-red-600" title="Delete assignment" aria-label="Delete assignment">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        @if($syllabusAssignment->submissions->isNotEmpty())
+                                            <div class="border-t border-slate-100/80 bg-slate-50/60 px-1.5 py-2 sm:px-2">
+                                                <p class="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">Student submissions</p>
+                                                <ul class="space-y-2">
+                                                    @foreach($syllabusAssignment->submissions as $studentSubmission)
+                                                        <li class="rounded-md bg-white p-2.5 ring-1 ring-slate-200/80">
+                                                            <div class="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
+                                                                <span class="text-sm font-semibold text-slate-800">{{ $studentSubmission->user?->name ?? 'Student' }}</span>
+                                                                <span class="text-xs font-medium text-slate-500 tabular-nums" title="Assignment submission date and time">Submitted {{ $studentSubmission->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>
+                                                            </div>
+                                                            @if($studentSubmission->judge0_language_id)
+                                                                <p class="mt-1 text-xs text-slate-500">{{ data_get($judge0LanguagesById->get($studentSubmission->judge0_language_id), 'name') ?? ('Language #'.$studentSubmission->judge0_language_id) }}</p>
+                                                            @endif
+                                                            @if(filled($studentSubmission->source_code))
+                                                                <pre class="mt-2 max-h-56 overflow-auto rounded border border-slate-200 bg-slate-950 p-2.5 font-mono text-[11px] leading-relaxed text-slate-100 sm:text-xs">{{ $studentSubmission->source_code }}</pre>
+                                                            @else
+                                                                <p class="mt-2 text-xs text-slate-500">No source code was stored for this submission.</p>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>
                         @endif
                     </li>
                 @empty
-                    <li class="py-2 pl-4 text-sm text-slate-500">No subtopics yet. Add one below.</li>
+                    <li class="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 py-4 text-center text-sm text-slate-500">No subtopics yet. Add one below.</li>
                 @endforelse
             </ul>
-            <form action="{{ route('manager.program.syllabus.subtopics.store', [$program, $topic]) }}" method="POST" class="mt-4 pt-4 border-t border-border flex flex-wrap items-center gap-2">
+            <form action="{{ route('manager.program.syllabus.subtopics.store', [$program, $topic]) }}" method="POST" class="mt-3 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
                 @csrf
-                <input type="text" name="title" class="rounded-input border border-slate-300 focus:ring-2 focus:ring-primary min-w-[200px] sm:min-w-[320px] flex-1" placeholder="Add subtopic..." required>
-                <button type="submit" class="shrink-0 px-4 py-2 rounded-button text-sm font-medium text-primary border border-primary/30 hover:bg-primary/10">Add Subtopic</button>
+                <input type="text" name="title" class="min-w-[200px] flex-1 rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary sm:min-w-[320px]" placeholder="New subtopic title…" required>
+                <button type="submit" class="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2 text-sm font-semibold text-primary transition hover:bg-primary/10">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Add subtopic
+                </button>
             </form>
         </div>
     </div>
 @empty
-    <div class="bg-white rounded-card border border-border shadow-card overflow-hidden print:hidden">
-        <div class="p-12 text-center text-slate-500">
-            <svg class="w-16 h-16 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-            <p class="mt-2">No topics or units yet. Add your first topic or unit above.</p>
+    <div class="relative overflow-hidden rounded-xl border border-slate-200/90 bg-gradient-to-br from-slate-50/80 to-white print:hidden">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/[0.06] blur-2xl"></div>
+        <div class="relative p-8 text-center">
+            <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-sky-500/10 text-primary ring-1 ring-primary/15">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+            </span>
+            <p class="mt-3 text-base font-semibold text-slate-800">No syllabus topics yet</p>
+            <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">Use <strong class="text-slate-700">Add topic or unit</strong> above to create your first section.</p>
         </div>
     </div>
 @endforelse
@@ -498,7 +628,8 @@ document.querySelectorAll('.subtopic-title-input').forEach(input => {
 document.querySelectorAll('.syllabus-schedule-toggle').forEach(btn => {
     btn.addEventListener('click', function() {
         const block = this.closest('.syllabus-schedule-block');
-        const panel = block && block.querySelector('.syllabus-schedule-panel');
+        if (!block) return;
+        const panel = block.querySelector('.syllabus-schedule-panel');
         if (!panel) return;
         panel.classList.toggle('hidden');
         if (!panel.classList.contains('hidden')) {

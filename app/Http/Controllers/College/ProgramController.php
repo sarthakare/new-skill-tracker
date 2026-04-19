@@ -85,7 +85,7 @@ class ProgramController extends Controller
         $managerId = $this->resolveManagerId($validated);
 
         if (empty($managerId)) {
-            return redirect()->back()->with('error', 'Please select who runs the semester/program (Vendor or Independent Trainer).')->withInput();
+            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Independent Trainer).')->withInput();
         }
 
         if (! $this->managerBelongsToCollege($validated['manager_type'], $managerId, $collegeId)) {
@@ -97,13 +97,13 @@ class ProgramController extends Controller
         $name = trim($validated['name']);
         if ($name === '') {
             return redirect()->back()
-                ->withErrors(['name' => 'Please enter a semester/program name.'])
+                ->withErrors(['name' => 'Please enter a subject/program name.'])
                 ->withInput();
         }
 
         if ($this->programNameTakenForEvent($event, $name)) {
             return redirect()->back()
-                ->withErrors(['name' => 'A semester/program with this name already exists for this year/event.'])
+                ->withErrors(['name' => 'A subject/program with this name already exists for this year/semester/event.'])
                 ->withInput();
         }
 
@@ -130,7 +130,7 @@ class ProgramController extends Controller
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 return redirect()->back()
-                    ->withErrors(['name' => 'A semester/program with this name already exists for this year/event.'])
+                    ->withErrors(['name' => 'A subject/program with this name already exists for this year/semester/event.'])
                     ->withInput();
             }
             throw $e;
@@ -151,17 +151,17 @@ class ProgramController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'program.created',
-            'description' => "Semester/program '{$program->name}' was created",
+            'description' => "Subject/program '{$program->name}' was created",
         ]);
 
         if (! empty($generatedCredentials)) {
             return redirect()->route('college.events.programs.show', [$event, $program])
-                ->with('success', 'Semester/program created successfully. Manager login ID and password are saved on this page.')
+                ->with('success', 'Subject/program created successfully. Manager login ID and password are saved on this page.')
                 ->with('highlight_new_manager_credentials', true);
         }
 
         return redirect()->route('college.events.programs.index', $event)
-            ->with('success', 'Semester/program created successfully.');
+            ->with('success', 'Subject/program created successfully.');
     }
 
     public function show(Event $event, Program $program): View
@@ -229,7 +229,7 @@ class ProgramController extends Controller
         $managerId = $this->resolveManagerId($validated);
 
         if (empty($managerId)) {
-            return redirect()->back()->with('error', 'Please select who runs the semester/program (Vendor or Independent Trainer).')->withInput();
+            return redirect()->back()->with('error', 'Please select who runs the subject/program (Vendor or Independent Trainer).')->withInput();
         }
 
         if (! $this->managerBelongsToCollege($validated['manager_type'], $managerId, $collegeId)) {
@@ -241,13 +241,13 @@ class ProgramController extends Controller
         $name = trim($validated['name']);
         if ($name === '') {
             return redirect()->back()
-                ->withErrors(['name' => 'Please enter a semester/program name.'])
+                ->withErrors(['name' => 'Please enter a subject/program name.'])
                 ->withInput();
         }
 
         if ($this->programNameTakenForEvent($event, $name, $program->id)) {
             return redirect()->back()
-                ->withErrors(['name' => 'A semester/program with this name already exists for this year/event.'])
+                ->withErrors(['name' => 'A subject/program with this name already exists for this year/semester/event.'])
                 ->withInput();
         }
 
@@ -274,7 +274,7 @@ class ProgramController extends Controller
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
                 return redirect()->back()
-                    ->withErrors(['name' => 'A semester/program with this name already exists for this year/event.'])
+                    ->withErrors(['name' => 'A subject/program with this name already exists for this year/semester/event.'])
                     ->withInput();
             }
             throw $e;
@@ -302,17 +302,17 @@ class ProgramController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'program.updated',
-            'description' => "Semester/program '{$program->name}' was updated",
+            'description' => "Subject/program '{$program->name}' was updated",
         ]);
 
         if (! empty($generatedCredentials)) {
             return redirect()->route('college.events.programs.show', [$event, $program])
-                ->with('success', 'Semester/program updated successfully. New manager login ID and password are saved on this page.')
+                ->with('success', 'Subject/program updated successfully. New manager login ID and password are saved on this page.')
                 ->with('highlight_new_manager_credentials', true);
         }
 
         return redirect()->route('college.events.programs.index', $event)
-            ->with('success', 'Semester/program updated successfully.');
+            ->with('success', 'Subject/program updated successfully.');
     }
 
     public function destroy(Event $event, Program $program): RedirectResponse
@@ -327,11 +327,11 @@ class ProgramController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'program.deleted',
-            'description' => "Semester/program '{$programName}' was deleted",
+            'description' => "Subject/program '{$programName}' was deleted",
         ]);
 
         return redirect()->route('college.events.programs.index', $event)
-            ->with('success', 'Semester/program deleted successfully.');
+            ->with('success', 'Subject/program deleted successfully.');
     }
 
     public function approveCompletion(Event $event, Program $program): RedirectResponse
@@ -369,10 +369,10 @@ class ProgramController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'program.approved',
-            'description' => "Semester/program '{$program->name}' completion was approved",
+            'description' => "Subject/program '{$program->name}' completion was approved",
         ]);
 
-        return redirect()->back()->with('success', 'Semester/program completion approved.');
+        return redirect()->back()->with('success', 'Subject/program completion approved.');
     }
 
     private function createManagerCredential(Program $program): array
@@ -422,7 +422,7 @@ class ProgramController extends Controller
     private function ensureCollegeScope(Event $event): void
     {
         if ($event->college_id !== Auth::user()->college_id) {
-            abort(403, 'Unauthorized access to this year/event.');
+            abort(403, 'Unauthorized access to this year/semester/event.');
         }
     }
 
@@ -431,7 +431,7 @@ class ProgramController extends Controller
         $this->ensureCollegeScope($event);
 
         if ($program->college_id !== Auth::user()->college_id || $program->event_id !== $event->id) {
-            abort(403, 'Unauthorized access to this semester/program.');
+            abort(403, 'Unauthorized access to this subject/program.');
         }
     }
 

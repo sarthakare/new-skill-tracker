@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Year/Event Dashboard') - Skill Tracker</title>
+    <title>@yield('title', 'Year/Semester/Event Dashboard') - Skill Tracker</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-slate-50/80 font-sans antialiased text-slate-800">
@@ -16,7 +16,7 @@
                 <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10">
                     <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 </span>
-                <span>{{ isset($event) ? $event->name : 'Year/Event Dashboard' }}</span>
+                <span>{{ isset($event) ? $event->name : 'Year/Semester/Event Dashboard' }}</span>
             </a>
         </div>
         <div class="flex items-center gap-3">

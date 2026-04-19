@@ -18,10 +18,14 @@ class SyllabusAssignment extends Model
         'expected_output',
         'time_limit',
         'languages_supported',
+        'starts_on',
+        'ends_on',
     ];
 
     protected $casts = [
         'languages_supported' => 'array',
+        'starts_on' => 'date',
+        'ends_on' => 'date',
     ];
 
     public function syllabusSubtopic(): BelongsTo
@@ -31,11 +35,11 @@ class SyllabusAssignment extends Model
 
     public function submissions(): HasMany
     {
-        return $this->hasMany(SyllabusAssignmentSubmission::class);
+        return $this->hasMany(SyllabusAssignmentSubmission::class)->orderByDesc('created_at');
     }
 
     /**
-     * Semester/program this assignment belongs to (via syllabus topic).
+     * Subject/program this assignment belongs to (via syllabus topic).
      */
     public function programId(): ?int
     {

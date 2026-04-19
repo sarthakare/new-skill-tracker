@@ -10,6 +10,12 @@ class SyllabusAssignmentSubmission extends Model
     protected $fillable = [
         'user_id',
         'syllabus_assignment_id',
+        'source_code',
+        'judge0_language_id',
+    ];
+
+    protected $casts = [
+        'judge0_language_id' => 'integer',
     ];
 
     public function user(): BelongsTo

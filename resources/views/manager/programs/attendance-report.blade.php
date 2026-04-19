@@ -89,9 +89,9 @@
     </div>
 
     <table class="attendance-doc-info-table">
-        <tr><td class="attendance-doc-label">Semester/program name</td><td>{{ $program->name }}</td></tr>
+        <tr><td class="attendance-doc-label">Subject/program name</td><td>{{ $program->name }}</td></tr>
         @if($program->event)
-            <tr><td class="attendance-doc-label">Year/Event</td><td>{{ $program->event->name }}</td></tr>
+            <tr><td class="attendance-doc-label">Year/Semester/Event</td><td>{{ $program->event->name }}</td></tr>
         @endif
         <tr><td class="attendance-doc-label">Session</td><td>{{ $session->title }}</td></tr>
         <tr><td class="attendance-doc-label">Date</td><td>{{ $session->session_date->format('d F Y') }}</td></tr>

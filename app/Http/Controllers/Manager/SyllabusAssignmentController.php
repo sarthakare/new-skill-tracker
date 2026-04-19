@@ -46,6 +46,8 @@ class SyllabusAssignmentController extends Controller
             'expected_output' => $data['expected_output'] ?? null,
             'time_limit' => isset($data['time_limit']) ? (int) $data['time_limit'] : null,
             'languages_supported' => $languageIds,
+            'starts_on' => $data['starts_on'] ?? null,
+            'ends_on' => $data['ends_on'] ?? null,
         ]);
 
         return redirect()
@@ -86,6 +88,8 @@ class SyllabusAssignmentController extends Controller
             'expected_output' => $data['expected_output'] ?? null,
             'time_limit' => isset($data['time_limit']) ? (int) $data['time_limit'] : null,
             'languages_supported' => $languageIds,
+            'starts_on' => $data['starts_on'] ?? null,
+            'ends_on' => $data['ends_on'] ?? null,
         ]);
 
         $topicId = $assignment->syllabusSubtopic->syllabus_topic_id;
@@ -94,6 +98,19 @@ class SyllabusAssignmentController extends Controller
             ->route('manager.program.syllabus.index', $program)
             ->withFragment('topic-'.$topicId)
             ->with('success', 'Assignment updated successfully.');
+    }
+
+    public function destroy(Program $program, SyllabusAssignment $assignment): RedirectResponse
+    {
+        $this->ensureAssignmentInProgram($program, $assignment);
+
+        $topicId = $assignment->syllabusSubtopic->syllabus_topic_id;
+        $assignment->delete();
+
+        return redirect()
+            ->route('manager.program.syllabus.index', $program)
+            ->withFragment('topic-'.$topicId)
+            ->with('success', 'Assignment deleted.');
     }
 
     private function ensureAssignmentInProgram(Program $program, SyllabusAssignment $assignment): void

@@ -20,11 +20,11 @@ class EnsureVendorEventAccess
         
         if (!$credentialId) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => 'Unauthorized. Vendor year/event access required.'], 403);
+                return response()->json(['message' => 'Unauthorized. Vendor year/semester/event access required.'], 403);
             }
             
             return redirect()->route('login')
-                ->with('error', 'Please login to access the year/event dashboard.');
+                ->with('error', 'Please login to access the year/semester/event dashboard.');
         }
 
         $credential = VendorEventCredential::where('id', $credentialId)
@@ -57,7 +57,7 @@ class EnsureVendorEventAccess
                 }
 
                 return redirect()->route('vendor.event.dashboard', $credential->event_id)
-                    ->with('error', 'You do not have access to this year/event.');
+                    ->with('error', 'You do not have access to this year/semester/event.');
             }
         }
 

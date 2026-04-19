@@ -55,8 +55,8 @@
 
         <section class="overflow-hidden rounded-2xl bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.1)] ring-1 ring-slate-200/90">
             <div class="border-b border-slate-100 bg-gradient-to-r from-primary/8 via-primary/4 to-transparent px-5 py-4 sm:px-6 sm:py-5">
-                <h2 class="text-base font-bold text-slate-900 sm:text-lg">Semesters/programs & attendance</h2>
-                <p class="mt-1 text-sm text-slate-500">Years/events and sessions where you are enrolled as a semester/program participant.</p>
+                <h2 class="text-base font-bold text-slate-900 sm:text-lg">Subjects/programs & attendance</h2>
+                <p class="mt-1 text-sm text-slate-500">Click a subject/program to open syllabus, attendance, assignments, and remarks. Each row is a separate enrollment.</p>
             </div>
             <div class="p-5 sm:p-6">
                 @forelse($enrollments as $enrollment)
@@ -67,32 +67,43 @@
                         $attendedSessions = $presentRows->map(fn ($row) => $row->session)->filter()->sortBy(function ($s) {
                             return ($s->session_date?->timestamp ?? 0).(string) ($s->start_time ?? '');
                         });
+                        $expandThisEnrollment = $activeAssignment && $program && (int) $activeAssignment->programId() === (int) $program->id;
                     @endphp
-                    <article class="group mb-5 last:mb-0 overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50/90 to-white ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-md hover:ring-slate-300/90">
-                        <div class="flex flex-col gap-4 border-b border-slate-100/90 bg-white/60 px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-6">
-                            <div class="min-w-0">
-                                <p class="text-[11px] font-bold uppercase tracking-wider text-primary/80">Year/Event</p>
-                                <p class="mt-1 text-lg font-bold leading-snug text-slate-900">{{ $event?->name ?? '—' }}</p>
-                                @if($event && ($event->start_date || $event->end_date))
-                                    <p class="mt-1.5 flex flex-wrap items-center gap-x-2 text-sm text-slate-500">
-                                        <span class="inline-flex items-center gap-1">
-                                            <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                            @if($event->start_date){{ $event->start_date->format('M j, Y') }}@endif
-                                            @if($event->start_date && $event->end_date)–@endif
-                                            @if($event->end_date){{ $event->end_date->format('M j, Y') }}@endif
-                                        </span>
-                                    </p>
-                                @endif
+                    <details class="group mb-4 last:mb-0 overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50/90 to-white ring-1 ring-slate-200/80 shadow-sm open:shadow-md open:ring-slate-300/90" @if($expandThisEnrollment) open @endif>
+                        <summary class="list-none cursor-pointer select-none border-b border-slate-100/90 bg-white/60 px-4 py-3.5 transition hover:bg-white/90 sm:px-5 sm:py-4 [&::-webkit-details-marker]:hidden">
+                            <div class="flex items-start gap-3 sm:gap-4">
+                                <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 ring-1 ring-slate-200/80 transition group-open:bg-primary/10 group-open:text-primary group-open:ring-primary/25" aria-hidden="true">
+                                    <svg class="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
+                                <div class="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                                    <div class="min-w-0">
+                                        <p class="text-[11px] font-bold uppercase tracking-wider text-primary/80">Year/Semester/Event</p>
+                                        <p class="mt-1 text-base font-bold leading-snug text-slate-900 sm:text-lg">{{ $event?->name ?? '—' }}</p>
+                                        @if($event && ($event->start_date || $event->end_date))
+                                            <p class="mt-1.5 flex flex-wrap items-center gap-x-2 text-sm text-slate-500">
+                                                <span class="inline-flex items-center gap-1">
+                                                    <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                    @if($event->start_date){{ $event->start_date->format('M j, Y') }}@endif
+                                                    @if($event->start_date && $event->end_date)–@endif
+                                                    @if($event->end_date){{ $event->end_date->format('M j, Y') }}@endif
+                                                </span>
+                                            </p>
+                                        @endif
+                                    </div>
+                                    <div class="shrink-0 text-left sm:text-right">
+                                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Subject/program</p>
+                                        <p class="mt-1 font-semibold text-slate-800">{{ $program?->name ?? '—' }}</p>
+                                        @if($program?->type)
+                                            <span class="mt-2 inline-flex rounded-full bg-info-light px-2.5 py-0.5 text-xs font-semibold text-info ring-1 ring-info/15">{{ $program->type }}</span>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            <div class="shrink-0 text-left sm:text-right">
-                                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Semester/program</p>
-                                <p class="mt-1 font-semibold text-slate-800">{{ $program?->name ?? '—' }}</p>
-                                @if($program?->type)
-                                    <span class="mt-2 inline-flex rounded-full bg-info-light px-2.5 py-0.5 text-xs font-semibold text-info ring-1 ring-info/15">{{ $program->type }}</span>
-                                @endif
-                            </div>
-                        </div>
+                        </summary>
 
+                        <div class="border-t border-slate-100/80 bg-white/50">
                         <div class="px-5 py-4 sm:px-6">
                             <p class="text-sm font-semibold text-slate-800">Sessions attended <span class="font-normal text-slate-500">({{ $attendedSessions->count() }})</span></p>
                             @if($attendedSessions->isEmpty())
@@ -118,7 +129,7 @@
                         </div>
 
                         @php
-                            $syllabusTopics = $syllabusTopicsByProgram->get($program->id, collect());
+                            $syllabusTopics = $syllabusTopicsByProgram->get($program?->id, collect());
                             $assignmentLinks = collect();
                             foreach ($syllabusTopics as $syllabusTopic) {
                                 foreach ($syllabusTopic->subtopics as $st) {
@@ -134,9 +145,9 @@
                         @endphp
 
                         @if($syllabusTopics->isNotEmpty())
-                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6">
+                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6" @if($assignmentLinks->isNotEmpty()) id="program-{{ $program->id }}-assignments" @endif>
                                 <p class="text-sm font-semibold text-slate-800">Syllabus</p>
-                                <p class="mt-1 text-xs text-slate-500">Course outline for this semester/program. Scheduled dates and times appear when your instructor adds them.</p>
+                                <p class="mt-1 text-xs text-slate-500">Course outline for this subject/program. Use the red <span class="font-medium text-slate-700">Show assignment</span> button next to a subtopic when your instructor added a coding task; it opens the runner below.</p>
                                 <ol class="mt-3 list-decimal space-y-4 pl-5 text-sm text-slate-800 marker:font-semibold">
                                     @foreach($syllabusTopics as $topic)
                                         <li class="pl-1">
@@ -150,15 +161,27 @@
                                                 @endif
                                             </div>
                                             @if($topic->subtopics->isNotEmpty())
-                                                <ul class="mt-2 list-disc space-y-1.5 pl-4 text-sm text-slate-700">
+                                                <ul class="mt-2 list-none space-y-2 pl-0 text-sm text-slate-700">
                                                     @foreach($topic->subtopics as $subtopic)
-                                                        <li>
-                                                            <span class="text-slate-800">{{ $subtopic->title }}</span>
-                                                            @if($subtopic->scheduled_date || $subtopic->scheduled_time)
-                                                                <span class="ml-1.5 inline-flex items-center gap-1 rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-600">
-                                                                    {{ trim(($subtopic->scheduled_date?->format('M j, Y') ?? '') . ' ' . ($subtopic->scheduled_time ? substr((string) $subtopic->scheduled_time, 0, 5) : '')) }}
-                                                                </span>
-                                                            @endif
+                                                        <li class="flex w-full flex-wrap items-center gap-x-3 gap-y-2 rounded-lg bg-slate-50/80 px-2 py-1.5">
+                                                            <div class="min-w-0 flex-1 pr-2 text-left">
+                                                                <span class="text-slate-800">{{ $subtopic->title }}</span>
+                                                            </div>
+                                                            <div class="ml-auto flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-2.5">
+                                                                @if($subtopic->scheduled_date || $subtopic->scheduled_time)
+                                                                    <span class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-600 whitespace-nowrap">
+                                                                        {{ trim(($subtopic->scheduled_date?->format('M j, Y') ?? '') . ' ' . ($subtopic->scheduled_time ? substr((string) $subtopic->scheduled_time, 0, 5) : '')) }}
+                                                                    </span>
+                                                                @endif
+                                                                @if($subtopic->assignments->isNotEmpty())
+                                                                    @foreach($subtopic->assignments as $asg)
+                                                                        <a href="{{ route('student.dashboard', ['assignment' => $asg->id]) }}#student-run-code" class="inline-flex items-center justify-center gap-1 rounded-md bg-red-600 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white shadow-sm ring-1 ring-red-700/30 transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/50 sm:text-xs {{ $activeAssignment && (int) $activeAssignment->id === (int) $asg->id ? 'ring-2 ring-red-300 ring-offset-1' : '' }}">
+                                                                            <svg class="h-3 w-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                                                            Show assignment
+                                                                        </a>
+                                                                    @endforeach
+                                                                @endif
+                                                            </div>
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -169,29 +192,9 @@
                             </div>
                         @endif
 
-                        @if($assignmentLinks->isNotEmpty())
-                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6" id="program-{{ $program->id }}-assignments">
-                                <p class="text-sm font-semibold text-slate-800">Coding assignments</p>
-                                <p class="mt-1 text-xs text-slate-500">Click <span class="font-medium text-slate-700">Show assignment</span> to open the problem and code runner below.</p>
-                                <ul class="mt-3 space-y-2">
-                                    @foreach($assignmentLinks as $row)
-                                        <li class="rounded-xl bg-white/90 p-3 ring-1 ring-slate-200/70 sm:p-4 {{ $activeAssignment && (int) $activeAssignment->id === (int) $row['assignment']->id ? 'ring-2 ring-primary/40 bg-primary/5' : '' }}">
-                                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                                <div class="min-w-0">
-                                                    <p class="font-medium text-slate-900">{{ $row['assignment']->title }}</p>
-                                                    <p class="mt-0.5 text-xs text-slate-500">{{ $row['topic']->title }} · {{ $row['subtopic']->title }}</p>
-                                                </div>
-                                                <a href="{{ route('student.dashboard', ['assignment' => $row['assignment']->id]) }}#student-run-code" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-hover">
-                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                                    Show assignment
-                                                </a>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-
-                                @if($activeAssignment && $program && (int) $activeAssignment->programId() === (int) $program->id)
-                                    <section id="student-run-code" class="mt-5 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.12)] scroll-mt-6">
+                        @if($assignmentLinks->isNotEmpty() && $activeAssignment && $program && (int) $activeAssignment->programId() === (int) $program->id)
+                            <div class="border-t border-slate-100/90 px-5 py-4 sm:px-6">
+                                    <section id="student-run-code" class="mt-0 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_28px_-8px_rgba(15,23,42,0.12)] scroll-mt-6">
                                         <div class="flex items-center gap-3 border-b border-slate-100 bg-slate-50/90 px-4 py-3 sm:px-5">
                                             <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-md">
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -220,7 +223,13 @@
                                                             <div class="mt-3 border-t border-primary/15 pt-3 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">{{ $activeAssignment->description }}</div>
                                                         @endif
                                                         <div id="assignment-submitted-banner" class="mt-3 rounded-xl border border-emerald-200/90 bg-emerald-50/90 px-3 py-2.5 text-xs font-medium text-emerald-900 sm:text-sm {{ $activeAssignmentSubmitted ? '' : 'hidden' }}">
-                                                            You have submitted this assignment. It is final and cannot be changed.
+                                                            <p id="assignment-submitted-message">
+                                                                @if($activeAssignmentSubmitted && $activeAssignmentSubmission)
+                                                                    Submitted on <span class="font-semibold tabular-nums">{{ $activeAssignmentSubmission->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</span>. Your saved code is shown below and cannot be changed.
+                                                                @else
+                                                                    You have submitted this assignment. It is final and cannot be changed.
+                                                                @endif
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <a href="{{ route('student.dashboard') }}#program-{{ $program->id }}-assignments" class="inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Close runner</a>
@@ -231,18 +240,28 @@
                                             @php
                                                 $runnerLangIds = array_column($codeRunnerLanguages, 'id');
                                                 $defaultRunnerLang = in_array(71, $runnerLangIds, true) ? 71 : ($runnerLangIds[0] ?? 71);
+                                                $selectedRunnerLang = $defaultRunnerLang;
+                                                if ($activeAssignmentSubmission && $activeAssignmentSubmission->judge0_language_id !== null) {
+                                                    $sid = (int) $activeAssignmentSubmission->judge0_language_id;
+                                                    if (in_array($sid, $runnerLangIds, true)) {
+                                                        $selectedRunnerLang = $sid;
+                                                    }
+                                                }
+                                                $runnerSourceValue = $activeAssignmentSubmission
+                                                    ? (string) ($activeAssignmentSubmission->source_code ?? '')
+                                                    : (string) ($activeAssignment->starter_code ?? '');
                                             @endphp
                                             <div>
                                                 <label for="code-run-language" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Language</label>
                                                 <select id="code-run-language" @disabled($activeAssignmentSubmitted) class="w-full rounded-xl border-0 bg-slate-100/90 px-4 py-3 text-sm font-medium text-slate-800 shadow-inner ring-1 ring-slate-200/80 focus:outline-none focus:ring-2 focus:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60">
                                                     @foreach ($codeRunnerLanguages as $lang)
-                                                        <option value="{{ $lang['id'] }}" @selected((int) $lang['id'] === (int) $defaultRunnerLang)>{{ $lang['name'] }}</option>
+                                                        <option value="{{ $lang['id'] }}" @selected((int) $lang['id'] === (int) $selectedRunnerLang)>{{ $lang['name'] }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div>
                                                 <label for="code-run-source" class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">Your code</label>
-                                                <textarea id="code-run-source" rows="12" @disabled($activeAssignmentSubmitted) class="w-full resize-y rounded-xl border-0 bg-slate-900 px-4 py-3 font-mono text-sm leading-relaxed text-slate-100 shadow-inner ring-1 ring-slate-700/80 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60" placeholder="Paste your code here…" required spellcheck="false">{{ $activeAssignment->starter_code ?? '' }}</textarea>
+                                                <textarea id="code-run-source" rows="12" @disabled($activeAssignmentSubmitted) class="w-full resize-y rounded-xl border-0 bg-slate-900 px-4 py-3 font-mono text-sm leading-relaxed text-slate-100 shadow-inner ring-1 ring-slate-700/80 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-60" placeholder="Paste your code here…" required spellcheck="false">{{ $runnerSourceValue }}</textarea>
                                             </div>
                                             <div>
                                                 <button type="button" id="code-run-submit" @disabled($activeAssignmentSubmitted) class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-hover disabled:pointer-events-none disabled:opacity-55">
@@ -278,26 +297,26 @@
                                             </div>
                                         </div>
                                     </section>
-                                @endif
                             </div>
                         @endif
 
                         <div class="mx-5 mb-5 rounded-xl border border-amber-200/70 bg-gradient-to-br from-amber-50/95 to-amber-50/50 px-4 py-3.5 sm:mx-6">
-                            <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Semester/Program manager remarks</p>
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-amber-900/75">Subject/Program manager remarks</p>
                             @if($enrollment->manager_remarks)
                                 <p class="mt-2 text-sm leading-relaxed text-slate-800 whitespace-pre-wrap">{{ $enrollment->manager_remarks }}</p>
                             @else
-                                <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this semester/program yet.</p>
+                                <p class="mt-2 text-sm text-slate-600">No remarks have been added for you in this subject/program yet.</p>
                             @endif
                         </div>
-                    </article>
+                        </div>
+                    </details>
                 @empty
                     <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-6 py-12 text-center">
                         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80">
                             <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                         </div>
-                        <p class="mt-4 text-sm font-medium text-slate-800">No semesters/programs yet</p>
-                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a semester/program manager adds you with your registered account, your years/events, attendance, and remarks will show up here.</p>
+                        <p class="mt-4 text-sm font-medium text-slate-800">No subjects/programs yet</p>
+                        <p class="mx-auto mt-1 max-w-md text-sm text-slate-500">When a subject/program manager adds you with your registered account, your years/semesters/events, attendance, and remarks will show up here.</p>
                     </div>
                 @endforelse
             </div>
@@ -321,16 +340,16 @@
             <tr><td class="student-report-doc-label">Email</td><td>{{ $user->email }}</td></tr>
             <tr><td class="student-report-doc-label">Department</td><td>{{ $user->department?->name ?? '—' }}</td></tr>
             <tr><td class="student-report-doc-label">Mobile</td><td>{{ $user->mobile ?? '—' }}</td></tr>
-            <tr><td class="student-report-doc-label">Semesters/programs enrolled</td><td>{{ $enrollments->count() }}</td></tr>
+            <tr><td class="student-report-doc-label">Subjects/programs enrolled</td><td>{{ $enrollments->count() }}</td></tr>
         </table>
 
-        <h2 class="student-report-doc-section">Semester/Program summary</h2>
+        <h2 class="student-report-doc-section">Subject/Program summary</h2>
         <table class="student-report-doc-table">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Year/Event</th>
-                    <th>Semester/program</th>
+                    <th>Year/Semester/Event</th>
+                    <th>Subject/program</th>
                     <th>Type</th>
                     <th>Sessions Attended</th>
                     <th>Remarks</th>
@@ -356,7 +375,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">No semesters/programs assigned yet.</td>
+                        <td colspan="6" class="text-center">No subjects/programs assigned yet.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -589,18 +608,34 @@
                     }
                     submitConfirmBtn.disabled = true;
                     try {
+                        const body = {
+                            source_code: sourceEl ? sourceEl.value : '',
+                            language_id: langEl ? parseInt(langEl.value, 10) : 0,
+                        };
                         const res = await fetch(url, {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
+                                'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': csrfToken(),
                                 'X-Requested-With': 'XMLHttpRequest',
                             },
+                            body: JSON.stringify(body),
                         });
                         const data = await res.json().catch(function () { return {}; });
                         if (!res.ok || !data.ok) {
-                            alert(data.error || ('Submit failed (' + res.status + ')'));
+                            alert(data.error || data.message || ('Submit failed (' + res.status + ')'));
                             return;
+                        }
+                        const msgEl = document.getElementById('assignment-submitted-message');
+                        if (msgEl && data.submitted_at_display) {
+                            msgEl.textContent = '';
+                            msgEl.appendChild(document.createTextNode('Submitted on '));
+                            const span = document.createElement('span');
+                            span.className = 'font-semibold tabular-nums';
+                            span.textContent = data.submitted_at_display;
+                            msgEl.appendChild(span);
+                            msgEl.appendChild(document.createTextNode('. Your saved code is shown below and cannot be changed.'));
                         }
                         lockRunnerAfterSubmit();
                     } catch (e) {

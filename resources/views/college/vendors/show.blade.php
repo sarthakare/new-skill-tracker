@@ -41,7 +41,7 @@
 
         <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
             <div class="px-5 py-4 border-b border-border bg-primary/5">
-                <h2 class="text-lg font-semibold text-slate-800">Assigned years/events</h2>
+                <h2 class="text-lg font-semibold text-slate-800">Assigned years/semesters/events</h2>
             </div>
             <div class="p-5">
                 @if($vendor->events->count() > 0)
@@ -49,7 +49,7 @@
                         <table class="w-full">
                             <thead>
                                 <tr class="bg-slate-100 border-b border-border">
-                                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Year/Event name</th>
+                                    <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Year/Semester/Event name</th>
                                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Type</th>
                                     <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Status</th>
                                     <th class="text-right text-xs font-semibold text-slate-600 uppercase tracking-wider px-4 py-2">Actions</th>
@@ -70,7 +70,7 @@
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-right">
-                                            <form action="{{ route('college.vendors.remove-from-event', [$vendor, $event]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to remove this vendor from the year/event?');">
+                                            <form action="{{ route('college.vendors.remove-from-event', [$vendor, $event]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to remove this vendor from the year/semester/event?');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-button text-sm font-medium text-red-600 border border-red-200 hover:bg-red-50">
@@ -85,7 +85,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-slate-500 text-sm">No years/events assigned.</p>
+                    <p class="text-slate-500 text-sm">No years/semesters/events assigned.</p>
                 @endif
             </div>
         </div>
@@ -94,15 +94,15 @@
     <div>
         <div class="bg-white rounded-card border border-border shadow-card overflow-hidden sticky top-24">
             <div class="px-5 py-4 border-b border-border bg-primary/5">
-                <h2 class="text-lg font-semibold text-slate-800">Assign to year/event</h2>
+                <h2 class="text-lg font-semibold text-slate-800">Assign to year/semester/event</h2>
             </div>
             <div class="p-5">
                 <form action="{{ route('college.vendors.assign-event', $vendor) }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label for="event_id" class="block text-sm font-medium text-slate-700 mb-1">Year/Event <span class="text-red-500">*</span></label>
+                        <label for="event_id" class="block text-sm font-medium text-slate-700 mb-1">Year/Semester/Event <span class="text-red-500">*</span></label>
                         <select id="event_id" name="event_id" required class="w-full rounded-input border @error('event_id') border-red-500 @else border-slate-300 @enderror focus:ring-2 focus:ring-primary focus:border-primary">
-                            <option value="">Select year/event</option>
+                            <option value="">Select year/semester/event</option>
                             @foreach(\App\Models\Event::where('college_id', Auth::user()->college_id)->where('status', '!=', 'Draft')->get() as $event)
                                 @if(!$vendor->events->contains($event))
                                     <option value="{{ $event->id }}" {{ old('event_id') == $event->id ? 'selected' : '' }}>{{ $event->name }}</option>
@@ -111,7 +111,7 @@
                         </select>
                         @error('event_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
-                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Assign to year/event</button>
+                    <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 rounded-button font-medium text-white bg-primary hover:bg-primary-hover">Assign to year/semester/event</button>
                 </form>
             </div>
         </div>

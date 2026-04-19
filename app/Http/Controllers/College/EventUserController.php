@@ -54,7 +54,7 @@ class EventUserController extends Controller
 
         if ($existing) {
             return redirect()->back()
-                ->with('error', 'User is already assigned to this year/event.');
+                ->with('error', 'User is already assigned to this year/semester/event.');
         }
 
         EventUser::create([
@@ -69,11 +69,11 @@ class EventUserController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'user.assigned',
-            'description' => "User '{$user->name}' assigned as '{$request->role}' to year/event '{$event->name}'",
+            'description' => "User '{$user->name}' assigned as '{$request->role}' to year/semester/event '{$event->name}'",
         ]);
 
         return redirect()->back()
-            ->with('success', 'User assigned to year/event successfully.');
+            ->with('success', 'User assigned to year/semester/event successfully.');
     }
 
     public function destroy(Event $event, EventUser $eventUser): RedirectResponse
@@ -92,17 +92,17 @@ class EventUserController extends Controller
             'event_id' => $event->id,
             'user_id' => Auth::id(),
             'action' => 'user.unassigned',
-            'description' => "User '{$userName}' unassigned from year/event '{$event->name}'",
+            'description' => "User '{$userName}' unassigned from year/semester/event '{$event->name}'",
         ]);
 
         return redirect()->back()
-            ->with('success', 'User unassigned from year/event successfully.');
+            ->with('success', 'User unassigned from year/semester/event successfully.');
     }
 
     private function ensureCollegeScope(Event $event): void
     {
         if ($event->college_id !== Auth::user()->college_id) {
-            abort(403, 'Unauthorized access to this year/event.');
+            abort(403, 'Unauthorized access to this year/semester/event.');
         }
     }
 }

@@ -49,6 +49,7 @@ class DashboardController extends Controller
 
         $activeAssignment = null;
         $activeAssignmentSubmitted = false;
+        $activeAssignmentSubmission = null;
         $codeRunnerLanguages = config('judge0.languages', []);
         if ($request->filled('assignment')) {
             $assignment = SyllabusAssignment::query()
@@ -60,10 +61,11 @@ class DashboardController extends Controller
                 if ($pid !== null && $enrollments->pluck('program_id')->contains($pid)) {
                     $activeAssignment = $assignment;
                     $codeRunnerLanguages = $assignment->allowedJudge0Languages();
-                    $activeAssignmentSubmitted = SyllabusAssignmentSubmission::query()
+                    $activeAssignmentSubmission = SyllabusAssignmentSubmission::query()
                         ->where('user_id', $user->id)
                         ->where('syllabus_assignment_id', $assignment->id)
-                        ->exists();
+                        ->first();
+                    $activeAssignmentSubmitted = $activeAssignmentSubmission !== null;
                 }
             }
         }
@@ -76,6 +78,7 @@ class DashboardController extends Controller
             'syllabusTopicsByProgram' => $syllabusTopicsByProgram,
             'activeAssignment' => $activeAssignment,
             'activeAssignmentSubmitted' => $activeAssignmentSubmitted,
+            'activeAssignmentSubmission' => $activeAssignmentSubmission,
             'codeRunnerLanguages' => $codeRunnerLanguages,
         ]);
     }

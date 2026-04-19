@@ -15,11 +15,11 @@ class EnsureProgramManagerAccess
 
         if (!$credentialId) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => 'Unauthorized. Semester/program manager access required.'], 403);
+                return response()->json(['message' => 'Unauthorized. Subject/program manager access required.'], 403);
             }
 
             return redirect()->route('login')
-                ->with('error', 'Please login to access the semester/program dashboard.');
+                ->with('error', 'Please login to access the subject/program dashboard.');
         }
 
         $credential = ProgramManagerCredential::with(['program', 'college'])
@@ -49,11 +49,11 @@ class EnsureProgramManagerAccess
 
             if ($credential->program_id != $programId) {
                 if ($request->expectsJson()) {
-                    return response()->json(['message' => 'Unauthorized access to this semester/program.'], 403);
+                    return response()->json(['message' => 'Unauthorized access to this subject/program.'], 403);
                 }
 
                 return redirect()->route('manager.program.dashboard', $credential->program_id)
-                    ->with('error', 'You do not have access to this semester/program.');
+                    ->with('error', 'You do not have access to this subject/program.');
             }
         }
 

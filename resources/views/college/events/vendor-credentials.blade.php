@@ -12,7 +12,7 @@
     </h1>
     <a href="{{ route('college.events.show', $event) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        Back to year/event
+        Back to year/semester/event
     </a>
 </div>
 
@@ -55,7 +55,7 @@
 
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
     <div class="px-5 py-4 border-b border-border bg-primary/5">
-        <h2 class="text-lg font-semibold text-slate-800">All vendor credentials for this year/event</h2>
+        <h2 class="text-lg font-semibold text-slate-800">All vendor credentials for this year/semester/event</h2>
     </div>
     <div class="p-5">
         @if($credentials->count() > 0)
@@ -84,10 +84,10 @@
                 </table>
             </div>
             <div class="mt-4 p-4 rounded-lg bg-info-light border border-info/30 text-slate-700 text-sm">
-                <strong>Note:</strong> Passwords are hashed and cannot be retrieved. If a vendor forgets their password, you can regenerate credentials by removing and re-adding the vendor to the year/event.
+                <strong>Note:</strong> Passwords are hashed and cannot be retrieved. If a vendor forgets their password, you can regenerate credentials by removing and re-adding the vendor to the year/semester/event.
             </div>
         @else
-            <p class="text-slate-500">No vendor credentials found for this year/event.</p>
+            <p class="text-slate-500">No vendor credentials found for this year/semester/event.</p>
         @endif
     </div>
 </div>

@@ -56,6 +56,7 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::post('/{program}/syllabus/subtopics/{subtopic}/assignments', [SyllabusAssignmentController::class, 'store'])->name('syllabus.assignments.store');
     Route::get('/{program}/syllabus/assignments/{assignment}/edit', [SyllabusAssignmentController::class, 'edit'])->name('syllabus.assignments.edit');
     Route::put('/{program}/syllabus/assignments/{assignment}', [SyllabusAssignmentController::class, 'update'])->name('syllabus.assignments.update');
+    Route::delete('/{program}/syllabus/assignments/{assignment}', [SyllabusAssignmentController::class, 'destroy'])->name('syllabus.assignments.destroy');
 
     Route::get('/{program}/completion', [ProgramCompletionController::class, 'create'])->name('completion.create');
     Route::post('/{program}/completion', [ProgramCompletionController::class, 'store'])->name('completion.store');

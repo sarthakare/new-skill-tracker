@@ -50,7 +50,7 @@ class Judge0RunController extends Controller
             if (! $enrolled) {
                 return response()->json([
                     'ok' => false,
-                    'error' => 'You are not enrolled in the semester/program for this assignment.',
+                    'error' => 'You are not enrolled in the subject/program for this assignment.',
                 ], 403);
             }
             if (! $assignment->allowsJudge0LanguageId($languageId)) {

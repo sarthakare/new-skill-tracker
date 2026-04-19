@@ -1,6 +1,6 @@
 @extends('vendor.layouts.app')
 
-@section('title', 'Year/Event Dashboard')
+@section('title', 'Year/Semester/Event Dashboard')
 
 @section('content')
 <div class="mb-6">
@@ -8,17 +8,17 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
         </span>
-        Year/Event Dashboard
+        Year/Semester/Event Dashboard
     </h1>
 </div>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <div class="bg-primary/5 rounded-card border border-primary/20 shadow-card p-5">
-        <p class="text-sm font-medium text-slate-600">Year/Event name</p>
+        <p class="text-sm font-medium text-slate-600">Year/Semester/Event name</p>
         <p class="mt-1 text-lg font-bold text-slate-900">{{ $stats['event_name'] }}</p>
     </div>
     <div class="bg-success-light rounded-card border border-success/20 shadow-card p-5">
-        <p class="text-sm font-medium text-slate-600">Year/Event type</p>
+        <p class="text-sm font-medium text-slate-600">Year/Semester/Event type</p>
         <p class="mt-1 text-lg font-bold text-slate-900">{{ $stats['event_type'] }}</p>
     </div>
     <div class="bg-info-light rounded-card border border-info/20 shadow-card p-5">
@@ -35,12 +35,12 @@
     <div class="lg:col-span-2 space-y-6">
         <div class="bg-white rounded-card border border-border shadow-card overflow-hidden">
             <div class="px-5 py-4 border-b border-border bg-primary/5">
-                <h2 class="text-lg font-semibold text-slate-800">Year/Event information</h2>
+                <h2 class="text-lg font-semibold text-slate-800">Year/Semester/Event information</h2>
             </div>
             <div class="p-5">
                 <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <dt class="text-slate-500">Year/Event name</dt><dd class="font-medium text-slate-900">{{ $event->name }}</dd>
-                    <dt class="text-slate-500">Year/Event type</dt><dd><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $event->type }}</span></dd>
+                    <dt class="text-slate-500">Year/Semester/Event name</dt><dd class="font-medium text-slate-900">{{ $event->name }}</dd>
+                    <dt class="text-slate-500">Year/Semester/Event type</dt><dd><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $event->type }}</span></dd>
                     <dt class="text-slate-500">College</dt><dd class="text-slate-700">{{ $event->college->name }}</dd>
                     <dt class="text-slate-500">Start Date</dt><dd class="text-slate-700">{{ $event->start_date->format('F d, Y') }}</dd>
                     <dt class="text-slate-500">End Date</dt><dd class="text-slate-700">{{ $event->end_date->format('F d, Y') }}</dd>
@@ -69,7 +69,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-slate-500">No modules are currently enabled for this year/event.</p>
+                    <p class="text-slate-500">No modules are currently enabled for this year/semester/event.</p>
                 @endif
             </div>
         </div>
@@ -94,7 +94,7 @@
             </div>
             <div class="p-5 space-y-2 text-sm text-slate-700">
                 <p><strong>{{ $stats['modules_enabled'] }}</strong> of <strong>{{ $stats['total_modules'] }}</strong> modules enabled</p>
-                <p>Year/Event duration: {{ $event->start_date->diffInDays($event->end_date) + 1 }} days</p>
+                <p>Year/Semester/Event duration: {{ $event->start_date->diffInDays($event->end_date) + 1 }} days</p>
                 <p>College: {{ $event->college->name }}</p>
             </div>
         </div>

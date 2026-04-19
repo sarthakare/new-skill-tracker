@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Edit Semester/program')
+@section('title', 'Edit Subject/program')
 
 @section('content')
 <div class="mb-6">
@@ -8,7 +8,7 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
         </span>
-        Edit Semester/program - {{ $program->name }}
+        Edit Subject/program - {{ $program->name }}
     </h1>
 </div>
 
@@ -18,7 +18,7 @@
             @csrf
             @method('PUT')
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Semester/program name <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Subject/program name <span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name', $program->name) }}" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
                 @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
@@ -35,7 +35,7 @@
             </div>
             <div class="border border-border rounded-lg p-4 bg-slate-50/50">
                 <h3 class="text-sm font-semibold text-slate-800 mb-1">Departments <span class="text-red-500">*</span></h3>
-                <p class="text-sm text-slate-500 mb-3">Select one or more departments this semester/program applies to.</p>
+                <p class="text-sm text-slate-500 mb-3">Select one or more departments this subject/program applies to.</p>
                 @if($departments->isEmpty())
                     <p class="text-sm text-amber-800">No departments defined. <a href="{{ route('college.departments.create') }}" class="font-medium text-primary hover:underline">Add departments</a> first.</p>
                 @else
@@ -73,11 +73,11 @@
                 </select>
             </div>
             <div class="border-t border-border pt-4">
-                <h3 class="text-sm font-semibold text-slate-800 mb-2">Who runs the semester/program?</h3>
+                <h3 class="text-sm font-semibold text-slate-800 mb-2">Who runs the subject/program?</h3>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Executor type <span class="text-red-500">*</span></label>
                     <select name="manager_type" id="manager_type" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary">
-                        <option value="">-- Select who runs the semester/program --</option>
+                        <option value="">-- Select who runs the subject/program --</option>
                         <option value="Vendor" {{ old('manager_type', in_array($program->manager_type, ['Vendor','Independent']) ? $program->manager_type : 'Vendor') === 'Vendor' ? 'selected' : '' }}>Vendor</option>
                         <option value="Independent" {{ old('manager_type', $program->manager_type) === 'Independent' ? 'selected' : '' }}>Independent Trainer</option>
                     </select>
@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div class="border-t border-border pt-4">
-                <h3 class="text-sm font-semibold text-slate-800 mb-2">Assign Semester/Program manager (internal)</h3>
+                <h3 class="text-sm font-semibold text-slate-800 mb-2">Assign Subject/Program manager (internal)</h3>
                 <p class="text-sm text-slate-500 mb-3">Optional. An internal manager can manage students, mark attendance, assign points, and generate reports.</p>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Internal Manager</label>

@@ -21,7 +21,7 @@
     </div>
     <div class="p-5">
         @if($registeredStudents->isEmpty())
-            <p class="text-sm text-slate-600">No registered students left to add (everyone may already be in this semester/program, or there are no student accounts yet). Use <strong>Create student</strong> below, or ask your college admin to register students first.</p>
+            <p class="text-sm text-slate-600">No registered students left to add (everyone may already be in this subject/program, or there are no student accounts yet). Use <strong>Create student</strong> below, or ask your college admin to register students first.</p>
         @else
             <form action="{{ route('manager.program.students.store', $program) }}" method="POST" class="flex flex-col sm:flex-row sm:items-end gap-4">
                 @csrf
@@ -35,7 +35,7 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover shrink-0">Add to semester/program</button>
+                <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 rounded-button font-medium text-white bg-primary hover:bg-primary-hover shrink-0">Add to subject/program</button>
             </form>
         @endif
     </div>
@@ -44,7 +44,7 @@
 <div class="bg-white rounded-card border border-border shadow-card overflow-hidden mb-6">
     <div class="px-5 py-4 border-b border-border bg-primary/5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-            <h2 class="text-lg font-semibold text-slate-800">Create student &amp; add to semester/program</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Create student &amp; add to subject/program</h2>
             <p class="text-sm text-slate-500 mt-1">Same fields as college admin: roll number, name, email, department, optional mobile, and a password you assign. The form stays hidden until you open it.</p>
         </div>
         @if(!$departments->isEmpty())

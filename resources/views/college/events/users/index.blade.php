@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Year/Event users')
+@section('title', 'Year/Semester/Event users')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,11 +8,11 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
         </span>
-        Year/Event users - {{ $event->name }}
+        Year/Semester/Event users - {{ $event->name }}
     </h1>
     <a href="{{ route('college.events.show', $event) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-        Back to year/event
+        Back to year/semester/event
     </a>
 </div>
 
@@ -37,7 +37,7 @@
                             <tr class="border-b border-border odd:bg-slate-50/50 hover:bg-primary/5 transition-colors">
                                 <td class="px-5 py-3 text-sm font-medium text-slate-900">{{ $eventUser->user->name }}</td>
                                 <td class="px-5 py-3 text-sm text-slate-600">{{ $eventUser->user->email }}</td>
-                                <td class="px-5 py-3"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $eventUser->role === 'Event Admin' ? 'Year/Event Admin' : $eventUser->role }}</span></td>
+                                <td class="px-5 py-3"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-info-light text-info">{{ $eventUser->role === 'Event Admin' ? 'Year/Semester/Event Admin' : $eventUser->role }}</span></td>
                                 <td class="px-5 py-3 text-right">
                                     <form action="{{ route('college.events.users.destroy', [$event, $eventUser]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to remove this user?');">
                                         @csrf
@@ -49,7 +49,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="px-5 py-12 text-center text-slate-500">No users assigned to this year/event.</td></tr>
+                            <tr><td colspan="4" class="px-5 py-12 text-center text-slate-500">No users assigned to this year/semester/event.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -79,7 +79,7 @@
                         <label for="role" class="block text-sm font-medium text-slate-700 mb-1">Role <span class="text-red-500">*</span></label>
                         <select id="role" name="role" required class="w-full rounded-input border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary @error('role') border-red-500 @enderror">
                             <option value="">Select Role</option>
-                            <option value="Event Admin" {{ old('role') === 'Event Admin' ? 'selected' : '' }}>Year/Event Admin</option>
+                            <option value="Event Admin" {{ old('role') === 'Event Admin' ? 'selected' : '' }}>Year/Semester/Event Admin</option>
                             <option value="Trainer" {{ old('role') === 'Trainer' ? 'selected' : '' }}>Trainer</option>
                             <option value="Judge" {{ old('role') === 'Judge' ? 'selected' : '' }}>Judge</option>
                             <option value="Coordinator" {{ old('role') === 'Coordinator' ? 'selected' : '' }}>Coordinator</option>

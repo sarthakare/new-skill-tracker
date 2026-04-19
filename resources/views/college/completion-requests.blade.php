@@ -1,6 +1,6 @@
 @extends('college.layouts.app')
 
-@section('title', 'Semester/Program completions')
+@section('title', 'Subject/Program completions')
 
 @section('content')
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -8,7 +8,7 @@
         <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
             <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
         </span>
-        Semester/Program completions
+        Subject/Program completions
     </h1>
     <a href="{{ route('college.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-button font-medium text-slate-700 bg-white border border-border hover:bg-slate-50 transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -28,8 +28,8 @@
                 <table class="w-full min-w-[800px]">
                     <thead>
                         <tr class="bg-slate-100 border-b border-border">
-                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Year/Event</th>
-                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Semester/program</th>
+                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Year/Semester/Event</th>
+                            <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Subject/program</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Requested By</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Requested At</th>
                             <th class="text-left text-xs font-semibold text-slate-600 uppercase tracking-wider px-5 py-3">Status</th>
