@@ -10,10 +10,20 @@ return new class extends Migration
     {
         Schema::create('program_student_assignment_remarks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('program_student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('syllabus_assignment_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('program_student_id');
+            $table->unsignedBigInteger('syllabus_assignment_id');
             $table->text('remarks')->nullable();
             $table->timestamps();
+
+            // Short FK names: MySQL max identifier length is 64; Laravel’s default exceeds it for this table name.
+            $table->foreign('program_student_id', 'psar_program_student_fk')
+                ->references('id')
+                ->on('program_students')
+                ->onDelete('cascade');
+            $table->foreign('syllabus_assignment_id', 'psar_syllabus_asg_fk')
+                ->references('id')
+                ->on('syllabus_assignments')
+                ->onDelete('cascade');
 
             $table->unique(['program_student_id', 'syllabus_assignment_id'], 'psar_student_assignment_unique');
         });
