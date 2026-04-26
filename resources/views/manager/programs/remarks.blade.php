@@ -101,66 +101,137 @@
                         </div>
                         <div class="px-3 py-2.5 sm:px-3.5">
                             @if(isset($programAssignments) && $programAssignments->isNotEmpty())
-                                <div class="mb-3 space-y-3">
-                                    <p class="text-[10px] font-bold uppercase tracking-wide text-slate-500">Assignment remarks</p>
-                                    @foreach($programAssignments as $assignment)
-                                        @php
-                                            $subKey = $student->user_id ? ($student->user_id.'-'.$assignment->id) : null;
-                                            $submission = $subKey ? ($latestSubmissionByUserAssignmentKey[$subKey] ?? null) : null;
-                                            $savedRow = $assignmentRemarksLookup->get($student->id)?->get($assignment->id);
-                                            $fieldName = 'assignment_remarks.'.$student->id.'.'.$assignment->id;
-                                        @endphp
-                                        <div class="rounded-lg border border-slate-200/90 bg-white p-2.5 shadow-sm ring-1 ring-slate-100">
-                                            <div class="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                                                <span class="text-sm font-semibold text-slate-900">{{ $assignment->title }}</span>
-                                                @if($assignment->difficulty)
-                                                    <span class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 ring-1 ring-slate-200/80">{{ $assignment->difficulty }}</span>
+                                @php
+                                    $studentSubmissionCount = 0;
+                                    $studentRemarkCount = 0;
+                                    foreach ($programAssignments as $assignment) {
+                                        $subKey = $student->user_id ? ($student->user_id.'-'.$assignment->id) : null;
+                                        if ($subKey && isset($latestSubmissionByUserAssignmentKey[$subKey])) {
+                                            $studentSubmissionCount++;
+                                        }
+                                        if (filled($assignmentRemarksLookup->get($student->id)?->get($assignment->id)?->remarks)) {
+                                            $studentRemarkCount++;
+                                        }
+                                    }
+                                    $assignmentsByType = collect([
+                                        'assignment' => $programAssignments->filter(fn ($assignment) => ($assignment->type ?? 'assignment') === 'assignment')->values(),
+                                        'problem' => $programAssignments->filter(fn ($assignment) => ($assignment->type ?? 'assignment') === 'problem')->values(),
+                                        'quiz' => $programAssignments->filter(fn ($assignment) => ($assignment->type ?? 'assignment') === 'quiz')->values(),
+                                    ]);
+                                @endphp
+                                <details class="mb-3 rounded-lg border border-slate-200/90 bg-slate-50/70 p-2.5 group">
+                                    <summary class="cursor-pointer list-none text-[11px] font-semibold text-slate-700 hover:text-primary [&::-webkit-details-marker]:hidden">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <svg class="h-3.5 w-3.5 shrink-0 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                            Add Remarks
+                                            <span class="rounded-md bg-white px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-slate-600 ring-1 ring-slate-200/80">{{ $programAssignments->count() }}</span>
+                                            <span class="text-[10px] text-slate-500">Submissions: {{ $studentSubmissionCount }} | Saved remarks: {{ $studentRemarkCount }}</span>
+                                        </span>
+                                    </summary>
+                                    <div class="mt-2.5 space-y-2 border-t border-slate-200/80 pt-2.5">
+                                        @foreach(['assignment', 'problem', 'quiz'] as $typeKey)
+                                            @php
+                                                $items = $assignmentsByType->get($typeKey, collect());
+                                                $typeTitle = $typeKey === 'problem' ? 'Problems' : ($typeKey === 'quiz' ? 'Quizzes' : 'Assignments');
+                                                $typeSummaryClasses = $typeKey === 'problem'
+                                                    ? 'text-amber-700 bg-amber-50 border-amber-200/80'
+                                                    : ($typeKey === 'quiz'
+                                                        ? 'text-sky-700 bg-sky-50 border-sky-200/80'
+                                                        : 'text-red-700 bg-red-50 border-red-200/80');
+                                            @endphp
+                                            <details class="rounded-md border border-slate-200/80 bg-white/80 p-2 group/type">
+                                                <summary class="cursor-pointer list-none text-[11px] font-semibold [&::-webkit-details-marker]:hidden">
+                                                    <span class="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 {{ $typeSummaryClasses }}">
+                                                        <svg class="h-3.5 w-3.5 shrink-0 transition group-open/type:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                                        {{ $typeTitle }} ({{ $items->count() }})
+                                                    </span>
+                                                </summary>
+                                                @if($items->isEmpty())
+                                                    <p class="mt-2 text-xs text-slate-500">No {{ strtolower($typeTitle) }} in this program.</p>
+                                                @else
+                                                    <div class="mt-2 space-y-3 border-t border-slate-100 pt-2">
+                                                        @foreach($items as $assignment)
+                                                            @php
+                                                                $subKey = $student->user_id ? ($student->user_id.'-'.$assignment->id) : null;
+                                                                $submission = $subKey ? ($latestSubmissionByUserAssignmentKey[$subKey] ?? null) : null;
+                                                                $savedRow = $assignmentRemarksLookup->get($student->id)?->get($assignment->id);
+                                                                $fieldName = 'assignment_remarks.'.$student->id.'.'.$assignment->id;
+                                                                $assignmentType = $assignment->type ?? 'assignment';
+                                                                $typeLabel = $assignmentType === 'problem' ? 'Problem' : ($assignmentType === 'quiz' ? 'Quiz' : 'Assignment');
+                                                                $typeBadgeClasses = $assignmentType === 'problem'
+                                                                    ? 'bg-amber-50 text-amber-700 ring-amber-200/80'
+                                                                    : ($assignmentType === 'quiz'
+                                                                        ? 'bg-sky-50 text-sky-700 ring-sky-200/80'
+                                                                        : 'bg-red-50 text-red-700 ring-red-200/80');
+                                                                $itemBorderClasses = $submission
+                                                                    ? 'border-emerald-300/90 ring-emerald-100/70 bg-emerald-50/20'
+                                                                    : 'border-slate-200/90 ring-slate-100 bg-white';
+                                                            @endphp
+                                                            <div class="rounded-lg border p-2.5 shadow-sm ring-1 {{ $itemBorderClasses }}">
+                                                                <div class="mb-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                                                                    <span class="text-sm font-semibold text-slate-900">{{ $assignment->title }}</span>
+                                                                    <span class="inline-flex rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 {{ $typeBadgeClasses }}">{{ $typeLabel }}</span>
+                                                                    @if($submission)
+                                                                        <span class="inline-flex rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-800 ring-1 ring-emerald-200/80">Submitted</span>
+                                                                    @else
+                                                                        <span class="inline-flex rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600 ring-1 ring-slate-200/80">Unsubmitted</span>
+                                                                    @endif
+                                                                </div>
+                                                                @if($submission)
+                                                                    <div class="mb-2 rounded-md border border-emerald-200/90 bg-emerald-50/70 p-2">
+                                                                        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-600">Latest submission</p>
+                                                                        <p class="mt-0.5 text-xs text-slate-500 tabular-nums">{{ $submission->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</p>
+                                                                        <details class="mt-1.5 group">
+                                                                            <summary class="cursor-pointer list-none text-xs font-semibold text-primary hover:underline [&::-webkit-details-marker]:hidden">
+                                                                                <span class="inline-flex items-center gap-1">
+                                                                                    <svg class="h-3.5 w-3.5 shrink-0 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                                                                    View submission
+                                                                                </span>
+                                                                            </summary>
+                                                                            <div class="mt-2 space-y-2 border-t border-slate-100 pt-2 text-xs">
+                                                                                @php $judge0LanguagesById = collect(config('judge0.languages', []))->keyBy('id'); @endphp
+                                                                                @if($submission->judge0_language_id)
+                                                                                    <p class="text-slate-600">
+                                                                                        <span class="font-medium text-slate-700">Language:</span>
+                                                                                        {{ data_get($judge0LanguagesById->get($submission->judge0_language_id), 'name') ?? ('#'.$submission->judge0_language_id) }}
+                                                                                    </p>
+                                                                                @endif
+                                                                                @if(filled($submission->source_code))
+                                                                                    <pre class="max-h-48 overflow-auto rounded border border-slate-200 bg-slate-950 p-2 font-mono text-[11px] leading-relaxed text-slate-100">{{ $submission->source_code }}</pre>
+                                                                                @else
+                                                                                    <p class="text-slate-500">No source code was stored for this submission.</p>
+                                                                                @endif
+                                                                            </div>
+                                                                        </details>
+                                                                    </div>
+                                                                @else
+                                                                    <p class="mb-2 inline-flex rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-500">No submission yet.</p>
+                                                                @endif
+                                                                <div class="mb-1 flex items-center justify-between gap-2">
+                                                                    <label for="assignment-remark-{{ $student->id }}-{{ $assignment->id }}" class="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Remark for this {{ strtolower($typeLabel) }}</label>
+                                                                    <button type="submit" class="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-primary-hover">
+                                                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                                                        Save
+                                                                    </button>
+                                                                </div>
+                                                                <textarea
+                                                                    id="assignment-remark-{{ $student->id }}-{{ $assignment->id }}"
+                                                                    name="assignment_remarks[{{ $student->id }}][{{ $assignment->id }}]"
+                                                                    rows="2"
+                                                                    placeholder="Feedback for this {{ strtolower($typeLabel) }}…"
+                                                                    class="w-full rounded-lg border-0 bg-slate-100/80 px-3 py-2 text-sm text-slate-900 shadow-inner ring-1 ring-slate-200/80 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/35 @error($fieldName) ring-red-400 @enderror"
+                                                                >{{ old($fieldName, $savedRow?->remarks) }}</textarea>
+                                                                @error($fieldName)
+                                                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                                                @enderror
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
                                                 @endif
-                                            </div>
-                                            @if($submission)
-                                                <div class="mb-2 rounded-md border border-slate-200/90 bg-slate-50/90 p-2">
-                                                    <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-600">Latest submission</p>
-                                                    <p class="mt-0.5 text-xs text-slate-500 tabular-nums">{{ $submission->created_at->timezone(config('app.timezone'))->format('M j, Y g:i A') }}</p>
-                                                    <details class="mt-1.5 group">
-                                                        <summary class="cursor-pointer list-none text-xs font-semibold text-primary hover:underline [&::-webkit-details-marker]:hidden">
-                                                            <span class="inline-flex items-center gap-1">
-                                                                <svg class="h-3.5 w-3.5 shrink-0 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                                                                View submission
-                                                            </span>
-                                                        </summary>
-                                                        <div class="mt-2 space-y-2 border-t border-slate-100 pt-2 text-xs">
-                                                            @php $judge0LanguagesById = collect(config('judge0.languages', []))->keyBy('id'); @endphp
-                                                            @if($submission->judge0_language_id)
-                                                                <p class="text-slate-600">
-                                                                    <span class="font-medium text-slate-700">Language:</span>
-                                                                    {{ data_get($judge0LanguagesById->get($submission->judge0_language_id), 'name') ?? ('#'.$submission->judge0_language_id) }}
-                                                                </p>
-                                                            @endif
-                                                            @if(filled($submission->source_code))
-                                                                <pre class="max-h-48 overflow-auto rounded border border-slate-200 bg-slate-950 p-2 font-mono text-[11px] leading-relaxed text-slate-100">{{ $submission->source_code }}</pre>
-                                                            @else
-                                                                <p class="text-slate-500">No source code was stored for this submission.</p>
-                                                            @endif
-                                                        </div>
-                                                    </details>
-                                                </div>
-                                            @else
-                                                <p class="mb-2 text-xs text-slate-500">No submission yet.</p>
-                                            @endif
-                                            <label for="assignment-remark-{{ $student->id }}-{{ $assignment->id }}" class="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Remark for this assignment</label>
-                                            <textarea
-                                                id="assignment-remark-{{ $student->id }}-{{ $assignment->id }}"
-                                                name="assignment_remarks[{{ $student->id }}][{{ $assignment->id }}]"
-                                                rows="2"
-                                                placeholder="Feedback for this assignment…"
-                                                class="w-full rounded-lg border-0 bg-slate-100/80 px-3 py-2 text-sm text-slate-900 shadow-inner ring-1 ring-slate-200/80 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/35 @error($fieldName) ring-red-400 @enderror"
-                                            >{{ old($fieldName, $savedRow?->remarks) }}</textarea>
-                                            @error($fieldName)
-                                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                    @endforeach
-                                </div>
+                                            </details>
+                                        @endforeach
+                                    </div>
+                                </details>
                             @endif
                             <label for="remarks-field-{{ $student->id }}" class="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-slate-500">General instructor remarks</label>
                             <textarea

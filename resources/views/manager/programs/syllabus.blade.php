@@ -9,7 +9,7 @@
     $topicsDone = $topics->where('is_complete', true)->count();
     $subtopicCount = $topics->sum(fn ($t) => $t->subtopics->count());
     $subtopicsDone = $topics->sum(fn ($t) => $t->subtopics->where('is_complete', true)->count());
-    $assignmentCount = $topics->sum(fn ($t) => $t->subtopics->sum(fn ($s) => $s->assignments->count()));
+    $syllabusItemCount = $topics->sum(fn ($t) => $t->subtopics->sum(fn ($s) => $s->assignments->count()));
     $topicPct = $topicCount > 0 ? (int) min(100, round(100 * $topicsDone / $topicCount)) : 0;
     $subPct = $subtopicCount > 0 ? (int) min(100, round(100 * $subtopicsDone / $subtopicCount)) : 0;
 @endphp
@@ -87,8 +87,8 @@
         <p class="mt-0.5 text-[11px] text-emerald-800/70">items marked complete</p>
     </div>
     <div class="rounded-lg border border-violet-200/70 bg-gradient-to-br from-violet-50/90 to-white p-3 shadow-sm">
-        <p class="text-xs font-medium text-violet-800/80">Assignments</p>
-        <p class="mt-1 text-2xl font-bold tabular-nums text-violet-950">{{ $assignmentCount }}</p>
+        <p class="text-xs font-medium text-violet-800/80">Syllabus items</p>
+        <p class="mt-1 text-2xl font-bold tabular-nums text-violet-950">{{ $syllabusItemCount }}</p>
     </div>
 </div>
 
@@ -260,9 +260,17 @@
                                 </span>
                             @endif
                             <div class="subtopic-actions inline-flex shrink-0 flex-nowrap items-center gap-1.5 rounded-md bg-white/90 py-0.5 pl-0.5 pr-1 ring-1 ring-slate-200/60 sm:gap-2 sm:pr-1.5">
-                                <a href="{{ route('manager.program.syllabus.assignments.create', [$program, $subtopic]) }}" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold text-primary ring-1 ring-primary/20 transition hover:bg-primary/10" title="Create coding assignment for this subtopic">
+                                <a href="{{ route('manager.program.syllabus.assignments.create-assignment', [$program, $subtopic]) }}" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold text-primary ring-1 ring-primary/20 transition hover:bg-primary/10" title="Create assignment for this subtopic">
                                     <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                                     Assignment
+                                </a>
+                                <a href="{{ route('manager.program.syllabus.assignments.create-problem', [$program, $subtopic]) }}" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-300 transition hover:bg-amber-50" title="Create problem for this subtopic">
+                                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9h8M8 13h6m-2 8a9 9 0 100-18 9 9 0 000 18z" /></svg>
+                                    Problem
+                                </a>
+                                <a href="{{ route('manager.program.syllabus.assignments.create-quiz', [$program, $subtopic]) }}" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-semibold text-sky-700 ring-1 ring-sky-300 transition hover:bg-sky-50" title="Create quiz for this subtopic">
+                                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                    Quiz
                                 </a>
                                 <button type="button" class="subtopic-edit-btn inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-800" title="Edit"><svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
                                 <form action="{{ route('manager.program.syllabus.subtopics.destroy', [$program, $subtopic]) }}" method="POST" class="inline shrink-0" onsubmit="return confirm('Delete this subtopic?');">
@@ -290,6 +298,7 @@
                                 @foreach($subtopic->assignments as $syllabusAssignment)
                                     @php
                                         $rangeLabel = '';
+                                        $type = $syllabusAssignment->type ?? 'assignment';
                                         if ($syllabusAssignment->starts_on && $syllabusAssignment->ends_on) {
                                             $rangeLabel = $syllabusAssignment->starts_on->format('M j, Y').' – '.$syllabusAssignment->ends_on->format('M j, Y');
                                         } elseif ($syllabusAssignment->starts_on) {
@@ -300,7 +309,13 @@
                                     @endphp
                                     <li class="overflow-hidden rounded-md bg-white/80 text-sm ring-1 ring-slate-100">
                                         <div class="flex min-w-0 flex-nowrap items-center gap-1.5 overflow-x-auto py-1.5 px-1.5">
-                                            <span class="inline-flex shrink-0 items-center rounded-md border border-red-500 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-red-700">Assignment</span>
+                                            @if($type === 'problem')
+                                                <span class="inline-flex shrink-0 items-center rounded-md border border-amber-400 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-700">Problem</span>
+                                            @elseif($type === 'quiz')
+                                                <span class="inline-flex shrink-0 items-center rounded-md border border-sky-400 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-700">Quiz</span>
+                                            @else
+                                                <span class="inline-flex shrink-0 items-center rounded-md border border-red-500 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-red-700">Assignment</span>
+                                            @endif
                                             <span class="min-w-0 flex-1 font-medium text-slate-800">{{ $syllabusAssignment->title }}</span>
                                             @if($rangeLabel !== '')
                                                 <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200/80" title="Availability">

@@ -30,7 +30,7 @@
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+    <main class="@yield('main_width_class', 'max-w-5xl mx-auto') px-4 sm:px-6 py-6 sm:py-8">
         @if(session('success'))
             <div class="mb-5 p-4 rounded-2xl bg-emerald-50/90 border border-emerald-200/80 text-emerald-900 text-sm shadow-sm" role="alert">{{ session('success') }}</div>
         @endif

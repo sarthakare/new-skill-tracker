@@ -10,9 +10,9 @@ class SyllabusAssignment extends Model
 {
     protected $fillable = [
         'syllabus_subtopic_id',
+        'type',
         'title',
         'description',
-        'difficulty',
         'starter_code',
         'test_cases',
         'expected_output',

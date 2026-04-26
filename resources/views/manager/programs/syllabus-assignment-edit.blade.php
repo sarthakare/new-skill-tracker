@@ -37,6 +37,7 @@
         <form action="{{ route('manager.program.syllabus.assignments.update', [$program, $assignment]) }}" method="POST" class="space-y-5 max-w-3xl">
             @csrf
             @method('PUT')
+            <input type="hidden" name="type" value="{{ old('type', $assignment->type ?? 'assignment') }}">
             <div>
                 <label for="assignment_title" class="block text-sm font-medium text-slate-700 mb-1">Title</label>
                 <input type="text" id="assignment_title" name="title" value="{{ old('title', $assignment->title) }}" required maxlength="255" placeholder="e.g. Two Sum" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('title') border-red-500 @enderror">
@@ -48,16 +49,6 @@
                 @error('description')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="assignment_difficulty" class="block text-sm font-medium text-slate-700 mb-1">Difficulty</label>
-                    <select id="assignment_difficulty" name="difficulty" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white @error('difficulty') border-red-500 @enderror">
-                        <option value="" disabled {{ old('difficulty', $assignment->difficulty) ? '' : 'selected' }}>Select…</option>
-                        @foreach (['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'] as $value => $label)
-                            <option value="{{ $value }}" @selected(old('difficulty', $assignment->difficulty) === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                    @error('difficulty')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
                 <div>
                     <label for="assignment_time_limit" class="block text-sm font-medium text-slate-700 mb-1">Time limit (seconds) <span class="text-slate-500 font-normal">(optional)</span></label>
                     <input type="number" id="assignment_time_limit" name="time_limit" value="{{ old('time_limit', $assignment->time_limit) }}" min="1" max="600" placeholder="e.g. 5" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('time_limit') border-red-500 @enderror">

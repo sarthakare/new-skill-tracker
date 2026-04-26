@@ -14,7 +14,22 @@ use Illuminate\View\View;
 
 class SyllabusAssignmentController extends Controller
 {
-    public function create(Program $program, SyllabusSubtopic $subtopic): View
+    public function createAssignment(Program $program, SyllabusSubtopic $subtopic): View
+    {
+        return $this->createByType($program, $subtopic, 'assignment');
+    }
+
+    public function createProblem(Program $program, SyllabusSubtopic $subtopic): View
+    {
+        return $this->createByType($program, $subtopic, 'problem');
+    }
+
+    public function createQuiz(Program $program, SyllabusSubtopic $subtopic): View
+    {
+        return $this->createByType($program, $subtopic, 'quiz');
+    }
+
+    private function createByType(Program $program, SyllabusSubtopic $subtopic, string $type): View
     {
         $this->ensureSubtopicInProgram($program, $subtopic);
 
@@ -23,7 +38,7 @@ class SyllabusAssignmentController extends Controller
         $program->load(['event', 'college', 'vendorManager', 'independentManager']);
         $subtopic->load('syllabusTopic');
 
-        return view('manager.programs.syllabus-assignment-create', compact('program', 'subtopic', 'credential'));
+        return view("manager.programs.syllabus-{$type}-create", compact('program', 'subtopic', 'credential'));
     }
 
     public function store(StoreSyllabusAssignmentRequest $request, Program $program, SyllabusSubtopic $subtopic): RedirectResponse
@@ -38,9 +53,10 @@ class SyllabusAssignmentController extends Controller
 
         SyllabusAssignment::create([
             'syllabus_subtopic_id' => $subtopic->id,
+            'type' => $data['type'],
             'title' => $data['title'],
             'description' => $data['description'],
-            'difficulty' => $data['difficulty'],
+            'difficulty' => null,
             'starter_code' => $data['starter_code'] ?? null,
             'test_cases' => $data['test_cases'] ?? null,
             'expected_output' => $data['expected_output'] ?? null,
@@ -53,7 +69,7 @@ class SyllabusAssignmentController extends Controller
         return redirect()
             ->route('manager.program.syllabus.index', $program)
             ->withFragment('topic-'.$subtopic->syllabus_topic_id)
-            ->with('success', 'Assignment created successfully.');
+            ->with('success', ucfirst($data['type']).' created successfully.');
     }
 
     public function edit(Program $program, SyllabusAssignment $assignment): View
@@ -82,7 +98,7 @@ class SyllabusAssignmentController extends Controller
         $assignment->update([
             'title' => $data['title'],
             'description' => $data['description'],
-            'difficulty' => $data['difficulty'],
+            'difficulty' => null,
             'starter_code' => $data['starter_code'] ?? null,
             'test_cases' => $data['test_cases'] ?? null,
             'expected_output' => $data['expected_output'] ?? null,

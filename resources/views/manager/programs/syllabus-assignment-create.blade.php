@@ -36,6 +36,7 @@
     <div class="p-5">
         <form action="{{ route('manager.program.syllabus.assignments.store', [$program, $subtopic]) }}" method="POST" class="space-y-5 max-w-3xl">
             @csrf
+            <input type="hidden" name="type" value="assignment">
             <div>
                 <label for="assignment_title" class="block text-sm font-medium text-slate-700 mb-1">Title</label>
                 <input type="text" id="assignment_title" name="title" value="{{ old('title') }}" required maxlength="255" placeholder="e.g. Two Sum" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('title') border-red-500 @enderror">
@@ -46,37 +47,6 @@
                 <textarea id="assignment_description" name="description" rows="8" required placeholder="Problem statement, sample input/output, constraints…" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary font-mono text-sm @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
                 @error('description')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="assignment_difficulty" class="block text-sm font-medium text-slate-700 mb-1">Difficulty</label>
-                    <select id="assignment_difficulty" name="difficulty" required class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary bg-white @error('difficulty') border-red-500 @enderror">
-                        <option value="" disabled {{ old('difficulty') ? '' : 'selected' }}>Select…</option>
-                        @foreach (['easy' => 'Easy', 'medium' => 'Medium', 'hard' => 'Hard'] as $value => $label)
-                            <option value="{{ $value }}" @selected(old('difficulty') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                    @error('difficulty')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label for="assignment_time_limit" class="block text-sm font-medium text-slate-700 mb-1">Time limit (seconds) <span class="text-slate-500 font-normal">(optional)</span></label>
-                    <input type="number" id="assignment_time_limit" name="time_limit" value="{{ old('time_limit') }}" min="1" max="600" placeholder="e.g. 5" class="w-full rounded-input border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary @error('time_limit') border-red-500 @enderror">
-                    <p class="mt-1.5 text-xs text-slate-500 leading-relaxed">When you run student code through Judge0, this caps how long each submission may use the CPU before it is stopped (time limit / TL). Leave blank until you configure auto-grading.</p>
-                    @error('time_limit')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-            </div>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                    <label for="assignment_starts_on" class="mb-1 block text-sm font-medium text-slate-700">Available from <span class="font-normal text-slate-500">(optional)</span></label>
-                    <input type="date" id="assignment_starts_on" name="starts_on" value="{{ old('starts_on') }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('starts_on') border-red-500 @enderror">
-                    @error('starts_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label for="assignment_ends_on" class="mb-1 block text-sm font-medium text-slate-700">Available until <span class="font-normal text-slate-500">(optional)</span></label>
-                    <input type="date" id="assignment_ends_on" name="ends_on" value="{{ old('ends_on') }}" class="w-full rounded-input border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary @error('ends_on') border-red-500 @enderror">
-                    @error('ends_on')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-            </div>
-            <p class="text-xs text-slate-500 -mt-2">Optional window when this assignment is considered active. End date must be on or after the start date.</p>
             <div>
                 <span class="block text-sm font-medium text-slate-700 mb-1">Languages students may use <span class="text-slate-500 font-normal">(optional, same list as “Run code” on the student dashboard)</span></span>
                 <p class="text-xs text-slate-500 mb-2">Select one or more Judge0 languages. Stored as language IDs so they match the student code runner.</p>

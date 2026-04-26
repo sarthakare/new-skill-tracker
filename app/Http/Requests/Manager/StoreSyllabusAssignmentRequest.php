@@ -36,9 +36,9 @@ class StoreSyllabusAssignmentRequest extends FormRequest
         $allowedLanguageIds = array_column(config('judge0.languages', []), 'id');
 
         return [
+            'type' => ['required', 'string', Rule::in(['assignment', 'problem', 'quiz'])],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'difficulty' => ['required', 'string', Rule::in(['easy', 'medium', 'hard'])],
             'starter_code' => ['nullable', 'string'],
             'test_cases' => ['nullable', 'string'],
             'expected_output' => ['nullable', 'string'],

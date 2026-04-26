@@ -52,7 +52,9 @@ Route::prefix('manager/program')->name('manager.program.')->middleware(['web', '
     Route::post('/{program}/syllabus/subtopics/{subtopic}/toggle-complete', [SyllabusController::class, 'toggleSubtopicComplete'])->name('syllabus.subtopics.toggle-complete');
     Route::post('/{program}/syllabus/subtopics/{subtopic}/schedule', [SyllabusController::class, 'updateSubtopicSchedule'])->name('syllabus.subtopics.schedule');
 
-    Route::get('/{program}/syllabus/subtopics/{subtopic}/assignments/create', [SyllabusAssignmentController::class, 'create'])->name('syllabus.assignments.create');
+    Route::get('/{program}/syllabus/subtopics/{subtopic}/assignments/create', [SyllabusAssignmentController::class, 'createAssignment'])->name('syllabus.assignments.create-assignment');
+    Route::get('/{program}/syllabus/subtopics/{subtopic}/problems/create', [SyllabusAssignmentController::class, 'createProblem'])->name('syllabus.assignments.create-problem');
+    Route::get('/{program}/syllabus/subtopics/{subtopic}/quizzes/create', [SyllabusAssignmentController::class, 'createQuiz'])->name('syllabus.assignments.create-quiz');
     Route::post('/{program}/syllabus/subtopics/{subtopic}/assignments', [SyllabusAssignmentController::class, 'store'])->name('syllabus.assignments.store');
     Route::get('/{program}/syllabus/assignments/{assignment}/edit', [SyllabusAssignmentController::class, 'edit'])->name('syllabus.assignments.edit');
     Route::put('/{program}/syllabus/assignments/{assignment}', [SyllabusAssignmentController::class, 'update'])->name('syllabus.assignments.update');
